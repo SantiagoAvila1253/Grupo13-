@@ -16,7 +16,7 @@ materia = [["Matemática", "Martes", "14:00 - 18:00"]]
 clases = ["2025-08-05", "2025-08-12", "2025-08-19", "2025-08-26", "2025-09-02", "2025-09-09", "2025-09-16", "2025-09-23", "2025-09-30", "2025-10-07", "2025-10-14", "2025-10-21", "2025-10-28", "2025-11-04", "2025-11-11", "2025-11-18", "2025-11-25"]
 
 # matriz alumnos
-Alumnos = [
+alumnos = [
     ["Juan", "Saltid", "08-09-2007", "jsaltid@uade.edu.ar"],
     ["Pablo", "Altanio", "19-04-2004", "paltanio@uade.edu.ar"],
     ["Marcelo", "Mandeo", "02-12-2007", "mmandeo@uade.edu.ar"],
@@ -34,8 +34,8 @@ Alumnos = [
     ["Faustina", "Flores", "12-08-2006", "fflores@uade.edu.ar"]
 ]
 
-# lista asistencia
-asistencias = ["Presente", "Ausente justificado", "Ausente injustificado"]
+# lista estados de asistencia
+estado_asistencia = ["Presente", "Ausente justificado", "Ausente injustificado"]
 
 presentismo = [
     [1,1,1,1],
@@ -50,7 +50,7 @@ presentismo = [
 
 #Programa principal
 
-mostrar_matriz("Alumnos", Alumnos,)
+mostrar_matriz("Alumnos", alumnos,)
 mostrar_matriz("Materia", materia,)
 mostrar_matriz("Clases", clases,)
-mostrar_matriz("Asistencias", asistencias,)
+mostrar_matriz("Asistencias", estado_asistencia,)
