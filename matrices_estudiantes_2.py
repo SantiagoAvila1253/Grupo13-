@@ -7,6 +7,7 @@ def mostrar_matriz(nombre, matriz):
         print(fila)
     
     return 
+
 # matrices
 
 # matriz materias
@@ -37,18 +38,22 @@ alumnos = [
 # lista estados de asistencia
 estado_asistencia = ["Presente", "Ausente justificado", "Ausente injustificado"]
 
+# lista estados de alumnos
+estado_alumnos = ["Activo","Inactivo"]
+
+# materia / clase / alumno / estado asistencia / estado alumno
 presentismo = [
-    [1,1,1,1],
-    [1,1,2,1],
-    [1,1,3,1],
-    [1,1,4,1],
-    [1,2,1,1],
-    [1,2,2,1],
-    [1,2,3,2],
-    [1,2,4,1]
+    [1,1,1,1,1],
+    [1,1,2,1,1],
+    [1,1,3,1,1],
+    [1,1,4,1,1],
+    [1,2,1,1,1],
+    [1,2,2,1,1],
+    [1,2,3,2,1],
+    [1,2,4,1,1]
 ]
 
-#Programa principal
+# programa principal
 
 mostrar_matriz("Alumnos", alumnos,)
 mostrar_matriz("Materia", materia,)
