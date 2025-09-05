@@ -11,7 +11,6 @@ def mostrar_matriz(nombre, matriz):
 
     return
 
-
 # matrices
 
 # matriz de docentes con credenciales de ingreso como operador del sistema (dni, clave)
@@ -43,7 +42,7 @@ clases = [
 ]
 
 # matriz alumnos
-# ??? preguntar cantidad de alumnos que deberíamos incluir
+
 alumnos = [
     ["Juan", "Saltid", "08-09-2007", "jsaltid@uade.edu.ar"],
     ["Pablo", "Altanio", "19-04-2004", "paltanio@uade.edu.ar"],

@@ -3,13 +3,11 @@
 def login_usuario(usuarios_docentes, estado):
 
     # bienvenida y menú inicial
+    item_menu_login = ["Ingresá el número de la opción que querés realizar:\n", "Loguearme al sistema", "Reiniciar la contraseña", "Salir del sistema"]
+    
     bienvenida = "Te damos la Bienvenida al sistema de presentismo.\n"
-    mostrar_menu_inicio = (
-        "Ingresá el número de la opción que querés realizar:\n\n"
-        "1- Loguearme al sistema\n"
-        "2- Reiniciar la contraseña\n"
-        "3- Salir del sistema\n"
-    )
+    
+    menu_login = mostrar_menu_login(item_menu_login)
 
     # pedir al usuario una opción del menú
     print(bienvenida)
@@ -81,14 +79,17 @@ def login_usuario(usuarios_docentes, estado):
 
     return estado
 
+def mostrar_menu_login(item_menu_login):
+    for item in item_menu_login:
+        print(f"{item_menu_login[item]}")
 
 # función para pedir y validar DNI
 # ??? validar con int o string, como se va a hacer el manejo de excepciones para saber qué método elegir
 def pedir_dni(usuarios_docentes):
     print("Ingresá tu usuario (DNI)")
     # ingreso a la validación del ingreso del input del usuario en DNI
-    dniInvalido = True
-    while dniInvalido:
+    dni_invalido = True
+    while dni_invalido:
         dni = input(
             "Ingresá tu número de DNI sin puntos, comas ni espacios o -1 para salir: "
         )
@@ -96,7 +97,7 @@ def pedir_dni(usuarios_docentes):
         # Validar si el usuario desea salir
         if dni == "-1":
             dni = -1
-            dniInvalido = False
+            dni_invalido = False
         else:
             # Validar que sean solo números
             soloNumeros = True
@@ -125,7 +126,7 @@ def pedir_dni(usuarios_docentes):
 
 
 # Función para busqueda de usuario ingresado en la función loginUsuario a través de la función pedirDni
-def buscarUsuario(usuarios, dni):
+def buscar_usuario(usuarios, dni):
     i = 0
     pos = -1
     largoUsuarios = len(usuarios)
@@ -139,9 +140,11 @@ def buscarUsuario(usuarios, dni):
     # devuelve la posición o si no lo encuentra retorna -1
     return pos
 
+def validar_dni():
+
 
 # Función para solicitar una nueva contraseña y la validarla (mínimo de 4 caracreres)
-def validaContraseña():
+def valida_contraseña():
     caracteresMinimos = 4
     nueva = input("Ingresá tu nueva contraseña (4 caracteres) o -1 para salir: ")
     largoNueva = len(nueva)
