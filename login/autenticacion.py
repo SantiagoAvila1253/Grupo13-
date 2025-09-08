@@ -1,159 +1,59 @@
-# Función Loguin del usuario
+# importar funciones y variables
 
-def login_usuario(usuarios_docentes, estado):
+from core import (
+    mostrar_menu_login, opcion_valida_menu,
+    dni_valido, password_valida,
+    DOCENTES, DO_DNI, DO_CLAVE
+)
 
-    # bienvenida y menú inicial
-    item_menu_login = ["Ingresá el número de la opción que querés realizar:\n", "Loguearme al sistema", "Reiniciar la contraseña", "Salir del sistema"]
-    
-    bienvenida = "Te damos la Bienvenida al sistema de presentismo.\n"
-    
-    menu_login = mostrar_menu_login(item_menu_login)
+# login
 
-    # pedir al usuario una opción del menú
-    print(bienvenida)
-    print(mostrar_menu_inicio)
-    opcion_menu = input("Elegí una opción del menú: ")
+def login_usuario():
+    while True:
+        mostrar_menu_login()
+        op = input("Elegí una opción: ").strip()
 
-    # validar opción ingresada
-    while opcion_menu not in ("1", "2", "3"):
-        print("El valor ingresado no es válido.\n")
-        print(mostrar_menu_inicio)
-        opcion_menu = input("Elegí una opción: ")
-
-    # en la opción 1 pedir credenciales del usuario
-    if opcion_menu == "1":
-        dni = pedir_dni(usuarios_docentes)
-
-    # Si dni no es -1 el usuario sigue en el sistema ???
-    if dni != -1:
-        # buscamos el usuario en la matriz de usuarios a ver si existe
-        idUsuario = buscarUsuario(usuarios, dni)
-
-        # si existe el usuario le pedimos que ingrese su clave o la reinicie
-        if idUsuario != -1:
-            clave = input(
-                "Ingresá tu contraseña (ingresá -1 para reiniciar la contraseña o -2 para salir): "
-            )
-            while (
-                clave != usuarios[idUsuario][0][4] and clave != "-1" and clave != "-2"
-            ):
-                print("Contraseña incorrecta.")
-                clave = input(
-                    "Ingresá tu contraseña: "
-                )  # tiene intentos infinitos hasta que se rinda o le pegue
-
-            # Si la clave ingresada coincide con la clave guardada en la matriz de usuarios inicia la sesión e ingresa al menú
-            if clave == usuarios[idUsuario][0][4]:
-                os.system("cls" if os.name == "nt" else "clear")
-                # cambia el estado y mantiene al usuario con sesión activa y dentro del sistema hasta que este decida salir
-                estado = 2
-                print(
-                    "Hola",
-                    usuarios[idUsuario][0][1],
-                    usuarios[idUsuario][0][2],
-                    ", iniciaste sesión correctamente.",
-                )
-                while estado == 2:
-                    estado = menuUsuario(usuarios, idUsuario, estado)
-
-            # si ingresa -1 va a la opción de generar una nueva contraseña
-            elif clave == "-1":
-                nueva = validaContraseña()
-                usuarios[idUsuario][0][4] = nueva
-                input(
-                    "Clave reiniciada. Volvé a iniciar sesión. Apretá Enter para continuar."
-                )
-                # después de reiniciar sale del sistema y tiene que volver a loguearse
-                estado = 1
-                print(salir)
-
-            # si ingresa -2 sale del sistema
+        if not opcion_valida_menu(op, {"1", "2", "3"}):
+            print("Opción inválida.")
+        elif op == "1":
+            dni = input("Ingresá tu DNI sin puntos ni comas o -1 para salir): ").strip()
+            if dni == "-1":
+                return None
+            if not dni_valido(dni):
+                print("DNI inválido.")
             else:
-                estado = 0
-                print(salir)
-
-    # Si el usuario quiere salir, sale del sistema
-    else:
-        estado = 0
-        print(f"{salir}")
-
-    return estado
-
-def mostrar_menu_login(item_menu_login):
-    for item in item_menu_login:
-        print(f"{item_menu_login[item]}")
-
-# función para pedir y validar DNI
-# ??? validar con int o string, como se va a hacer el manejo de excepciones para saber qué método elegir
-def pedir_dni(usuarios_docentes):
-    print("Ingresá tu usuario (DNI)")
-    # ingreso a la validación del ingreso del input del usuario en DNI
-    dni_invalido = True
-    while dni_invalido:
-        dni = input(
-            "Ingresá tu número de DNI sin puntos, comas ni espacios o -1 para salir: "
-        )
-
-        # Validar si el usuario desea salir
-        if dni == "-1":
-            dni = -1
-            dni_invalido = False
-        else:
-            # Validar que sean solo números
-            soloNumeros = True
-            i = 0
-            largoDni = len(dni)
-            while i < largoDni and soloNumeros:
-                if dni[i] < "0" or dni[i] > "9":
-                    soloNumeros = False
-                i += 1
-
-            # Validar cantidad de caracteres
-            if soloNumeros:
-                if largoDni >= 7 and largoDni <= 8:
-                    dniInvalido = False
-                    dni = int(dni)
+                contraseña = input("Ingresá tu Contraseña: ")
+                ok = False
+                for item in DOCENTES:
+                    if item[DO_DNI] == dni and item[DO_CLAVE] == contraseña:
+                        ok = True
+                if ok:
+                    print("Login correcto.")
+                    return {"dni": dni}
                 else:
-                    print("Verificá la cantidad de dígitos (7 u 8).")
-            else:
-                print("Valor inválido, solo se aceptan números.")
-
-    # retorna el valor de dni
-    return dni
-
-
-# __Funciones complementarias__
+                    print("Contraseña incorrecta. Probá  de nuevo o reseteá tu contraseña.")
+        elif op == "2":
+            reiniciar_contraseña()
+        elif op == "3":
+            return None
 
 
-# Función para busqueda de usuario ingresado en la función loginUsuario a través de la función pedirDni
-def buscar_usuario(usuarios, dni):
-    i = 0
-    pos = -1
-    largoUsuarios = len(usuarios)
-    while i < largoUsuarios:
-        if (
-            usuarios[i][0][0] == dni
-        ):  # usuarios[i][0] son los datos del usuario, [0] es la pos del dni
-            pos = i
-        i += 1
+def reiniciar_contraseña():
+    dni = input("Ingresá tu DNI: ").strip()
+    if not dni_valido(dni):
+        print("DNI inválido.")
+        return False
 
-    # devuelve la posición o si no lo encuentra retorna -1
-    return pos
+    nueva = input("Nueva contraseña (mínimo 4 caracteres): ")
+    if not password_valida(nueva, 4):
+        print("Inválida.")
+        return False
 
-def validar_dni():
+    for item in DOCENTES:
+        if item[DO_DNI] == dni:
+            item[DO_CLAVE] = nueva
+            print("Contraseña actualizada.")
+            return True
 
-
-# Función para solicitar una nueva contraseña y la validarla (mínimo de 4 caracreres)
-def valida_contraseña():
-    caracteresMinimos = 4
-    nueva = input("Ingresá tu nueva contraseña (4 caracteres) o -1 para salir: ")
-    largoNueva = len(nueva)
-
-    if nueva != "-1":
-        while nueva != "-1" and largoNueva < caracteresMinimos:
-            nueva = input(
-                "Contraseña invalida, debe tener al menos 4 caracteres o -1 para volver al inicio: "
-            )
-            largoNueva = len(nueva)
-
-    return nueva
+    print("Usuario no encontrado.")
+    return False
