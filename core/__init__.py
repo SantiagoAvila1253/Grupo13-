@@ -1,4 +1,5 @@
-# Re-exporto para importar desde 'core' directo
+# imprtar en init
+
 from .datos import (
     ESTADOS_ASISTENCIA, ESTADOS_ALUMNO,
     DOCENTES, MATERIAS, CLASES,
@@ -16,7 +17,7 @@ from .validadores import (
 )
 
 __all__ = [
-    # data
+    # datos
     "ESTADOS_ASISTENCIA","ESTADOS_ALUMNO","DOCENTES","MATERIAS","CLASES","alumnos",
     "DO_DNI","DO_CLAVE","MA_NOMBRE","MA_DIA","MA_HORARIO",
     "AL_LEGAJO","AL_DNI","AL_EMAIL","AL_APELLIDO","AL_NOMBRE","AL_ESTADO_IDX",
@@ -24,7 +25,7 @@ __all__ = [
     # menus
     "mostrar_menu_login","mostrar_menu_principal","mostrar_menu_alumnos",
     "mostrar_menu_asistencia","mostrar_menu_reportes",
-    # validators
+    # validadores
     "opcion_valida_menu","dni_valido","legajo_valido","email_valido",
     "nombre_valido","apellido_valido","fecha_ddmmyyyy_valida","password_valida",
 ]
