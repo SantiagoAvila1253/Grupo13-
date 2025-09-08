@@ -1,9 +1,4 @@
-def mostrar_matriz(nombre, matriz):
-    print(f"{nombre}:")
-    for fila in matriz:
-        print(matriz[fila][0], end=" ")
-    print()
-    return 
+
 def alta_alumno(alumnos,alumnos_baja):
     print("Alta de alumno ")
     print("1 - Dar de alta a un alumno nuevo")
@@ -17,7 +12,7 @@ def alta_alumno(alumnos,alumnos_baja):
             print("-" * 75)
             for alumno in alumnos_baja:
                
-                print(f"{alumno[4]:<5} | {alumno[0]:<12} | {alumno[1]:<15} | {alumno[3]:<27}")
+                print(f"{alumno[0]:<5} | {alumno[3]:<12} | {alumno[2]:<15} | {alumno[5]:<27}")
             id_reactivar = int(input("Ingrese el ID del alumno a reactivar: "))
         reactivar_alumno(id_reactivar ,alumnos, alumnos_baja) 
     elif opcion == 1:  
@@ -41,10 +36,10 @@ def baja_alumno(alumnos,alumnos_baja):
     id_alumno = int(input("ingrese el ID del alumno a dar de baja: "))
 
     for alumno in alumnos:
-        if  alumno[4] == id_alumno:
+        if  alumno[0] == id_alumno:
             alumnos_baja.append(alumno)
             alumnos.remove(alumno)
-            print(f" Alumno {alumno[0]} {alumno[1]} y ID {id_alumno} eliminado correctamente.")
+            print(f" Alumno {alumno[3]} {alumno[2]} y ID {id_alumno} eliminado correctamente.")
             return
     print(" No se encontró un alumno con ese ID.")
 
@@ -68,26 +63,26 @@ def modificar_dato_alumno(alumnos):
     for alumno in alumnos:
         if alumno[4] == id_alumno:
             print(f"\nAlumno encontrado:")
-            print(f"1 - Nombre: {alumno[0]}")
-            print(f"2 - Apellido: {alumno[1]}")
-            print(f"3 - Fecha de nacimiento: {alumno[2]}")
-            print(f"4 - Email: {alumno[3]}\n")
+            print(f"1 - Nombre: {alumno[3]}")
+            print(f"2 - Apellido: {alumno[2]}")
+            print(f"3 - Fecha de nacimiento: {alumno[4]}")
+            print(f"4 - Email: {alumno[5]}\n")
 
             opcion = int(input("¿Qué dato desea modificar? (1-4): "))
 
             if opcion == 1:
-                alumno[0] = input("Ingrese el nuevo nombre: ")
-                alumno[3] = input("Ingrese el nuevo email (ligado al nombre y apellido): ")
+                alumno[3] = input("Ingrese el nuevo nombre: ")
+                alumno[5] = input("Ingrese el nuevo email (ligado al nombre y apellido): ")
 
             elif opcion == 2:
-                alumno[1] = input("Ingrese el nuevo apellido: ")
-                alumno[3] = input("Ingrese el nuevo email (ligado al nombre y apellido): ")
+                alumno[2] = input("Ingrese el nuevo apellido: ")
+                alumno[5] = input("Ingrese el nuevo email (ligado al nombre y apellido): ")
 
             elif opcion == 3:
-                alumno[2] = input("Ingrese la nueva fecha de nacimiento (dd-mm-aaaa): ")
+                alumno[4] = input("Ingrese la nueva fecha de nacimiento (dd-mm-aaaa): ")
 
             elif opcion == 4:
-                alumno[3] = input("Ingrese el nuevo email: ")
+                alumno[5] = input("Ingrese el nuevo email: ")
 
             else:
                 print("Opción inválida.")
@@ -95,10 +90,10 @@ def modificar_dato_alumno(alumnos):
             print()
             print("Dato modificado correctamente.")
             print("Nuevo registro")
-            print(f"nombre: {alumno[0]}")
-            print(f"apellido: {alumno[1]}")
-            print(f"fecha de nacimiento: {alumno[2]}")
-            print(f"email: {alumno[3]}")
+            print(f"nombre: {alumno[3]}")
+            print(f"apellido: {alumno[2]}")
+            print(f"fecha de nacimiento: {alumno[4]}")
+            print(f"email: {alumno[5]}")
             
                   
             return
