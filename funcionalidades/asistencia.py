@@ -1,5 +1,5 @@
 # materia / clase / alumno / estado asistencia / total ausentes injustificados / estado alumno
-presentismo = [
+registro_asistencia = [
     [1, 1, 1, 1, 1, 1],
     [1, 1, 2, 1, 1, 1],
     [1, 1, 3, 1, 1, 1],

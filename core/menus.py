@@ -12,6 +12,7 @@ def mostrar_menu_principal():
     print("1) Gestión de alumnos")
     print("2) Asistencia")
     print("3) Reportes")
+    print("9) Cerrar sesión")
     print("0) Salir")
 
 
@@ -21,6 +22,7 @@ def mostrar_menu_alumnos():
     print("2) Alta alumno")
     print("3) Baja alumno")
     print("4) Modificar alumno")
+    print("9) Cerrar sesión")
     print("0) Volver")
 
 
@@ -28,6 +30,7 @@ def mostrar_menu_asistencia():
     print("\n--- MENÚ ASISTENCIA ---")
     print("1) Registrar asistencia")
     print("2) Consultar asistencia por fecha")
+    print("9) Cerrar sesión")
     print("0) Volver")
 
 
@@ -35,4 +38,5 @@ def mostrar_menu_reportes():
     print("\n--- MENÚ REPORTES ---")
     print("1) Presentes por clase")
     print("2) Porcentaje de asistencia por alumno")
+    print("9) Cerrar sesión")
     print("0) Volver")
