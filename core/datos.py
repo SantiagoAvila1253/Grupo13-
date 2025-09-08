@@ -13,23 +13,31 @@ EAL_ACTIVO = 0; EAL_INACTIVO = 1
 
 # DOCENTES: [dni, clave]
 DOCENTES = [
-    ["12345678", "Clave.123"],
+    [2001, "12345678", "Clave.123", "Carlos", "Gonzalez", "cgonzalez@uade.edu.ar"],
 ]
-DO_DNI = 0; DO_CLAVE = 1
-
-# MATERIAS: [nombre, día, horario]
-MATERIAS = [
-    ["Matemática", "Martes", "14:00 - 18:00"],
-]
-MA_NOMBRE = 0; MA_DIA = 1; MA_HORARIO = 2
+DO_LEGAJO = 0; DO_DNI = 1; DO_CLAVE = 2; DO_NOMBRE = 3; DO_APELLIDO = 4; DO_EMAIL = 5
 
 # CLASES: lista de fechas (cada posición = índice de clase)
 CLASES = [
-    "2025-08-05","2025-08-12","2025-08-19","2025-08-26",
-    "2025-09-02","2025-09-09","2025-09-16","2025-09-23",
-    "2025-09-30","2025-10-07","2025-10-14","2025-10-21",
-    "2025-10-28","2025-11-04","2025-11-11","2025-11-18","2025-11-25",
+    [3001, "Matemática", "2025-08-05", "Martes", "14:00 - 18:00"],
+    [3002, "Matemática", "2025-08-12", "Martes", "14:00 - 18:00"],
+    [3003, "Matemática", "2025-08-19", "Martes", "14:00 - 18:00"],
+    [3004, "Matemática", "2025-08-26", "Martes", "14:00 - 18:00"],
+    [3005, "Matemática", "2025-09-02", "Martes", "14:00 - 18:00"],
+    [3006, "Matemática", "2025-09-09", "Martes", "14:00 - 18:00"],
+    [3007, "Matemática", "2025-09-16", "Martes", "14:00 - 18:00"],
+    [3008, "Matemática", "2025-09-23", "Martes", "14:00 - 18:00"],
+    [3009, "Matemática", "2025-09-30", "Martes", "14:00 - 18:00"],
+    [3010, "Matemática", "2025-10-07", "Martes", "14:00 - 18:00"],
+    [3011, "Matemática", "2025-10-14", "Martes", "14:00 - 18:00"],
+    [3012, "Matemática", "2025-10-21", "Martes", "14:00 - 18:00"],
+    [3013, "Matemática", "2025-10-28", "Martes", "14:00 - 18:00"],
+    [3014, "Matemática", "2025-11-04", "Martes", "14:00 - 18:00"],
+    [3015, "Matemática", "2025-11-11", "Martes", "14:00 - 18:00"],
+    [3016, "Matemática", "2025-11-18", "Martes", "14:00 - 18:00"],
+    [3017, "Matemática", "2025-11-25", "Martes", "14:00 - 18:00"],
 ]
+CL_ID = 0; CL_MATERIA = 1; CL_FECHA = 2; CL_DIA = 3; CL_HORARIO = 4
 
 # Variable de trabajo alumnos
 
@@ -58,4 +66,4 @@ AL_LEGAJO = 0; AL_DNI = 1; AL_APELLIDO = 2; AL_NOMBRE = 3; AL_FECHA_NAC = 4; AL_
 
 # Cada fila de presentismo: [materia_idx, clase_idx, alumno_legajo, estado_asistencia_idx, estado_alumno_idx]
 
-PR_MATERIA_IDX = 0; PR_CLASE_IDX = 1; PR_ALUMNO_LEGAJO = 2; PR_ESTADO_ASIST_IDX = 3; PR_ESTADO_ALUMNO_IDX = 4
+PR_CLASE_IDX = 1; PR_ALUMNO_LEGAJO = 2; PR_ESTADO_ASIST_IDX = 3; PR_ESTADO_ALUMNO_IDX = 4
