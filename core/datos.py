@@ -57,4 +57,5 @@ AL_LEGAJO = 0; AL_DNI = 1; AL_APELLIDO = 2; AL_NOMBRE = 3; AL_FECHA_NAC = 4; AL_
 # Transacciones con matriz presentismo
 
 # Cada fila de presentismo: [materia_idx, clase_idx, alumno_legajo, estado_asistencia_idx, estado_alumno_idx]
+
 PR_MATERIA_IDX = 0; PR_CLASE_IDX = 1; PR_ALUMNO_LEGAJO = 2; PR_ESTADO_ASIST_IDX = 3; PR_ESTADO_ALUMNO_IDX = 4
