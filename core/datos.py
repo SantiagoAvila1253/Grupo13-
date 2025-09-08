@@ -1,23 +1,27 @@
 # Base de datos
+
 # valores fijos, usados por índice
 
 # Estados de asistencia
+
 ESTADOS_ASISTENCIA = ["Presente", "Ausente justificado", "Ausente injustificado"]
 EA_PRESENTE = 0; EA_AUS_J = 1; EA_AUS_I = 2
 
 # Estados de alumno
+
 ESTADOS_ALUMNO = ["Activo", "Inactivo"]
 EAL_ACTIVO = 0; EAL_INACTIVO = 1
 
 # bases iniciales
 
-# DOCENTES: [dni, clave]
+# Docentes: [legajo, dni, clave, Nombre, Apellido, mail]
 DOCENTES = [
     [2001, "12345678", "Clave.123", "Carlos", "Gonzalez", "cgonzalez@uade.edu.ar"],
 ]
 DO_LEGAJO = 0; DO_DNI = 1; DO_CLAVE = 2; DO_NOMBRE = 3; DO_APELLIDO = 4; DO_EMAIL = 5
 
-# CLASES: lista de fechas (cada posición = índice de clase)
+# Clases: [Id, materia, fecha, día y horario]
+
 CLASES = [
     [3001, "Matemática", "2025-08-05", "Martes", "14:00 - 18:00"],
     [3002, "Matemática", "2025-08-12", "Martes", "14:00 - 18:00"],
