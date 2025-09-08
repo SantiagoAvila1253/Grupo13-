@@ -22,10 +22,10 @@ def login_usuario():
             if not dni_valido(dni):
                 print("DNI inválido.")
             else:
-                contraseña = input("Ingresá tu Contraseña: ")
+                clave = input("Ingresá tu Contraseña: ")
                 ok = False
                 for item in DOCENTES:
-                    if item[DO_DNI] == dni and item[DO_CLAVE] == contraseña:
+                    if item[DO_DNI] == dni and item[DO_CLAVE] == clave:
                         ok = True
                 if ok:
                     print("Login correcto.")
@@ -33,12 +33,12 @@ def login_usuario():
                 else:
                     print("Contraseña incorrecta. Probá  de nuevo o reseteá tu contraseña.")
         elif op == "2":
-            reiniciar_contraseña()
+            reiniciar_clave()
         elif op == "3":
             return None
 
 
-def reiniciar_contraseña():
+def reiniciar_clave():
     dni = input("Ingresá tu DNI: ").strip()
     if not dni_valido(dni):
         print("DNI inválido.")
