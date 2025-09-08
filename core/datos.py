@@ -4,12 +4,12 @@
 
 # Estados de asistencia
 
-ESTADOS_ASISTENCIA = ["Presente", "Ausente justificado", "Ausente injustificado"]
+ESTADOS_ASISTENCIA = ("Presente", "Ausente justificado", "Ausente injustificado")
 EA_PRESENTE = 0; EA_AUS_J = 1; EA_AUS_I = 2
 
 # Estados de alumno
 
-ESTADOS_ALUMNO = ["Activo", "Inactivo"]
+ESTADOS_ALUMNO = ("Activo", "Inactivo")
 EAL_ACTIVO = 0; EAL_INACTIVO = 1
 
 # bases iniciales
@@ -23,23 +23,23 @@ DO_LEGAJO = 0; DO_DNI = 1; DO_CLAVE = 2; DO_NOMBRE = 3; DO_APELLIDO = 4; DO_EMAI
 # Clases: [Id, materia, fecha, día y horario]
 
 CLASES = [
-    [3001, "Matemática", "2025-08-05", "Martes", "14:00 - 18:00"],
-    [3002, "Matemática", "2025-08-12", "Martes", "14:00 - 18:00"],
-    [3003, "Matemática", "2025-08-19", "Martes", "14:00 - 18:00"],
-    [3004, "Matemática", "2025-08-26", "Martes", "14:00 - 18:00"],
-    [3005, "Matemática", "2025-09-02", "Martes", "14:00 - 18:00"],
-    [3006, "Matemática", "2025-09-09", "Martes", "14:00 - 18:00"],
-    [3007, "Matemática", "2025-09-16", "Martes", "14:00 - 18:00"],
-    [3008, "Matemática", "2025-09-23", "Martes", "14:00 - 18:00"],
-    [3009, "Matemática", "2025-09-30", "Martes", "14:00 - 18:00"],
-    [3010, "Matemática", "2025-10-07", "Martes", "14:00 - 18:00"],
-    [3011, "Matemática", "2025-10-14", "Martes", "14:00 - 18:00"],
-    [3012, "Matemática", "2025-10-21", "Martes", "14:00 - 18:00"],
-    [3013, "Matemática", "2025-10-28", "Martes", "14:00 - 18:00"],
-    [3014, "Matemática", "2025-11-04", "Martes", "14:00 - 18:00"],
-    [3015, "Matemática", "2025-11-11", "Martes", "14:00 - 18:00"],
-    [3016, "Matemática", "2025-11-18", "Martes", "14:00 - 18:00"],
-    [3017, "Matemática", "2025-11-25", "Martes", "14:00 - 18:00"],
+    (3001, "Matemática", "2025-08-05", "Martes", "14:00 - 18:00"),
+    (3002, "Matemática", "2025-08-12", "Martes", "14:00 - 18:00"),
+    (3003, "Matemática", "2025-08-19", "Martes", "14:00 - 18:00"),
+    (3004, "Matemática", "2025-08-26", "Martes", "14:00 - 18:00"),
+    (3005, "Matemática", "2025-09-02", "Martes", "14:00 - 18:00"),
+    (3006, "Matemática", "2025-09-09", "Martes", "14:00 - 18:00"),
+    (3007, "Matemática", "2025-09-16", "Martes", "14:00 - 18:00"),
+    (3008, "Matemática", "2025-09-23", "Martes", "14:00 - 18:00"),
+    (3009, "Matemática", "2025-09-30", "Martes", "14:00 - 18:00"),
+    (3010, "Matemática", "2025-10-07", "Martes", "14:00 - 18:00"),
+    (3011, "Matemática", "2025-10-14", "Martes", "14:00 - 18:00"),
+    (3012, "Matemática", "2025-10-21", "Martes", "14:00 - 18:00"),
+    (3013, "Matemática", "2025-10-28", "Martes", "14:00 - 18:00"),
+    (3014, "Matemática", "2025-11-04", "Martes", "14:00 - 18:00"),
+    (3015, "Matemática", "2025-11-11", "Martes", "14:00 - 18:00"),
+    (3016, "Matemática", "2025-11-18", "Martes", "14:00 - 18:00"),
+    (3017, "Matemática", "2025-11-25", "Martes", "14:00 - 18:00"),
 ]
 CL_ID = 0; CL_MATERIA = 1; CL_FECHA = 2; CL_DIA = 3; CL_HORARIO = 4
 
