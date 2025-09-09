@@ -67,11 +67,11 @@ def fecha_ddmmyyyy_valida(fecha):
         return False
 
     d, m, y = partes[0], partes[1], partes[2]
-    if not (d.isdigit() and m.isdigit() and y.isdigit()):
+    if not (d.isdigit() and m.isdigit() and a.isdigit()):
         return False
 
-    d = int(d); m = int(m); y = int(y)
-    if not (1 <= d <= 31 and 1 <= m <= 12 and 1900 <= y <= 2100):
+    d = int(d); m = int(m); a = int(a)
+    if not (1 <= d <= 31 and 1 <= m <= 12 and 1915 <= a <= 2009):
         return False
 
     return True
