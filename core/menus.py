@@ -10,7 +10,7 @@ def mostrar_menu_login():
 def mostrar_menu_principal():
     print("\n--- MENÚ PRINCIPAL ---")
     print("1) Gestión de alumnos")
-    print("2) Asistencia")
+    print("2) Gestión de asistencias")
     print("3) Reportes")
     print("9) Cerrar sesión")
     print("0) Salir")
@@ -29,7 +29,7 @@ def mostrar_menu_alumnos():
 def mostrar_menu_asistencia():
     print("\n--- MENÚ ASISTENCIA ---")
     print("1) Registrar asistencia")
-    print("2) Consultar asistencia por fecha")
+    print("2) Consultar asistencias")
     print("9) Cerrar sesión")
     print("0) Volver")
 
