@@ -1,28 +1,38 @@
-# Validadores básicos (sin try/except por ahora porque lo vemos en la clase 10)
+# Validadores
 
-# Menús (opciones) valida que la opción ingresada esté dentro de las opciones válidas
+# Menús con opciones
+
+# Devuelve True si 'opcion' está dentro de 'validas'
 
 def opcion_valida_menu(opcion, validas):
     return opcion in validas
 
+def estado_asistencia_valido(valor, validos):
+    return valor in validos
+
 # Datos numéricos
 
-# DNI válido: 7 u 8 dígitos numéricos
+# DNI válido si tiene 7 u 8 dígitos
 
 def dni_valido(dni):
     return dni.isdigit() and 7 <= len(dni) <= 8
 
-# Legajo válido: entero positivo (string de dígitos > 0)
+# Legajo válido si es string de dígitos y su entero > 0
+
+def legajo_valido_str(valor):
+    return valor.isdigit() and int(valor) > 0
+
+# Compatibilidad con dato existente
 
 def legajo_valido(legajo):
-    return legajo.isdigit() and int(legajo) > 0
+    return legajo_valido_str(legajo)
 
-# True si valor es string de dígitos y su entero es > 0
+# True si es string de dígitos y > 0
 
 def entero_positivo_str(valor):
     return valor.isdigit() and int(valor) > 0
 
-# True si valor es string de dígitos y el entero está entre [minimo, maximo].
+# True si es string de dígitos y el entero está entre dos valores
 
 def entero_en_rango_str(valor, minimo, maximo):
     if not valor.isdigit():
@@ -30,43 +40,52 @@ def entero_en_rango_str(valor, minimo, maximo):
     n = int(valor)
     return minimo <= n <= maximo
 
+# Textos
 
-# Textos (no vacíos, mínimos)
+# True si el texto no está vacío
 
-# True si el texto no está vacío al quitar espacios
 def no_vacio(texto):
     return len(texto.strip()) > 0
 
-# Nombre válido: mínimo 'min_len' caracteres no vacíos
+# True si tiene al menos 'min_len' caracteres no vacíos
 
 def nombre_valido(nombre, min_len=2):
     return len(nombre.strip()) >= min_len
 
-# Apellido válido: mínimo 'min_len' caracteres no vacíos
+# True si tiene al menos 'min_len' caracteres no vacíos
+
 def apellido_valido(apellido, min_len=2):
     return len(apellido.strip()) >= min_len
 
-# Validación de email: contiene '@', '.' y tiene largo mínimo razonable
+# Validación simple de email: contiene '@' y '.', y largo mínimo
 
 def email_valido(email):
     e = email.strip()
     return "@" in e and "." in e and len(e) > 5
 
-# Password válida: longitud mínima
+# Contraseñas 
+
+# True si cumple requisito de cantidad de caracteres
 
 def password_valida(password, min_len=4):
     return len(password) >= min_len
 
-# Fechas formato dd-mm-aaaa
 
-# Fecha válida simple en formato dd-mm-aaaa. Chequea: 3 partes separadas por '-', todas dígitos, rangos básicos de día/mes/año (No considera meses con 30/31 días ni bisiestos exactos
+# Fechas (dd-mm-aaaa) - validación simple
+
+"""
+- 3 partes separadas por '-'
+- todas dígitos
+- rangos básicos: 1<=d<=31, 1<=m<=12, 1915<=a<=2009
+(No valida meses de 30/31 ni años bisiestos exactos.)
+"""
 
 def fecha_ddmmyyyy_valida(fecha):
     partes = fecha.strip().split("-")
     if len(partes) != 3:
         return False
 
-    d, m, y = partes[0], partes[1], partes[2]
+    d, m, a = partes[0], partes[1], partes[2]
     if not (d.isdigit() and m.isdigit() and a.isdigit()):
         return False
 

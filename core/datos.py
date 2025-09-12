@@ -15,14 +15,14 @@ AL_ACTIVO = 0; AL_INACTIVO = 1
 # bases iniciales
 
 # Docentes: [legajo, dni, clave, Nombre, Apellido, mail]
-DOCENTES = [
+docentes = [
     [2001, "12345678", "Clave.123", "Carlos", "Gonzalez", "cgonzalez@uade.edu.ar"],
 ]
 DO_LEGAJO = 0; DO_DNI = 1; DO_CLAVE = 2; DO_NOMBRE = 3; DO_APELLIDO = 4; DO_EMAIL = 5
 
 # Clases: [Id, materia, fecha, día y horario]
 
-CLASES = [
+clases = [
     (3001, "Matemática", "2025-08-05", "Martes", "14:00 - 18:00"),
     (3002, "Matemática", "2025-08-12", "Martes", "14:00 - 18:00"),
     (3003, "Matemática", "2025-08-19", "Martes", "14:00 - 18:00"),

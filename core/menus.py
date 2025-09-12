@@ -28,10 +28,10 @@ def mostrar_menu_alumnos():
 
 def mostrar_menu_asistencia():
     print("\n--- MENÚ ASISTENCIA ---")
-    print("1) Cargar asistencia")
+    print("1) Registrar asistencia")
     print("2) Modificar registros")
     print("3) Filtrar")
-    print("2) Ver alumnos")
+    print("4) Ver alumnos")
     print("9) Cerrar sesión")
     print("0) Volver")
 

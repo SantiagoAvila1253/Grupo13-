@@ -3,7 +3,7 @@
 from core import (
     mostrar_menu_login, opcion_valida_menu,
     dni_valido, password_valida,
-    DOCENTES, DO_DNI, DO_CLAVE
+    docentes, DO_DNI, DO_CLAVE
 )
 
 # login
@@ -24,7 +24,7 @@ def login_usuario():
             else:
                 clave = input("Ingresá tu Contraseña: ")
                 ok = False
-                for item in DOCENTES:
+                for item in docentes:
                     if item[DO_DNI] == dni and item[DO_CLAVE] == clave:
                         ok = True
                 if ok:
@@ -49,7 +49,7 @@ def reiniciar_clave():
         print("Inválida.")
         return False
 
-    for item in DOCENTES:
+    for item in docentes:
         if item[DO_DNI] == dni:
             item[DO_CLAVE] = nueva
             print("Contraseña actualizada.")
