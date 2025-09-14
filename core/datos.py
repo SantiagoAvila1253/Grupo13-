@@ -66,9 +66,13 @@ alumnos = [
 ]
 AL_LEGAJO = 0; AL_DNI = 1; AL_APELLIDO = 2; AL_NOMBRE = 3; AL_FECHA_NAC = 4; AL_EMAIL = 5; AL_ESTADO = 6
 
+
+
 # diccionario de presentismo
 ''' Clave: (clase_id, legajo)
 Valor: estado_idx - Puede ser: 0=Presente, 1=AJ o 2=AI
 Ej: asistencias[(3001, 1001)] = 0'''
 
 asistencias = {}
+
+alumnos_baja = []

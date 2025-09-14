@@ -26,7 +26,7 @@ from .menus import (
 
 from .validadores import (
     opcion_valida_menu, dni_valido, legajo_valido, email_valido,
-    nombre_valido, apellido_valido, fecha_ddmmaaaa_valida, password_valida
+    nombre_valido, apellido_valido, fecha_ddmmyyyy_valida, password_valida
 )
 
 __all__ = [

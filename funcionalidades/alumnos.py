@@ -1,3 +1,4 @@
+from core.datos import (alumnos, clases, alumnos_baja)
 
 def alta_alumno(alumnos,alumnos_baja):
     print("Alta de alumno ")
@@ -23,7 +24,7 @@ def alta_alumno(alumnos,alumnos_baja):
         email = input("Email: ")
     
         nuevo_id = 1001 + len(alumnos) + len(alumnos_baja)#genera el nuevo id sumando el 1001 que es el primero y recorre las otras lista y segun la cantidad se suma 
-        alumnos.append([nombre, apellido, fecha_nac, email, nuevo_id])
+        alumnos.append([nuevo_id, apellido, nombre, email, fecha_nac])
         print(f" Alumno {nombre} {apellido} agregado correctamente con ID {nuevo_id}.")
 
     else:
@@ -39,13 +40,13 @@ def baja_alumno(alumnos,alumnos_baja):
         if  alumno[0] == id_alumno:
             alumnos_baja.append(alumno)
             alumnos.remove(alumno)
-            print(f" Alumno {alumno[3]} {alumno[2]} y ID {id_alumno} eliminado correctamente.")
+            print(f" Alumno {alumno[2]} {alumno[1]} y ID {id_alumno} eliminado correctamente.")
             return
     print(" No se encontró un alumno con ese ID.")
 
 
 def reactivar_alumno(id_reactivar, alumnos, alumnos_baja):
-    alumno_a_reactivar= list(filter(lambda x:x[4]== id_reactivar, alumnos_baja))
+    alumno_a_reactivar= list(filter(lambda x:x[0]== id_reactivar, alumnos_baja))
 
     if alumno_a_reactivar:
         alumnos.append(alumno_a_reactivar[0])
@@ -61,12 +62,12 @@ def modificar_dato_alumno(alumnos):
     id_alumno = int(input("Ingrese el ID del alumno a modificar: "))
 
     for alumno in alumnos:
-        if alumno[4] == id_alumno:
+        if alumno[0] == id_alumno:
             print(f"\nAlumno encontrado:")
-            print(f"1 - Nombre: {alumno[3]}")
-            print(f"2 - Apellido: {alumno[2]}")
+            print(f"1 - Nombre: {alumno[2]}")
+            print(f"2 - Apellido: {alumno[1]}")
             print(f"3 - Fecha de nacimiento: {alumno[4]}")
-            print(f"4 - Email: {alumno[5]}\n")
+            print(f"4 - Email: {alumno[3]}\n")
 
             opcion = int(input("¿Qué dato desea modificar? (1-4): "))
 

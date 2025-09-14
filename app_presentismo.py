@@ -4,6 +4,13 @@ from core import (
 )
 from login import login_usuario
 
+from funcionalidades.alumnos import (
+    alta_alumno, baja_alumno, modificar_dato_alumno,
+)
+
+from core.datos import (
+    alumnos_baja
+)
 
 def listar_alumnos():
     if not alumnos:
@@ -11,7 +18,10 @@ def listar_alumnos():
         return
     print("\nLEGAJO | APELLIDO, NOMBRE | EMAIL")
     for a in alumnos:
-        print(f"{a[AL_LEGAJO]} | {a[AL_APELLIDO]}, {a[AL_NOMBRE]} | {a[AL_EMAIL]}")
+        if len(a) > max(AL_LEGAJO, AL_APELLIDO, AL_NOMBRE, AL_EMAIL):
+            print(f"{a[AL_LEGAJO]} | {a[AL_APELLIDO]}, {a[AL_NOMBRE]} | {a[AL_EMAIL]}")
+        else:
+            print("Alumno mal cargado:", a)
 
 
 def menu_alumnos():
@@ -29,11 +39,14 @@ def menu_alumnos():
         elif aop == "1":
             listar_alumnos()
         elif aop == "2":
-            print("Alta de alumno (pendiente).")
+            alta_alumno(alumnos, alumnos_baja)
+            print("Alta de alumno.")
         elif aop == "3":
-            print("Baja lógica de alumno (pendiente).")
+            print("Baja lógica de alumno.")
+            baja_alumno(alumnos, alumnos_baja)
         elif aop == "4":
-            print("Modificar alumno (pendiente).")
+            print("Modificar alumno.")
+            modificar_dato_alumno(alumnos)           
     return "volver"
 
 
