@@ -24,7 +24,7 @@ def alta_alumno(alumnos,alumnos_baja):
         email = input("Email: ")
     
         nuevo_id = 1001 + len(alumnos) + len(alumnos_baja)#genera el nuevo id sumando el 1001 que es el primero y recorre las otras lista y segun la cantidad se suma 
-        alumnos.append([nuevo_id, apellido, nombre, email, fecha_nac])
+        alumnos.append([nuevo_id," ", apellido, nombre, fecha_nac,email, 0])
         print(f" Alumno {nombre} {apellido} agregado correctamente con ID {nuevo_id}.")
 
     else:

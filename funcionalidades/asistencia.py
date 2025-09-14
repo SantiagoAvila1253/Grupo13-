@@ -1,15 +1,16 @@
 # importar funciones y variables
 
-from core import (
-    # variables
+from core.datos import (
     clases, alumnos, asistencias,
-    
-    # constantes
     ESTADOS_ASISTENCIA, PRESENTE, AUS_J, AUS_I, AL_ACTIVO, AL_INACTIVO, CL_ID, CL_MATERIA, CL_FECHA, CL_DIA, CL_HORARIO, AL_LEGAJO, AL_APELLIDO, AL_NOMBRE, AL_ESTADO, AL_DNI, AL_EMAIL,
-    
-    # menús y validadores
-    mostrar_menu_asistencia, opcion_valida_menu, legajo_valido_str, estado_asistencia_valido,
 )
+from core.menus import (
+    mostrar_menu_asistencia
+)
+from core.validadores import (
+    legajo_valido_str, estado_asistencia_valido, opcion_valida_menu
+)
+
 
 # Crear diccionarios de clases por id y de alumnos por legajo
 

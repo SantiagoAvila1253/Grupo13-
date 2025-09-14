@@ -6,7 +6,7 @@ from core import (
     opcion_valida_menu,
 
     # datos de alumnos para listado rápido
-    alumnos, AL_LEGAJO, AL_APELLIDO, AL_NOMBRE, AL_EMAIL,
+    alumnos,clases,asistencias, AL_LEGAJO, AL_APELLIDO, AL_NOMBRE, AL_EMAIL, PRESENTE
 )
 
 # login
@@ -20,16 +20,24 @@ from core.datos import (
     alumnos_baja
 )
 
+from funcionalidades.Reportes import (
+    reporte_asistencia_por_estudiante,
+    reporte_asistencia_general,
+    reporte_por_clase
+)
+from funcionalidades.asistencia import(
+    gestion_asistencias
+)
+
 def listar_alumnos():
     if not alumnos:
         print("Sin alumnos.")
         return
-    print("\nLEGAJO | APELLIDO, NOMBRE | EMAIL")
+    print(f"{'LEGAJO':<8}| {'APELLIDO':<15} | {'NOMBRE':<14} | {'EMAIL':<27}")
+    print("-" * 70)
     for a in alumnos:
-        if len(a) > max(AL_LEGAJO, AL_APELLIDO, AL_NOMBRE, AL_EMAIL):
-            print(f"{a[AL_LEGAJO]} | {a[AL_APELLIDO]}, {a[AL_NOMBRE]} | {a[AL_EMAIL]}")
-        else:
-            print("Alumno mal cargado:", a)
+       print(f"{a[AL_LEGAJO ]:<6} | {a[AL_APELLIDO]:<15} | {a[AL_NOMBRE]:<12} | {a[AL_EMAIL]:<27}")
+    print() 
 
 
 # menú alumnos
@@ -47,35 +55,57 @@ def menu_alumnos():
             return "logout"
         elif opcion == "1":
             listar_alumnos()
-        elif aop == "2":
+        elif opcion == "2":
             alta_alumno(alumnos, alumnos_baja)
             print("Alta de alumno.")
-        elif aop == "3":
+        elif opcion == "3":
             print("Baja lógica de alumno.")
             baja_alumno(alumnos, alumnos_baja)
-        elif aop == "4":
+        elif opcion == "4":
             print("Modificar alumno.")
             modificar_dato_alumno(alumnos)           
     return "volver"
 
 
-# menú reportes (placeholder)
+# Asegúrate de tener las variables asistencias, estudiantes y clases disponibles.
+# Ejemplo de menú de reportes adaptado:
 def menu_reportes():
     en_reportes = True
     while en_reportes:
         mostrar_menu_reportes()
         opcion = input("Elegí una opción: ").strip()
 
-        if not opcion_valida_menu(opcion, {"0", "1", "2", "9"}):
+        if not opcion_valida_menu(opcion, {"0", "1", "2", "3", "9"}):
             print("Opción inválida.")
         elif opcion == "0":
             en_reportes = False
         elif opcion == "9":
             return "logout"
         elif opcion == "1":
-            print("Presentes por clase (pendiente).")
+            print(reporte_asistencia_general(asistencias))
         elif opcion == "2":
-            print("Porcentaje de asistencia por alumno (pendiente).")
+            # Encabezado de la tabla
+            print(f"{'LEGAJO':<8} {'APELLIDO':<15} {'NOMBRE':<14} {'PRESENTES':<10} {'TOTAL':<7} {'% ASISTENCIA':<13}")
+            print("-" * 65)
+            for alumno in alumnos:
+                legajo = alumno[AL_LEGAJO]
+                apellido = alumno[AL_APELLIDO]
+                nombre = alumno[AL_NOMBRE]
+                # Calcula presentes y total
+                total = 0
+                presentes = 0
+                for (clase_id, l), estado in asistencias.items():
+                    if l == legajo:
+                        total += 1
+                        if estado == PRESENTE:
+                            presentes += 1
+                porcentaje = (presentes / total) * 100 if total > 0 else 0
+                print(f"{legajo:<8} {apellido:<15} {nombre:<14} {presentes:<10} {total:<7} {porcentaje:>10.2f}%")
+            print()
+        elif opcion == "3":
+            for clase_id in clases:
+                print(reporte_por_clase(asistencias, alumnos, clases, clase_id))
+                print()
     return "volver"
 
 
