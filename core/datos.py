@@ -5,7 +5,7 @@
 # Estados de asistencia
 
 ESTADOS_ASISTENCIA = ("Presente", "Ausente justificado", "Ausente injustificado")
-EPRESENTE = 0; AUS_J = 1; AUS_I = 2
+PRESENTE = 0; AUS_J = 1; AUS_I = 2
 
 # Estados de alumno
 

@@ -11,11 +11,11 @@ from core import (
 def login_usuario():
     while True:
         mostrar_menu_login()
-        op = input("Elegí una opción: ").strip()
+        opcion = input("Elegí una opción: ").strip()
 
-        if not opcion_valida_menu(op, {"1", "2", "3"}):
+        if not opcion_valida_menu(opcion, {"1", "2", "3"}):
             print("Opción inválida.")
-        elif op == "1":
+        elif opcion == "1":
             dni = input("Ingresá tu DNI sin puntos ni comas o -1 para salir): ").strip()
             if dni == "-1":
                 return None
@@ -32,9 +32,9 @@ def login_usuario():
                     return {"dni": dni}
                 else:
                     print("Contraseña incorrecta. Probá  de nuevo o reseteá tu contraseña.")
-        elif op == "2":
+        elif opcion == "2":
             reiniciar_clave()
-        elif op == "3":
+        elif opcion == "3":
             return None
 
 
