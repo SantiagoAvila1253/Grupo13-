@@ -6,7 +6,7 @@ from core import (
     opcion_valida_menu,
 
     # datos de alumnos para listado rápido
-    alumnos,clases,asistencias, AL_LEGAJO, AL_APELLIDO, AL_NOMBRE, AL_EMAIL, PRESENTE
+    alumnos,clases,asistencias, AL_LEGAJO, AL_APELLIDO, AL_NOMBRE, AL_EMAIL,
 )
 
 # login
@@ -33,10 +33,10 @@ def listar_alumnos():
     if not alumnos:
         print("Sin alumnos.")
         return
-    print(f"{'LEGAJO':<8}| {'APELLIDO':<15} | {'NOMBRE':<14} | {'EMAIL':<27}")
+    print(f"{'LEGAJO':<8}| {'APELLIDO':<17} | {'NOMBRE':<13} | {'EMAIL':<27}")
     print("-" * 70)
     for a in alumnos:
-       print(f"{a[AL_LEGAJO ]:<6} | {a[AL_APELLIDO]:<15} | {a[AL_NOMBRE]:<12} | {a[AL_EMAIL]:<27}")
+       print(f"{a[AL_LEGAJO ]:<6} | {a[AL_APELLIDO]:<15} | {a[AL_NOMBRE]:<12} | {a[AL_EMAIL]:<30}")
     print() 
 
 
@@ -84,28 +84,12 @@ def menu_reportes():
         elif opcion == "1":
             print(reporte_asistencia_general(asistencias))
         elif opcion == "2":
-            # Encabezado de la tabla
-            print(f"{'LEGAJO':<8} {'APELLIDO':<15} {'NOMBRE':<14} {'PRESENTES':<10} {'TOTAL':<7} {'% ASISTENCIA':<13}")
-            print("-" * 65)
-            for alumno in alumnos:
-                legajo = alumno[AL_LEGAJO]
-                apellido = alumno[AL_APELLIDO]
-                nombre = alumno[AL_NOMBRE]
-                # Calcula presentes y total
-                total = 0
-                presentes = 0
-                for (clase_id, l), estado in asistencias.items():
-                    if l == legajo:
-                        total += 1
-                        if estado == PRESENTE:
-                            presentes += 1
-                porcentaje = (presentes / total) * 100 if total > 0 else 0
-                print(f"{legajo:<8} {apellido:<15} {nombre:<14} {presentes:<10} {total:<7} {porcentaje:>10.2f}%")
-            print()
-        elif opcion == "3":
-            for clase_id in clases:
-                print(reporte_por_clase(asistencias, alumnos, clases, clase_id))
+            for clase in clases:
+                print(reporte_por_clase(asistencias, alumnos, clases, clase[0]))
                 print()
+        elif opcion == "3":
+            for alumno in alumnos:
+                print(reporte_asistencia_por_estudiante(asistencias, alumnos, alumno[AL_LEGAJO]))
     return "volver"
 
 

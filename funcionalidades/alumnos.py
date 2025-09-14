@@ -1,4 +1,4 @@
-from core.datos import (alumnos, clases, alumnos_baja)
+from core.datos import (alumnos, clases, alumnos_baja,)
 
 def alta_alumno(alumnos,alumnos_baja):
     print("Alta de alumno ")
@@ -13,7 +13,7 @@ def alta_alumno(alumnos,alumnos_baja):
             print("-" * 75)
             for alumno in alumnos_baja:
                
-                print(f"{alumno[0]:<5} | {alumno[3]:<12} | {alumno[2]:<15} | {alumno[5]:<27}")
+                print(f"{alumnos[0]:<5} | {alumnos[3]:<12} | {alumnos[2]:<15} | {alumnos[5]:<27}")
             id_reactivar = int(input("Ingrese el ID del alumno a reactivar: "))
         reactivar_alumno(id_reactivar ,alumnos, alumnos_baja) 
     elif opcion == 1:  
@@ -40,7 +40,7 @@ def baja_alumno(alumnos,alumnos_baja):
         if  alumno[0] == id_alumno:
             alumnos_baja.append(alumno)
             alumnos.remove(alumno)
-            print(f" Alumno {alumno[2]} {alumno[1]} y ID {id_alumno} eliminado correctamente.")
+            print(f" Alumno {alumno[3]} {alumno[2]} y ID {id_alumno} eliminado correctamente.")
             return
     print(" No se encontró un alumno con ese ID.")
 
@@ -64,10 +64,9 @@ def modificar_dato_alumno(alumnos):
     for alumno in alumnos:
         if alumno[0] == id_alumno:
             print(f"\nAlumno encontrado:")
-            print(f"1 - Nombre: {alumno[2]}")
-            print(f"2 - Apellido: {alumno[1]}")
+            print(f"1 - Nombre: {alumno[3]}")
+            print(f"2 - Apellido: {alumno[2]}")
             print(f"3 - Fecha de nacimiento: {alumno[4]}")
-            print(f"4 - Email: {alumno[3]}\n")
 
             opcion = int(input("¿Qué dato desea modificar? (1-4): "))
 
@@ -82,8 +81,6 @@ def modificar_dato_alumno(alumnos):
             elif opcion == 3:
                 alumno[4] = input("Ingrese la nueva fecha de nacimiento (dd-mm-aaaa): ")
 
-            elif opcion == 4:
-                alumno[5] = input("Ingrese el nuevo email: ")
 
             else:
                 print("Opción inválida.")

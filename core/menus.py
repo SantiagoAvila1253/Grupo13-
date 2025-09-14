@@ -38,7 +38,8 @@ def mostrar_menu_asistencia():
 
 def mostrar_menu_reportes():
     print("\n--- MENÚ REPORTES ---")
-    print("1) Presentes por clase")
-    print("2) Porcentaje de asistencia por alumno")
+    print("1) reporte general de asistencia")
+    print("2) presentes por clase")
+    print("3) Porcentaje de asistencia por alumno")
     print("9) Cerrar sesión")
     print("0) Volver")
