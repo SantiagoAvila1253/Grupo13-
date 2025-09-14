@@ -3,7 +3,7 @@
 from .datos import (
     # importar listas fijas
     ESTADOS_ASISTENCIA, ESTADOS_ALUMNO,
-    EPRESENTE, AUS_J, AUS_I,
+    PRESENTE, AUS_J, AUS_I,
     AL_ACTIVO, AL_INACTIVO,
 
     # docentes + referencias
@@ -25,14 +25,14 @@ from .menus import (
 )
 
 from .validadores import (
-    opcion_valida_menu, dni_valido, legajo_valido, email_valido,
-    nombre_valido, apellido_valido, fecha_ddmmyyyy_valida, password_valida
+    opcion_valida_menu, dni_valido, legajo_valido, legajo_valido_str, estado_asistencia_valido, email_valido,
+    nombre_valido, apellido_valido, fecha_ddmmaaaa_valida, password_valida
 )
 
 __all__ = [
     # importar listas fijas
     "ESTADOS_ASISTENCIA", "ESTADOS_ALUMNO",
-    "EPRESENTE", "AUS_J", "AUS_I",
+    "PRESENTE", "AUS_J", "AUS_I",
     "AL_ACTIVO", "AL_INACTIVO",
 
     # docentes + referencias
@@ -52,6 +52,6 @@ __all__ = [
     "mostrar_menu_asistencia", "mostrar_menu_reportes",
 
     # validadores
-    "opcion_valida_menu", "dni_valido", "legajo_valido", "email_valido",
+    "opcion_valida_menu", "dni_valido", "legajo_valido_str", "estado_asistencia_valido", "legajo_valido", "email_valido",
     "nombre_valido", "apellido_valido", "fecha_ddmmaaaa_valida", "password_valida",
 ]
