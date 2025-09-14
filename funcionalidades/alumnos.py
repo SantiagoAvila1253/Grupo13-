@@ -1,4 +1,5 @@
 from core.datos import (alumnos, clases, alumnos_baja,)
+from core.validadores import (nombre_valido, apellido_valido, fecha_ddmmaaaa_valida, email_valido, legajo_valido_str)
 
 def alta_alumno(alumnos,alumnos_baja):
     print("Alta de alumno ")
@@ -19,9 +20,24 @@ def alta_alumno(alumnos,alumnos_baja):
     elif opcion == 1:  
     
         nombre = input("Nombre: ")
+        while not nombre_valido(nombre):
+            print("Nombre inválido. Intente de nuevo.")
+            nombre = input("Nombre: ")
+
         apellido = input("Apellido: ")
+        while not apellido_valido(apellido):
+            print("Apellido inválido. Intente de nuevo.")
+            apellido = input("Apellido: ")
+
         fecha_nac = input("Fecha de nacimiento (dd-mm-aaaa): ")
+        while not fecha_ddmmaaaa_valida(fecha_nac):
+            print("Fecha inválida. Intente de nuevo.")
+            fecha_nac = input("Fecha de nacimiento (dd-mm-aaaa): ")
+       
         email = input("Email: ")
+        while not email_valido(email):
+            print("Email inválido. Intente de nuevo.")
+            email = input("Email: ")
     
         nuevo_id = 1001 + len(alumnos) + len(alumnos_baja)#genera el nuevo id sumando el 1001 que es el primero y recorre las otras lista y segun la cantidad se suma 
         alumnos.append([nuevo_id," ", apellido, nombre, fecha_nac,email, 0])
