@@ -39,7 +39,6 @@ def listar_alumnos():
        print(f"{a[AL_LEGAJO ]:<6} | {a[AL_APELLIDO]:<15} | {a[AL_NOMBRE]:<12} | {a[AL_EMAIL]:<30}")
     print() 
 
-
 # menú alumnos
 def menu_alumnos():
     en_alumnos = True

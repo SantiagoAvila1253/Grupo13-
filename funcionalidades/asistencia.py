@@ -134,7 +134,7 @@ def mostrar_lista_de_clases():
 # Muestra los datos de una clase específica (ID, Materia, Fecha, Día, Horario)
 
 def mostrar_encabezado_clase(clase_id):
-    # Construir diccionario de clases indexadas por ID para acceso rápido
+    # Construir diccionario de clases indexadas por ID
     clases_por_id, _ = construir_indices()
 
     # Buscar la clase con el ID dado
@@ -149,102 +149,117 @@ def mostrar_encabezado_clase(clase_id):
     print("\n=== CLASE ===")
     print(f"ID: {fila[CL_ID]}  |  Materia: {fila[CL_MATERIA]}")
     print(f"Fecha: {fila[CL_FECHA]}  |  Día: {fila[CL_DIA]}  |  Horario: {fila[CL_HORARIO]}")
+    return
 
+
+# Devuelve el texto del estado según el índice. Si el índice no es un entero o está fuera de rango, devuelve "-".
 
 def texto_estado(idx):
-    return ESTADOS_ASISTENCIA[idx] if isinstance(idx, int) else "-"
+    if type(idx) is not int:
+        return "-"
+    if 0 <= idx < len(ESTADOS_ASISTENCIA):
+        return ESTADOS_ASISTENCIA[idx]
+    return "-"
+
 
 # Muestra la tabla de asistencias de una clase
 # Columnas: LEGAJO | APELLIDO | NOMBRE | DNI | EMAIL | ESTADO | AJ | AI | %ASISTENCIA
 # Aplica filtros por apellido (contiene)
 
 def mostrar_tabla_clase(clase_id, filtro_apellido="", filtro_legajo=None, filtro_estado=None):
-    # obtener índices rápidos
+
+    # obtener índices de acceso rápido
     clases_por_id, _ = construir_indices()
 
-    # validar existencia de clase
+    # validar existencia de la clase
     if clase_id not in clases_por_id:
         print("Clase no encontrada.")
         return
 
-    # encabezado general
     print("\n--- LISTA DE ASISTENCIA ---")
-    print(
-        f"Clase: {clases_por_id[clase_id][CL_MATERIA]} | "
-        f"Fecha: {clases_por_id[clase_id][CL_FECHA]} | "
-        f"Día: {clases_por_id[clase_id][CL_DIA]} | "
-        f"Horario: {clases_por_id[clase_id][CL_HORARIO]}"
-    )
 
-    # filtros visibles
     filtros_txt = []
-    fa_norm = filtro_apellido.strip().upper() if isinstance(filtro_apellido, str) else ""
-    if fa_norm != "":
-        filtros_txt.append(f"Apellido CONTAINS '{fa_norm}'")
-    if isinstance(filtro_legajo, int):
-        filtros_txt.append(f"Legajo == {filtro_legajo}")
-    if isinstance(filtro_estado, int) and filtro_estado in (PRESENTE, AUS_J, AUS_I):
-        filtros_txt.append(f"Estado == {ESTADOS_ASISTENCIA[filtro_estado]}")
-    print("Filtros: " + (" | ".join(filtros_txt) if filtros_txt else "ninguno"))
 
-    # encabezados de tabla
+    # normalizar filtro de apellido a mayúsculas para comparar sin case
+    fa_norm = ""
+    if isinstance(filtro_apellido, str):
+        fa_norm = filtro_apellido.upper()
+        if fa_norm != "":
+            filtros_txt.append(f"Apellido contiene '{fa_norm}'")
+
+    # normalizar filtro de legajo
+    legajo_filtrado = None
+    if filtro_legajo is not None:
+        s_leg = str(filtro_legajo).strip()
+        if s_leg != "" and legajo_valido_str(s_leg):
+            legajo_filtrado = int(s_leg)
+            filtros_txt.append(f"Legajo == {legajo_filtrado}")
+
+    # filtro de estado: solo si es un int y está dentro de los estados posibles
+    if type(filtro_estado) is int and filtro_estado in (PRESENTE, AUS_J, AUS_I):
+        filtros_txt.append(f"Estado == {ESTADOS_ASISTENCIA[filtro_estado]}")
+
+    # imprimir línea de filtros
+    print("Filtros: " + (" | ".join(filtros_txt) if filtros_txt else "ninguno") + "\n")
+
+    # encabezados de tabla (ancho fijo para alinear)
     print("LEGAJO | APELLIDO           | NOMBRE             | DNI       | EMAIL                     | ESTADO        | AJ | AI | %ASIST")
     print("-------+--------------------+--------------------+-----------+---------------------------+---------------+----+----+-------")
 
-    # acumuladores de la clase
-    tot_p = 0
-    tot_aj = 0
-    tot_ai = 0
+    # totales de la clase
+    tot_p = 0   # presentes
+    tot_aj = 0  # ausentes justificados
+    tot_ai = 0  # ausentes injustificados
+
+    # contador de filas que pasan los filtros (para el mensaje de "sin resultados")
     filas_visibles = 0
 
-    # lista ordenada para imprimir
+    # obtener alumnos en orden (apellido/nombre o el criterio que tengan)
     lista = listar_alumnos_ordenados()
 
-    # recorrer alumnos
+    # recorrer alumnos (índice manual para respetar tu estilo)
     i = 0
     n = len(lista)
     while i < n:
         a = lista[i]
+
+        # extraer campos del alumno por índice
         legajo = a[AL_LEGAJO]
         apellido = a[AL_APELLIDO]
         nombre = a[AL_NOMBRE]
         dni = a[AL_DNI]
         email = a[AL_EMAIL]
 
-        # bandera para decidir si mostrar o no la fila
+        # bandera que decide si mostrar la fila según filtros
         mostrar_fila = True
 
-        # filtro por apellido (contiene, sin mayúsc/minúsc)
-        if mostrar_fila:
-            if fa_norm != "":
-                if fa_norm not in apellido.upper():
-                    mostrar_fila = False
+        # filtro por apellido (contains, case-insensitive)
+        if fa_norm != "":
+            if fa_norm not in apellido.upper():
+                mostrar_fila = False
 
         # filtro por legajo exacto
-        if mostrar_fila:
-            if filtro_legajo and legajo_valido_str(str(filtro_legajo)):
-                filtro_legajo = int(filtro_legajo)
-                if legajo != filtro_legajo:
-                    mostrar_fila = False
+        if mostrar_fila and legajo_filtrado is not None:
+            if legajo != legajo_filtrado:
+                mostrar_fila = False
 
-        # estado actual de asistencia en esta clase (0/1/2 o None)
+        # estado actual del alumno en esta clase (0/1/2 o None)
         estado_actual = estado_de(clase_id, legajo)
 
-        # filtro por estado (solo si se pidió)
-        if mostrar_fila:
-            if isinstance(filtro_estado, int) and filtro_estado in (PRESENTE, AUS_J, AUS_I):
-                if estado_actual != filtro_estado:
-                    mostrar_fila = False
+        # filtro por estado
+        if mostrar_fila and type(filtro_estado) is int and filtro_estado in (PRESENTE, AUS_J, AUS_I):
+            if estado_actual != filtro_estado:
+                mostrar_fila = False
 
-        # si la fila pasa los filtros, calcular y mostrar
+        # si la fila pasa los filtros, calculamos métricas e imprimimos
         if mostrar_fila:
-            # AJ y AI acumulados del alumno en TODAS las clases
+            # AJ y AI ACUMULADOS del alumno en TODAS las clases (globales)
             aj = 0
             ai = 0
             total = 0
 
-            # contar presentes/aj/ai del alumno globalmente
-            # (sin 'continue', solo ifs)
+            # recorremos asistencias globales para este legajo
+            # clave: (cid, leg)  valor: est. cid = id de la clase
             for (cid, leg), est in asistencias.items():
                 if leg == legajo:
                     total = total + 1
@@ -253,25 +268,28 @@ def mostrar_tabla_clase(clase_id, filtro_apellido="", filtro_legajo=None, filtro
                     elif est == AUS_I:
                         ai = ai + 1
 
-            # presentes = total - (aj + ai)
+            # presentes globales = total - (aj + ai)
             presentes = total - (aj + ai)
 
-            # porcentaje de asistencia (sobre total del alumno)
+            # porcentaje de asistencia global del alumno
             if total > 0:
                 pct_asist = (presentes / total) * 100.0
             else:
                 pct_asist = 0.0
 
-            # texto del estado actual
-            estado_txt = ESTADOS_ASISTENCIA[estado_actual] if isinstance(estado_actual, int) else "-"
+            # texto del estado actual en esta clase
+            if type(estado_actual) is int:
+                estado_txt = ESTADOS_ASISTENCIA[estado_actual]
+            else:
+                estado_txt = "-"
 
-            # imprimir fila
+            # imprimir fila del alumno (alineada)
             print(
                 f"{legajo:<6} | {apellido:<18} | {nombre:<18} | {dni:<9} | "
                 f"{email:<25} | {estado_txt:<13} | {aj:^2} | {ai:^2} | {pct_asist:>6.1f}%"
             )
 
-            # acumular totales de la CLASE (solo si hay marca en esta clase)
+            # acumular totales de ESTA clase según estado_actual
             if estado_actual == PRESENTE:
                 tot_p = tot_p + 1
             elif estado_actual == AUS_J:
@@ -279,21 +297,31 @@ def mostrar_tabla_clase(clase_id, filtro_apellido="", filtro_legajo=None, filtro
             elif estado_actual == AUS_I:
                 tot_ai = tot_ai + 1
 
-            # contar filas visibles
+            # contar fila visible
             filas_visibles = filas_visibles + 1
 
         # avanzar al siguiente alumno
         i = i + 1
 
-    # si no hay filas visibles con los filtros
+    # mensaje si ningún alumno pasó los filtros
     if filas_visibles == 0:
         print("(No hay filas para mostrar con los filtros dados.)")
 
-    # pie de tabla con totales de la clase
+    # pie de tabla con totales de la CLASE
     print("-------+--------------------+--------------------+-----------+---------------------------+---------------+----+----+-------")
     total_clase = tot_p + tot_aj + tot_ai
     print(f"Totales de la clase -> Presentes: {tot_p} | AJ: {tot_aj} | AI: {tot_ai} | Total marcas: {total_clase}")
 
+# mensaje y lista para pedir legajo
+
+def pedir_legajo(mensaje="Ingresá el LEGAJO: "):
+    print("\n--- LISTA DE ALUMNOS ---")
+    print("LEGAJO | APELLIDO, NOMBRE")
+    print("-------+----------------------------")
+    for a in listar_alumnos_ordenados():
+        print(f"{a[AL_LEGAJO]:<6} | {a[AL_APELLIDO]}, {a[AL_NOMBRE]}")
+    print()
+    return input(mensaje).strip()
 
 # Acciones, opciones del menú del panel
 
@@ -316,7 +344,7 @@ def registrar_asistencia_secuencial(clase_id):
         a = ordenados[i]
         leg = a[AL_LEGAJO]; ape = a[AL_APELLIDO]; nom = a[AL_NOMBRE]
         print(f"\n{leg} - {ape}, {nom}")
-        print("Estado (0=Presente, 1=AJ, 2=AI, Enter = no cambiar)")
+        print("Estado (0 = Presente, 1 = AJ, 2 = AI, Enter = no cambiar)")
         val = input("Estado: ").strip()
         if val == "":  # no cambiar
             i = i + 1
@@ -331,7 +359,7 @@ def registrar_asistencia_secuencial(clase_id):
 # Modificar o eliminar un registro
 
 def modificar_o_eliminar_registro(clase_id):
-    leg = input("LEGAJO (obligatorio): ").strip()
+    leg = pedir_legajo()
     if not legajo_valido_str(leg):
         print("Legajo inválido.")
         return
@@ -363,7 +391,8 @@ def modificar_o_eliminar_registro(clase_id):
 
 # filtros es un dict mutado con claves: {'apellido': str, 'legajo': int|None, 'estado': int|None}
     
-def submenu_filtros(filtros):
+def submenu_filtros(filtros, clase_id):
+    # Submenú de filtros que redibuja la tabla al aplicar cada cambio
     en_submenu = True
     while en_submenu:
         print("\n--- FILTROS ---")
@@ -379,9 +408,14 @@ def submenu_filtros(filtros):
 
         if opcion == "0":
             en_submenu = False
+
         elif opcion == "a":
             texto = input("Texto de apellido (vacío = sin filtro): ").strip()
             filtros["apellido"] = texto
+            # Redibujar tabla filtrada inmediatamente
+            mostrar_encabezado_clase(clase_id)
+            mostrar_tabla_clase(clase_id, filtros["apellido"], filtros["legajo"], filtros["estado"])
+
         elif opcion == "b":
             texto = input("Legajo exacto (vacío = sin filtro): ").strip()
             if texto == "":
@@ -390,6 +424,10 @@ def submenu_filtros(filtros):
                 filtros["legajo"] = int(texto)
             else:
                 print("Legajo inválido.")
+            # Redibujar tabla filtrada inmediatamente
+            mostrar_encabezado_clase(clase_id)
+            mostrar_tabla_clase(clase_id, filtros["apellido"], filtros["legajo"], filtros["estado"])
+
         elif opcion == "c":
             texto = input("Estado (0/1/2; vacío = sin filtro): ").strip()
             if texto == "":
@@ -398,12 +436,21 @@ def submenu_filtros(filtros):
                 filtros["estado"] = int(texto)
             else:
                 print("Estado inválido.")
+            # Redibujar tabla filtrada inmediatamente
+            mostrar_encabezado_clase(clase_id)
+            mostrar_tabla_clase(clase_id, filtros["apellido"], filtros["legajo"], filtros["estado"])
+
         elif opcion == "d":
             filtros["apellido"] = ""
             filtros["legajo"] = None
             filtros["estado"] = None
+            # Redibujar tabla limpia inmediatamente
+            mostrar_encabezado_clase(clase_id)
+            mostrar_tabla_clase(clase_id, filtros["apellido"], filtros["legajo"], filtros["estado"])
+
         else:
             print("Opción inválida.")
+
 
 # Muestra una tabla con los totales acumulados de asistencia por alumno
 
@@ -443,7 +490,7 @@ def ver_alumnos_global():
 
 def ver_historial_y_totales_alumno():
     # Pedir legajo y validar
-    leg = input("LEGAJO (detalle): ").strip()
+    leg = pedir_legajo()
     if not legajo_valido_str(leg):
         print("Legajo inválido.")
         return
@@ -567,7 +614,7 @@ def panel_asistencias(clase_id):
 
         # Submenú de filtros
         elif opcion == "3":
-            submenu_filtros(filtros)
+            submenu_filtros(filtros, clase_id)
 
         # Ver listado global de alumnos + detalle de historial
         elif opcion == "4":
@@ -585,23 +632,75 @@ def panel_asistencias(clase_id):
 def gestion_asistencias():
     seguir = True
     while seguir:
-        mostrar_lista_de_clases()
-        print('Opciones: ingresá un ID de clase, "0" para volver, "9" para cerrar sesión.')
-        valor = input("Seleccioná la clase: ").strip()
+        # Mostrar menú principal de asistencias
+        mostrar_menu_asistencia()
+        opcion = input("Elegí una opción: ").strip()
 
-        if opcion_valida_menu(valor, {"0","9"}) or valor.isdigit():
-            if valor == "0":
-                seguir = False
-            elif valor == "9":
-                return "logout"
+        if opcion == "0":   # volver
+            seguir = False
+        elif opcion == "9": # cerrar sesión
+            return "logout"
+
+        # Opción 1: cargar asistencia por clase
+        elif opcion == "1":
+            mostrar_lista_de_clases()
+            clase_txt = input("Ingresá el ID de la clase: ").strip()
+            if not clase_txt.isdigit():
+                print("ID inválido.")
+                continue
+            clase_id = int(clase_txt)
+            clases_por_id, _ = construir_indices()
+            if clase_id not in clases_por_id:
+                print("ID de clase inexistente.")
+                continue
+
+            # Pedir legajo de inicio
+            legajo_txt = pedir_legajo("Ingresá legajo inicial (Enter = todos): ")
+            if legajo_txt == "":
+                registrar_asistencia_secuencial(clase_id)
+            elif legajo_valido_str(legajo_txt):
+                registrar_asistencia_secuencial(clase_id)  # dentro ya usa el legajo inicial
             else:
-                clase_id = int(valor)
-                clases_por_id, _ = construir_indices()
-                if clase_id in clases_por_id:
-                    res = panel_asistencias(clase_id)
-                    if res == "logout":
-                        return "logout"
-                else:
-                    print("ID de clase inexistente.")
+                print("Legajo inválido.")
+
+        # Opción 2: modificar registros
+        elif opcion == "2":
+            mostrar_lista_de_clases()
+            clase_txt = input("Ingresá el ID de la clase: ").strip()
+            if clase_txt.isdigit():
+                modificar_o_eliminar_registro(int(clase_txt))
+            else:
+                print("ID inválido.")
+
+        # Opción 3: filtros (y mostrar tabla filtrada directamente)
+        elif opcion == "3":
+            mostrar_lista_de_clases()
+            clase_txt = input("Ingresá el ID de la clase para filtrar: ").strip()
+            if not clase_txt.isdigit():
+                print("ID inválido.")
+                continue
+            clase_id = int(clase_txt)
+
+            # armar dict de filtros
+            filtros = {"apellido": "", "legajo": None, "estado": None}
+            submenu_filtros(filtros)
+
+            # mostrar tabla filtrada de inmediato
+            mostrar_tabla_clase(
+                clase_id,
+                filtro_apellido=filtros["apellido"],
+                filtro_legajo=filtros["legajo"],
+                filtro_estado=filtros["estado"],
+            )
+
+        # Opción 4: alumnos global
+        elif opcion == "4":
+            ver_alumnos_global()
+            ver_detalle = input("¿Ver historial de un alumno? (S/N): ").strip().upper()
+            if ver_detalle == "S":
+                ver_historial_y_totales_alumno()
+
         else:
-            print("Entrada inválida. Debe ser un ID de clase, 0 o 9.")
+            print("Opción inválida.")
+
+
