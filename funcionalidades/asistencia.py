@@ -202,7 +202,9 @@ def mostrar_tabla_clase(clase_id, filtro_apellido="", filtro_legajo=None, filtro
     # imprimir línea de filtros
     print("Filtros: " + (" | ".join(filtros_txt) if filtros_txt else "ninguno") + "\n")
 
-    # encabezados de tabla (ancho fijo para alinear)
+    print(f"Estados: 0={ESTADOS_ASISTENCIA[PRESENTE]}, 1={ESTADOS_ASISTENCIA[AUS_J]}, 2={ESTADOS_ASISTENCIA[AUS_I]}")
+
+    # encabezados de tabla
     print("LEGAJO | APELLIDO           | NOMBRE             | DNI       | EMAIL                     | ESTADO        | AJ | AI | %ASIST")
     print("-------+--------------------+--------------------+-----------+---------------------------+---------------+----+----+-------")
 
@@ -392,7 +394,6 @@ def modificar_o_eliminar_registro(clase_id):
 # filtros es un dict mutado con claves: {'apellido': str, 'legajo': int|None, 'estado': int|None}
     
 def submenu_filtros(filtros, clase_id):
-    # Submenú de filtros que redibuja la tabla al aplicar cada cambio
     en_submenu = True
     while en_submenu:
         print("\n--- FILTROS ---")
@@ -401,7 +402,7 @@ def submenu_filtros(filtros, clase_id):
         print(f"Estado actual: {filtros['estado']}")
         print("a) Filtrar por apellido (vacío = sin filtro)")
         print("b) Filtrar por legajo (número exacto; vacío = sin filtro)")
-        print("c) Filtrar por estado (0/1/2; vacío = sin filtro)")
+        print("c) Filtrar por estado (Pes = 0; AJ = 1; AI = 2; vacío = sin filtro)")
         print("d) Limpiar todos los filtros")
         print("0) Volver")
         opcion = input("Elegí: ").strip().lower()
@@ -412,9 +413,14 @@ def submenu_filtros(filtros, clase_id):
         elif opcion == "a":
             texto = input("Texto de apellido (vacío = sin filtro): ").strip()
             filtros["apellido"] = texto
-            # Redibujar tabla filtrada inmediatamente
-            mostrar_encabezado_clase(clase_id)
-            mostrar_tabla_clase(clase_id, filtros["apellido"], filtros["legajo"], filtros["estado"])
+
+            # mostrar tabla al instante
+            mostrar_tabla_clase(
+                clase_id,
+                filtro_apellido=filtros["apellido"],
+                filtro_legajo=filtros["legajo"],
+                filtro_estado=filtros["estado"],
+            )
 
         elif opcion == "b":
             texto = input("Legajo exacto (vacío = sin filtro): ").strip()
@@ -424,11 +430,17 @@ def submenu_filtros(filtros, clase_id):
                 filtros["legajo"] = int(texto)
             else:
                 print("Legajo inválido.")
-            # Redibujar tabla filtrada inmediatamente
-            mostrar_encabezado_clase(clase_id)
-            mostrar_tabla_clase(clase_id, filtros["apellido"], filtros["legajo"], filtros["estado"])
+
+            mostrar_tabla_clase(
+                clase_id,
+                filtro_apellido=filtros["apellido"],
+                filtro_legajo=filtros["legajo"],
+                filtro_estado=filtros["estado"],
+            )
 
         elif opcion == "c":
+            # aclarar mapeo 0/1/2
+            print(f"Estados: 0={ESTADOS_ASISTENCIA[PRESENTE]}, 1={ESTADOS_ASISTENCIA[AUS_J]}, 2={ESTADOS_ASISTENCIA[AUS_I]}")
             texto = input("Estado (0/1/2; vacío = sin filtro): ").strip()
             if texto == "":
                 filtros["estado"] = None
@@ -436,21 +448,29 @@ def submenu_filtros(filtros, clase_id):
                 filtros["estado"] = int(texto)
             else:
                 print("Estado inválido.")
-            # Redibujar tabla filtrada inmediatamente
-            mostrar_encabezado_clase(clase_id)
-            mostrar_tabla_clase(clase_id, filtros["apellido"], filtros["legajo"], filtros["estado"])
+
+            mostrar_tabla_clase(
+                clase_id,
+                filtro_apellido=filtros["apellido"],
+                filtro_legajo=filtros["legajo"],
+                filtro_estado=filtros["estado"],
+            )
 
         elif opcion == "d":
             filtros["apellido"] = ""
             filtros["legajo"] = None
             filtros["estado"] = None
-            # Redibujar tabla limpia inmediatamente
-            mostrar_encabezado_clase(clase_id)
-            mostrar_tabla_clase(clase_id, filtros["apellido"], filtros["legajo"], filtros["estado"])
+            print("Filtros limpiados.")
+
+            mostrar_tabla_clase(
+                clase_id,
+                filtro_apellido=filtros["apellido"],
+                filtro_legajo=filtros["legajo"],
+                filtro_estado=filtros["estado"],
+            )
 
         else:
             print("Opción inválida.")
-
 
 # Muestra una tabla con los totales acumulados de asistencia por alumno
 
