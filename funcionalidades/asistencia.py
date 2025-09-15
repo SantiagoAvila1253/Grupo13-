@@ -690,7 +690,7 @@ def gestion_asistencias():
             if clase_txt.isdigit():
                 clase_id = int(clase_txt)
                 filtros = {"apellido": "", "legajo": None, "estado": None}
-                submenu_filtros(filtros)
+                submenu_filtros(filtros, clase_id)
                 mostrar_tabla_clase(
                     clase_id,
                     filtro_apellido=filtros["apellido"],
