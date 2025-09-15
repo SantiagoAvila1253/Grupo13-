@@ -327,34 +327,34 @@ def pedir_legajo(mensaje="Ingresá el LEGAJO: "):
 
 # Carga secuencial de asistencia: permite elegir legajo de inicio (opcional). Con Enter empieza desde el primero
 
-def registrar_asistencia_secuencial(clase_id):
-    inicio = input("Legajo de inicio (Enter = primero): ").strip()
-    idx_inicio = 0
+def registrar_asistencia_secuencial(clase_id, inicio_legajo=None):
+    # Orden base de alumnos
     ordenados = listar_alumnos_ordenados()
-    if inicio and legajo_valido_str(inicio):
-        leg_inicial = int(inicio)
-        for i, a in enumerate(ordenados):
-            if a[AL_LEGAJO] == leg_inicial:
-                idx_inicio = i
-                break
 
+    # índice de inicio (por defecto, el primero)
+    idx_inicio = 0
+    if inicio_legajo is not None:
+        for i, a in enumerate(ordenados):
+            if a[AL_LEGAJO] == inicio_legajo:
+                idx_inicio = i
+
+    # iterar alumnos desde idx_inicio
     i = idx_inicio
     n = len(ordenados)
     while i < n:
         a = ordenados[i]
-        leg = a[AL_LEGAJO]; ape = a[AL_APELLIDO]; nom = a[AL_NOMBRE]
+        leg, ape, nom = a[AL_LEGAJO], a[AL_APELLIDO], a[AL_NOMBRE]
         print(f"\n{leg} - {ape}, {nom}")
         print("Estado (0 = Presente, 1 = AJ, 2 = AI, Enter = no cambiar)")
         val = input("Estado: ").strip()
-        if val == "":  # no cambiar
-            i = i + 1
+        if val == "":
+            i += 1
+        elif estado_asistencia_valido(val, {"0","1","2"}):
+            set_asistencia(clase_id, leg, int(val))
+            aplicar_desactivacion_por_ausentismo(leg)
+            i += 1
         else:
-            if estado_asistencia_valido(val, {"0", "1", "2"}):
-                set_asistencia(clase_id, leg, int(val))
-                aplicar_desactivacion_por_ausentismo(leg)
-                i = i + 1
-            else:
-                print("Valor inválido. Debe ser 0, 1 o 2. (no se avanzó)")
+            print("Valor inválido. Debe ser 0, 1 o 2. (no se avanzó)")
 
 # Modificar o eliminar un registro
 
@@ -638,30 +638,41 @@ def gestion_asistencias():
 
         if opcion == "0":   # volver
             seguir = False
+
         elif opcion == "9": # cerrar sesión
             return "logout"
 
         # Opción 1: cargar asistencia por clase
         elif opcion == "1":
+            # print("[DEBUG] registrar_asistencia_secuencial INICIO FUNCIÓN")
+
+            # 1) elegir clase
             mostrar_lista_de_clases()
             clase_txt = input("Ingresá el ID de la clase: ").strip()
-            if not clase_txt.isdigit():
-                print("ID inválido.")
-                continue
-            clase_id = int(clase_txt)
-            clases_por_id, _ = construir_indices()
-            if clase_id not in clases_por_id:
-                print("ID de clase inexistente.")
-                continue
 
-            # Pedir legajo de inicio
-            legajo_txt = pedir_legajo("Ingresá legajo inicial (Enter = todos): ")
-            if legajo_txt == "":
-                registrar_asistencia_secuencial(clase_id)
-            elif legajo_valido_str(legajo_txt):
-                registrar_asistencia_secuencial(clase_id)  # dentro ya usa el legajo inicial
+            if clase_txt.isdigit():
+                clase_id = int(clase_txt)
+                clases_por_id, _ = construir_indices()
+                if clase_id in clases_por_id:
+                    # 2) pedir legajo inicial (Enter = todos)
+                    legajo_txt = pedir_legajo("Ingresá legajo inicial (Enter = todos): ")
+                    if legajo_txt == "":
+                        inicio_param = None
+                    else:
+                        if not legajo_valido_str(legajo_txt):
+                            print("Legajo inválido.")
+                            inicio_param = None
+                        else:
+                            inicio_param = int(legajo_txt)
+                    if legajo_txt == "" or legajo_valido_str(legajo_txt):
+                        # print("[DEBUG] registrar_asistencia_secuencial INICIO")
+                        registrar_asistencia_secuencial(clase_id, inicio_legajo=inicio_param)
+                        # print("[DEBUG] registrar_asistencia_secuencial fin")
+
+                else:
+                    print("ID de clase inexistente.")
             else:
-                print("Legajo inválido.")
+                print("ID inválido.")
 
         # Opción 2: modificar registros
         elif opcion == "2":
@@ -672,26 +683,22 @@ def gestion_asistencias():
             else:
                 print("ID inválido.")
 
-        # Opción 3: filtros (y mostrar tabla filtrada directamente)
+        # Opción 3: filtros (y mostrar tabla filtrada)
         elif opcion == "3":
             mostrar_lista_de_clases()
             clase_txt = input("Ingresá el ID de la clase para filtrar: ").strip()
-            if not clase_txt.isdigit():
+            if clase_txt.isdigit():
+                clase_id = int(clase_txt)
+                filtros = {"apellido": "", "legajo": None, "estado": None}
+                submenu_filtros(filtros)
+                mostrar_tabla_clase(
+                    clase_id,
+                    filtro_apellido=filtros["apellido"],
+                    filtro_legajo=filtros["legajo"],
+                    filtro_estado=filtros["estado"],
+                )
+            else:
                 print("ID inválido.")
-                continue
-            clase_id = int(clase_txt)
-
-            # armar dict de filtros
-            filtros = {"apellido": "", "legajo": None, "estado": None}
-            submenu_filtros(filtros)
-
-            # mostrar tabla filtrada de inmediato
-            mostrar_tabla_clase(
-                clase_id,
-                filtro_apellido=filtros["apellido"],
-                filtro_legajo=filtros["legajo"],
-                filtro_estado=filtros["estado"],
-            )
 
         # Opción 4: alumnos global
         elif opcion == "4":
@@ -702,5 +709,6 @@ def gestion_asistencias():
 
         else:
             print("Opción inválida.")
+
 
 
