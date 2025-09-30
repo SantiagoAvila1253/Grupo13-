@@ -1,131 +1,87 @@
-# Validadores
+# Importar expresiones regulares
+import re
 
-# Menús con opciones
+# Patrones precompilados
 
-# Devuelve True si 'opcion' está dentro de 'validas'
+# Permite ceros a la izquierda, pero exige valor > 0 (rechaza "0", "0000", etc.)
+RE_LEGAJO = re.compile(r'^0*[1-9]\d*$')
 
+# DNI: exactamente 7 u 8 dígitos
+RE_DNI = re.compile(r'^\d{7,8}$')
+
+# Email: parte local con ._%+-, dominio con . y -, y TLD de 2+ letras
+RE_EMAIL = re.compile(r'^[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$')
+
+# Estados válidos: '0' (Presente), '1' (AJ), '2' (AI)
+RE_ESTADO = re.compile(r'^[012]$')
+
+# Fecha: dd-mm-aaaa o dd/mm/aaaa (formato correcto)
+RE_FECHA_FMT = re.compile(
+    r'^(0[1-9]|[12]\d|3[01])[-/](0[1-9]|1[0-2])[-/](19\d{2}|20\d{2})$'
+)
+
+# Nombres/Apellidos: letras (incluye acentos/ñ), espacios, ' y -, mínimo 2 chars
+RE_NOM_AP = re.compile(r"^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ' -]{2,}$")
+
+# Funciones
+
+#  Menús / opciones
 def opcion_valida_menu(opcion, validas):
-    validar = opcion in validas
-    return validar
+    return opcion in validas
 
+# Valida formato (regex 0|1|2) y exige pertenencia al set 'validos'
 def estado_asistencia_valido(valor, validos):
-    validar = valor in validos
-    return validar
+    v = valor.strip()
+    return bool(RE_ESTADO.fullmatch(v)) and v in validos
 
-# Datos numéricos
+# Numéricos
 
-# DNI válido si tiene 7 u 8 dígitos
+#  Legajo acepta ceros a la izquierda: "0005". Rechaza "0"/"0000" y no-numérico
+def legajo_valido_str(valor: str) -> bool:
+    s = valor.strip()
+    return bool(RE_LEGAJO.fullmatch(s))
 
+# DNI True si DNI tiene 7 u 8 dígitos
 def dni_valido(dni):
-    validar = dni.isdigit() and 7 <= len(dni) <= 8
-    return validar
+    return bool(RE_DNI.fullmatch(dni.strip()))
 
-# Legajo válido si es string de dígitos y su entero > 0
+#  Texto
 
-def legajo_valido_str(valor):
-    validar = valor.isdigit() and int(valor) > 0
-    return validar
+# Nombre y apellido
+def nom_ape_valido(nombre, min_len=2):
+    s = nombre.strip()
+    return bool(RE_NOM_AP.fullmatch(s))
 
-# Compatibilidad con dato existente
-
-def legajo_valido(legajo):
-    validar = legajo_valido_str(legajo)
-    return validar
-
-# True si es string de dígitos y > 0
-
-def entero_positivo_str(valor):
-    validar = valor.isdigit() and int(valor) > 0
-    return validar
-
-# True si es string de dígitos y el entero está entre dos valores
-
-def entero_en_rango_str(valor, minimo, maximo):
-    if not valor.isdigit():
-        return False
-    n = int(valor)
-    validar = minimo <= n <= maximo
-    return validar
-
-# Textos
-
-# True si el texto no está vacío
-
-def no_vacio(texto):
-    validar = len(texto.strip()) > 0
-    return validar
-
-# True si tiene al menos 'min_len' caracteres no vacíos
-
-def nombre_valido(nombre, min_len=2):
-    validar = len(nombre.strip()) >= min_len
-    return validar
-
-# True si tiene al menos 'min_len' caracteres no vacíos
-
-def apellido_valido(apellido, min_len=2):
-    validar = len(apellido.strip()) >= min_len
-    return validar
-
-# Validación simple de email: contiene '@' y '.', y largo mínimo
-
+# Email completo; '\.' asegura punto literal
 def email_valido(email):
-    e = email.strip()
-    validar = "@" in e and "." in e and len(e) > 5
-    return validar
+    return bool(RE_EMAIL.fullmatch(email.strip()))
 
-# Contraseñas 
-
-# True si cumple requisito de cantidad de caracteres
-
+# Contraseña Regla mínima de longitud
 def password_valida(password, min_len=4):
-    validar = len(password) >= min_len
-    return validar
+    return len(password) >= min_len
 
-# Validar bisiesto
-"""
-True si 'a' (año) es bisiesto:
-- divisible por 4 y no por 100, o
-- divisible por 400
-"""
+#  Fechas
 
+# True si el año 'a' es bisiesto
 def es_bisiesto(a):
-    validar = (a % 4 == 0 and a % 100 != 0) or (a % 400 == 0)
-    return validar
+    return (a % 4 == 0 and a % 100 != 0) or (a % 400 == 0)
 
-# Valida formato fecha con 'dd-mm-aaaa'
-
-"""
-- 3 partes separadas por '-'
-- todas dígitos
-- rangos exactos por mes (30/31) y febrero con bisiestos
-- rango de año acotado
-"""
-
-def fecha_ddmmaaaa_valida(fecha):
-    partes = fecha.strip().split("-")
-    if len(partes) != 3:
+""" Acepta dd-mm-aaaa o dd/mm/aaaa. Valida formato completo con regex; chequea días según mes y febrero bisiesto.
+    Rango de año 1915-2009"""
+def fecha_ddmmaaaa_valida(fecha):   
+    s = fecha.strip()
+    if not RE_FECHA_FMT.fullmatch(s):
         return False
-
-    d, m, a = partes[0], partes[1], partes[2]
-    if not (d.isdigit() and m.isdigit() and a.isdigit()):
-        return False
-
-    d = int(d); m = int(m); a = int(a)
-
-    # Rango de año según edades posibles estimadas
+    d_str, m_str, a_str = re.split(r'[-/]', s, maxsplit=2)
+    d, mm, a = int(d_str), int(m_str), int(a_str)
     if not (1915 <= a <= 2009):
         return False
-
-    if not (1 <= m <= 12):
+    if not (1 <= mm <= 12):
         return False
-
-    # Días por mes con febrero bisiesto
-    if m in (1, 3, 5, 7, 8, 10, 12):
+    if mm in (1, 3, 5, 7, 8, 10, 12):
         max_dias = 31
-    elif m in (4, 6, 9, 11):
+    elif mm in (4, 6, 9, 11):
         max_dias = 30
     else:
         max_dias = 29 if es_bisiesto(a) else 28
-    validar = 1 <= d <= max_dias
-    return validar
+    return 1 <= d <= max_dias

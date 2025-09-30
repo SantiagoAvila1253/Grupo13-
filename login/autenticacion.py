@@ -1,18 +1,17 @@
 # importar funciones y variables
 
 from core import (
-    mostrar_menu_login, opcion_valida_menu,
-    dni_valido, password_valida,
+    # Funciones
+    mostrar_menu_login, opcion_valida_menu, dni_valido, password_valida,
+    # Datos
     docentes, DO_DNI, DO_CLAVE
 )
 
 # login
-
 def login_usuario():
     while True:
         mostrar_menu_login()
         opcion = input("Elegí una opción: ").strip()
-
         if not opcion_valida_menu(opcion, {"1", "2", "3"}):
             print("Opción inválida.")
         elif opcion == "1":
@@ -37,23 +36,20 @@ def login_usuario():
         elif opcion == "3":
             return None
 
-
+# Resetear clave
 def reiniciar_clave():
     dni = input("Ingresá tu DNI: ").strip()
     if not dni_valido(dni):
         print("DNI inválido.")
         return False
-
     nueva = input("Nueva contraseña (mínimo 4 caracteres): ")
     if not password_valida(nueva, 4):
         print("Inválida.")
         return False
-
     for item in docentes:
         if item[DO_DNI] == dni:
             item[DO_CLAVE] = nueva
             print("Contraseña actualizada.")
             return True
-
     print("Usuario no encontrado.")
     return False
