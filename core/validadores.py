@@ -36,11 +36,6 @@ def estado_asistencia_valido(valor, validos):
 
 # Numéricos
 
-#  Legajo acepta ceros a la izquierda: "0005". Rechaza "0"/"0000" y no-numérico
-def legajo_valido_str(valor: str) -> bool:
-    s = valor.strip()
-    return bool(RE_LEGAJO.fullmatch(s))
-
 # DNI True si DNI tiene 7 u 8 dígitos
 def dni_valido(dni):
     return bool(RE_DNI.fullmatch(dni.strip()))

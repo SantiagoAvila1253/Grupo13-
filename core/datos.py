@@ -1,14 +1,14 @@
+from .helpers import listar_alumnos_ordenados
+
 # Base de datos
 
 # valores fijos, usados por índice
 
 # Estados de asistencia
-
 ESTADOS_ASISTENCIA = ("Presente", "Ausente justificado", "Ausente injustificado")
 PRESENTE = 0; AUS_J = 1; AUS_I = 2
 
 # Estados de alumno
-
 ESTADOS_ALUMNO = ("Activo", "Inactivo")
 AL_ACTIVO = 0; AL_INACTIVO = 1
 
@@ -21,7 +21,6 @@ docentes = [
 DO_LEGAJO = 0; DO_DNI = 1; DO_CLAVE = 2; DO_NOMBRE = 3; DO_APELLIDO = 4; DO_EMAIL = 5
 
 # Clases: [Id, materia, fecha, día y horario]
-
 clases = [
     (3001, "Matemática", "2025-08-05", "Martes", "14:00 - 18:00"),
     (3002, "Matemática", "2025-08-12", "Martes", "14:00 - 18:00"),
@@ -46,7 +45,6 @@ CL_ID = 0; CL_MATERIA = 1; CL_FECHA = 2; CL_DIA = 3; CL_HORARIO = 4
 # Variable de trabajo alumnos
 
 # alumnos: [legajo, dni, apellido, nombre, fecha_nac, email, estado_alumno_idx]
-
 alumnos = [
     [1001, "40111222", "Saltid", "Juan", "08-09-2007", "jsaltid@uade.edu.ar", AL_ACTIVO],
     [1002, "39222333", "Altanio", "Pablo", "19-04-2004", "paltanio@uade.edu.ar", AL_ACTIVO],
@@ -66,13 +64,13 @@ alumnos = [
 ]
 AL_LEGAJO = 0; AL_DNI = 1; AL_APELLIDO = 2; AL_NOMBRE = 3; AL_FECHA_NAC = 4; AL_EMAIL = 5; AL_ESTADO = 6
 
-
-
 # diccionario de presentismo
 ''' Clave: (clase_id, legajo)
 Valor: estado_idx - Puede ser: 0=Presente, 1=AJ o 2=AI
 Ej: asistencias[(3001, 1001)] = 0'''
-
 asistencias = {}
 
+# Variantes de alumnos
 alumnos_baja = []
+alumnos_ordenada = listar_alumnos_ordenados(alumnos,AL_APELLIDO,AL_NOMBRE,AL_LEGAJO)
+

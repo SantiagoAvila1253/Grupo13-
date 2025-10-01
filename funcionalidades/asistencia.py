@@ -1,14 +1,15 @@
 # Importar funciones y datos
 
-from core.datos import (
-    clases, alumnos, asistencias,
-    ESTADOS_ASISTENCIA, PRESENTE, AUS_J, AUS_I, AL_ACTIVO, AL_INACTIVO, CL_ID, CL_MATERIA, CL_FECHA, CL_DIA, CL_HORARIO, AL_LEGAJO, AL_APELLIDO, AL_NOMBRE, AL_ESTADO, AL_DNI, AL_EMAIL
-)
-from core.menus import (
-    mostrar_menu_asistencia
-)
-from core.validadores import (
-    legajo_valido_str, estado_asistencia_valido, opcion_valida_menu
+from core import (
+    # datos
+    clases, alumnos, asistencias, alumnos_ordenada,
+    ESTADOS_ASISTENCIA, PRESENTE, AUS_J, AUS_I, AL_ACTIVO, AL_INACTIVO, CL_ID, CL_MATERIA, CL_FECHA, CL_DIA, CL_HORARIO, AL_LEGAJO, AL_APELLIDO, AL_NOMBRE, AL_ESTADO, AL_DNI, AL_EMAIL,
+    # menú
+    mostrar_menu_asistencia,
+    # validadores
+    estado_asistencia_valido, opcion_valida_menu,
+    # helpers
+    legajo_valido, actualizar_alumnos_ordenada
 )
 
 # Crear diccionarios de clases por id y de alumnos por legajo
@@ -16,12 +17,6 @@ def construir_indices():
     clases_por_id = {fila[CL_ID]: fila for fila in clases}
     alumnos_por_legajo = {fila[AL_LEGAJO]: fila for fila in alumnos}
     return clases_por_id, alumnos_por_legajo
-
-# Copia de alumnos por legajo ordenada por apellido, nombre, legajo
-def listar_alumnos_ordenados():
-    copia = list(alumnos)
-    copia.sort(key=lambda alumno: (alumno[AL_APELLIDO].upper(), alumno[AL_NOMBRE].upper(), alumno[AL_LEGAJO]))
-    return copia
 
 # acceder al diccionario. 0/1/2 si hay marca; None si no existe
 def estado_de(clase_id, legajo):
@@ -118,9 +113,11 @@ def texto_estado(idx):
 # Columnas: LEGAJO | APELLIDO | NOMBRE | DNI | EMAIL | ESTADO | AJ | AI | %ASISTENCIA
 # Aplica filtros por apellido (contiene)
 
-def mostrar_tabla_clase(clase_id, filtro_apellido="", filtro_legajo=None, filtro_estado=None):
+def mostrar_tabla_clase(clase_id, alumnos_ordenada, filtro_apellido="", filtro_legajo=None, filtro_estado=None):
     # obtener índices de acceso rápido
     clases_por_id, _ = construir_indices()
+    # Actualizar lista alumnos ordenada
+    alumnos_ordenada = actualizar_alumnos_ordenada()
     # validar existencia de la clase
     if clase_id not in clases_por_id:
         print("Clase no encontrada.")
@@ -133,13 +130,10 @@ def mostrar_tabla_clase(clase_id, filtro_apellido="", filtro_legajo=None, filtro
         fa_norm = filtro_apellido.upper()
         if fa_norm != "":
             filtros_txt.append(f"Apellido contiene '{fa_norm}'")
-    # normalizar filtro de legajo
-    legajo_filtrado = None
-    if filtro_legajo is not None:
-        s_leg = str(filtro_legajo).strip()
-        if s_leg != "" and legajo_valido_str(s_leg):
-            legajo_filtrado = int(s_leg)
-            filtros_txt.append(f"Legajo == {legajo_filtrado}")
+    # normalizar filtro de legajo (ya debería venir validado como int o None)
+    legajo_filtrado = filtro_legajo if isinstance(filtro_legajo, int) else None
+    if legajo_filtrado is not None:
+        filtros_txt.append(f"Legajo == {legajo_filtrado}")
     # filtro de estado: solo si es un int y está dentro de los estados posibles
     if type(filtro_estado) is int and filtro_estado in (PRESENTE, AUS_J, AUS_I):
         filtros_txt.append(f"Estado == {ESTADOS_ASISTENCIA[filtro_estado]}")
@@ -155,13 +149,11 @@ def mostrar_tabla_clase(clase_id, filtro_apellido="", filtro_legajo=None, filtro
     tot_ai = 0  # ausentes injustificados
     # contador de filas que pasan los filtros (para el mensaje de "sin resultados")
     filas_visibles = 0
-    # obtener alumnos en orden (apellido/nombre o el criterio que tengan)
-    lista = listar_alumnos_ordenados()
     # recorrer alumnos (índice manual para respetar tu estilo)
     i = 0
-    n = len(lista)
+    n = len(alumnos_ordenada)
     while i < n:
-        a = lista[i]
+        a = alumnos_ordenada[i]
         # extraer campos del alumno por índice
         legajo = a[AL_LEGAJO]
         apellido = a[AL_APELLIDO]
@@ -240,7 +232,7 @@ def pedir_legajo(mensaje="Ingresá el LEGAJO: "):
     print("\n--- LISTA DE ALUMNOS ---")
     print("LEGAJO | APELLIDO, NOMBRE")
     print("-------+----------------------------")
-    for a in listar_alumnos_ordenados():
+    for a in alumnos_ordenada:
         print(f"{a[AL_LEGAJO]:<6} | {a[AL_APELLIDO]}, {a[AL_NOMBRE]}")
     print()
     return input(mensaje).strip()
@@ -248,20 +240,20 @@ def pedir_legajo(mensaje="Ingresá el LEGAJO: "):
 # Acciones, opciones del menú del panel
 
 # Carga secuencial de asistencia: permite elegir legajo de inicio (opcional). Con Enter empieza desde el primero
-def registrar_asistencia_secuencial(clase_id, inicio_legajo=None):
-    # Orden base de alumnos
-    ordenados = listar_alumnos_ordenados()
+def registrar_asistencia_secuencial(clase_id, alumnos_ordenada, inicio_legajo=None):
+    # actualizar lista alumnos ordenada
+    alumnos_ordenada = actualizar_alumnos_ordenada()
     # índice de inicio (por defecto, el primero)
     idx_inicio = 0
     if inicio_legajo is not None:
-        for i, a in enumerate(ordenados):
+        for i, a in enumerate(alumnos_ordenada):
             if a[AL_LEGAJO] == inicio_legajo:
                 idx_inicio = i
     # iterar alumnos desde idx_inicio
     i = idx_inicio
-    n = len(ordenados)
+    n = len(alumnos_ordenada)
     while i < n:
-        a = ordenados[i]
+        a = alumnos_ordenada[i]
         leg, ape, nom = a[AL_LEGAJO], a[AL_APELLIDO], a[AL_NOMBRE]
         print(f"\n{leg} - {ape}, {nom}")
         print("Estado (0 = Presente, 1 = AJ, 2 = AI, Enter = no cambiar)")
@@ -277,11 +269,7 @@ def registrar_asistencia_secuencial(clase_id, inicio_legajo=None):
 
 # Modificar o eliminar un registro
 def modificar_o_eliminar_registro(clase_id):
-    leg = pedir_legajo()
-    if not legajo_valido_str(leg):
-        print("Legajo inválido.")
-        return
-    leg = int(leg)
+    leg = legajo_valido(tipo="alumno")
     actual = estado_de(clase_id, leg)
     print(f"Estado actual: {texto_estado(actual)}")
     print('Nuevo estado (0/1/2) o "E" para eliminar, Enter = sin cambios')
@@ -336,10 +324,8 @@ def submenu_filtros(filtros, clase_id):
                 texto = input("Legajo exacto (vacío = sin filtro): ").strip()
                 if texto == "":
                     filtros["legajo"] = None
-                elif legajo_valido_str(texto):
-                    filtros["legajo"] = int(texto)
                 else:
-                    print("Legajo inválido.")
+                    filtros["legajo"] = legajo_valido(tipo="alumno")
                 mostrar_tabla_clase(
                     clase_id,
                     filtro_apellido=filtros["apellido"],
@@ -379,8 +365,10 @@ def ver_alumnos_global():
     print("\n--- ALUMNOS (totales acumulados) ---")
     print("LEGAJO | APELLIDO, NOMBRE           | P  | AJ | AI | Tot | %Asist | %Aus (AI) | ¿>25%?")
     print("-------+-----------------------------+----+----+----+-----+--------+-----------+--------")
+    # lista alumnos actualizada
+    alumnos_ordenada = actualizar_alumnos_ordenada()
     # Recorrer alumnos (ordenados por Apellido, Nombre, Legajo)
-    for alumno in listar_alumnos_ordenados():
+    for alumno in alumnos_ordenada:
         legajo = alumno[AL_LEGAJO]
         apellido = alumno[AL_APELLIDO]
         nombre = alumno[AL_NOMBRE]
@@ -404,11 +392,7 @@ def ver_alumnos_global():
 # Muestra el historial de asistencias de un alumno y sus totales; permite modificación puntual
 def ver_historial_y_totales_alumno():
     # Pedir legajo y validar
-    leg = pedir_legajo()
-    if not legajo_valido_str(leg):
-        print("Legajo inválido.")
-        return
-    leg = int(leg)
+    leg = legajo_valido(tipo="alumno")
     # Encabezado del historial
     print("\n--- HISTORIAL DEL ALUMNO ---")
     print("FECHA       | MATERIA      | ESTADO")
@@ -497,13 +481,8 @@ def gestion_asistencias():
                         if legajo_txt == "":
                             inicio_param = None
                         else:
-                            if not legajo_valido_str(legajo_txt):
-                                print("Legajo inválido.")
-                                inicio_param = None
-                            else:
-                                inicio_param = int(legajo_txt)
-                        if legajo_txt == "" or legajo_valido_str(legajo_txt):
-                            registrar_asistencia_secuencial(clase_id, inicio_legajo=inicio_param)
+                            inicio_param = legajo_valido(tipo="alumno")
+                        registrar_asistencia_secuencial(clase_id, inicio_legajo=inicio_param)
                     else:
                         print("ID de clase inexistente.")
                 else:

@@ -12,12 +12,10 @@ from .datos import (
 
     # alumnos + referencias
     alumnos, AL_LEGAJO, AL_DNI, AL_APELLIDO, AL_NOMBRE, AL_FECHA_NAC, AL_EMAIL, AL_ESTADO,
+    alumnos_ordenada, alumnos_baja,
 
     # asistencias
     asistencias,
-
-    # alumnos baja
-    alumnos_baja,
 )
 
 from .menus import (
@@ -25,7 +23,11 @@ from .menus import (
 )
 
 from .validadores import (
-    opcion_valida_menu, dni_valido, legajo_valido_str, estado_asistencia_valido, email_valido, password_valida, nom_ape_valido, fecha_ddmmaaaa_valida
+    opcion_valida_menu, dni_valido, estado_asistencia_valido, email_valido, password_valida, nom_ape_valido, fecha_ddmmaaaa_valida
+)
+
+from .helpers import (
+    legajo_valido, actualizar_alumnos_ordenada
 )
 
 __all__ = [
@@ -40,16 +42,17 @@ __all__ = [
 
     # alumnos + referencias
     "alumnos", "AL_LEGAJO", "AL_DNI", "AL_APELLIDO", "AL_NOMBRE", "AL_FECHA_NAC", "AL_EMAIL", "AL_ESTADO",
+    "alumnos_ordenada", "alumnos_baja",
 
     # asistencias
     "asistencias",
-
-    # alumnos baja
-    "alumnos_baja",
 
     # menús
     "mostrar_menu_login", "mostrar_menu_principal", "mostrar_menu_alumnos", "mostrar_menu_asistencia", "mostrar_menu_reportes",
 
     # validadores
-    "opcion_valida_menu", "dni_valido", "legajo_valido_str", "estado_asistencia_valido", "email_valido", "nom_ape_valido", "fecha_ddmmaaaa_valida", "password_valida",
+    "opcion_valida_menu", "dni_valido", "estado_asistencia_valido", "email_valido", "nom_ape_valido", "fecha_ddmmaaaa_valida", "password_valida",
+    
+    # helpers
+    "legajo_valido", "actualizar_alumnos_ordenada"
 ]

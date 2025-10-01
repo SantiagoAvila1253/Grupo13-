@@ -8,12 +8,12 @@
 from core import (
     # Datos
     alumnos, alumnos_baja, AL_LEGAJO, AL_APELLIDO, AL_NOMBRE, AL_EMAIL,
-    
     # Menú
     mostrar_menu_alumnos,
-
     # Validadores
-    nom_ape_valido, fecha_ddmmaaaa_valida, email_valido, legajo_valido_str, opcion_valida_menu
+    nom_ape_valido, fecha_ddmmaaaa_valida, email_valido, opcion_valida_menu,
+    # Helpers
+    legajo_valido
 )
 
 # Dar de alta un alumno (nuevo o reactivación)
@@ -32,14 +32,8 @@ def alta_alumno(alumnos, alumnos_baja):
             print("-" * 75)
             for alumno in alumnos_baja:
                 print(f"{alumno[0]:<5} | {alumno[3]:<12} | {alumno[2]:<15} | {alumno[5]:<27}")
-
-            # Pedir ID y validar
-            id_texto = input("Ingrese el ID del alumno a reactivar: ").strip()
-            if not legajo_valido_str(id_texto):
-                print("ID inválido.")
-                return
-            id_reactivar = int(id_texto)
-
+            # Pedir y validar legajo
+            id_reactivar = legajo_valido(tipo="inactivo")
             reactivar_alumno(id_reactivar, alumnos, alumnos_baja)
         else:
             print("No hay alumnos inactivos para reactivar.")
@@ -86,11 +80,8 @@ def alta_alumno(alumnos, alumnos_baja):
 # Dar de baja (lógica) un alumno
 def baja_alumno(alumnos, alumnos_baja):
     print("Baja de alumno")
-    id_texto = input("ingrese el ID del alumno a dar de baja: ").strip()
-    if not legajo_valido_str(id_texto):
-        print("ID inválido.")
-        return
-    id_alumno = int(id_texto)
+    # Pedir y validar legajo
+    id_alumno = legajo_valido(tipo="alumno")
 
     # Mover de activos a inactivos si existe
     for alumno in alumnos:
@@ -120,20 +111,17 @@ def reactivar_alumno(id_reactivar, alumnos, alumnos_baja):
 # Modificar datos de un alumno
 def modificar_dato_alumno(alumnos):
     print("Modificar datos de un alumno")
-    id_texto = input("Ingrese el ID del alumno a modificar: ").strip()
-    if not legajo_valido_str(id_texto):
-        print("ID inválido.")
-        return
-    id_alumno = int(id_texto)
+    # Pedir y validar legajo
+    id_alumno = legajo_valido(tipo = "alumno")
     # Buscar y editar campos seleccionados
     for alumno in alumnos:
         if alumno[0] == id_alumno:
             print(f"\nAlumno encontrado:")
-            print(f"1 - Nombre: {alumno[3]}")
-            print(f"2 - Apellido: {alumno[2]}")
-            print(f"3 - Fecha de nacimiento: {alumno[4]}")
+            print(f"1) Nombre: {alumno[3]}")
+            print(f"2) Apellido: {alumno[2]}")
+            print(f"3) Fecha de nacimiento: {alumno[4]}")
 
-            opcion = input("¿Qué dato desea modificar? (1-4): ").strip()
+            opcion = input("¿Qué dato desea modificar?: ").strip()
 
             if opcion == "1":
                 alumno[3] = input("Ingrese el nuevo nombre: ")
@@ -144,7 +132,6 @@ def modificar_dato_alumno(alumnos):
             elif opcion == "3":
                 alumno[4] = input("Ingrese la nueva fecha de nacimiento (dd-mm-aaaa): ")
             else:
-                print("Opción inválida.")
                 return
 
             # Confirmación de cambios
