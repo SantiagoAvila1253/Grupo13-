@@ -26,6 +26,7 @@ def mostrar_menu_alumnos():
     print("0) Volver")
 
 
+
 def mostrar_menu_asistencia():
     print("\n--- MENÚ ASISTENCIA ---")
     print("1) Ingresá un ID de clase para cargar asistencia")
@@ -35,6 +36,12 @@ def mostrar_menu_asistencia():
     print("9) Cerrar sesión")
     print("0) Volver")
 
+def mostrar_submenu_filtrar():
+    print("a) Filtrar por apellido")
+    print("b) Filtrar por legajo")
+    print("c) Filtrar por estado (Pes; AJ; AI; sin filtro)")
+    print("d) Limpiar todos los filtros")
+    print("0) Volver")
 
 def mostrar_menu_reportes():
     print("\n--- MENÚ REPORTES ---")

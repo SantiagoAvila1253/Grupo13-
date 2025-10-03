@@ -19,7 +19,7 @@ from .datos import (
 )
 
 from .menus import (
-    mostrar_menu_login, mostrar_menu_principal, mostrar_menu_alumnos, mostrar_menu_asistencia, mostrar_menu_reportes
+    mostrar_menu_login, mostrar_menu_principal, mostrar_menu_alumnos, mostrar_menu_asistencia, mostrar_menu_reportes, mostrar_submenu_filtrar
 )
 
 from .validadores import (
@@ -48,7 +48,7 @@ __all__ = [
     "asistencias",
 
     # menús
-    "mostrar_menu_login", "mostrar_menu_principal", "mostrar_menu_alumnos", "mostrar_menu_asistencia", "mostrar_menu_reportes",
+    "mostrar_menu_login", "mostrar_menu_principal", "mostrar_menu_alumnos", "mostrar_menu_asistencia", "mostrar_menu_reportes", "mostrar_submenu_filtrar",
 
     # validadores
     "opcion_valida_menu", "dni_valido", "estado_asistencia_valido", "email_valido", "nom_ape_valido", "fecha_ddmmaaaa_valida", "password_valida",

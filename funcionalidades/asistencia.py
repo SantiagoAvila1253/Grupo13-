@@ -5,7 +5,7 @@ from core import (
     clases, alumnos, asistencias, alumnos_ordenada,
     ESTADOS_ASISTENCIA, PRESENTE, AUS_J, AUS_I, AL_ACTIVO, AL_INACTIVO, CL_ID, CL_MATERIA, CL_FECHA, CL_DIA, CL_HORARIO, AL_LEGAJO, AL_APELLIDO, AL_NOMBRE, AL_ESTADO, AL_DNI, AL_EMAIL,
     # menú
-    mostrar_menu_asistencia,
+    mostrar_menu_asistencia, mostrar_submenu_filtrar,
     # validadores
     estado_asistencia_valido, opcion_valida_menu,
     # helpers
@@ -299,11 +299,7 @@ def submenu_filtros(filtros, clase_id):
         print(f"Apellido actual: {filtros['apellido']!r}")
         print(f"Legajo actual: {filtros['legajo']}")
         print(f"Estado actual: {filtros['estado']}")
-        print("a) Filtrar por apellido (vacío = sin filtro)")
-        print("b) Filtrar por legajo (número exacto; vacío = sin filtro)")
-        print("c) Filtrar por estado (Pes = 0; AJ = 1; AI = 2; vacío = sin filtro)")
-        print("d) Limpiar todos los filtros")
-        print("0) Volver")
+        mostrar_submenu_filtrar()
         opcion = input("Elegí: ").strip().lower()
         if not opcion_valida_menu(opcion, {"0", "a", "b", "c", "d"}):
             print("Opción inválida.")
