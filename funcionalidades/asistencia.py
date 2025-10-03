@@ -272,7 +272,7 @@ def modificar_o_eliminar_registro(clase_id):
     leg = legajo_valido(tipo="alumno")
     actual = estado_de(clase_id, leg)
     print(f"Estado actual: {texto_estado(actual)}")
-    print('Nuevo estado (0/1/2) o "E" para eliminar, Enter = sin cambios')
+    print('Ingresá 0 = Presente, 1 = AJ, 2 = AI, E = Eliminar registro o Enter = no cambiar')
     val = input("Nuevo estado: ").strip().upper()
     if val == "":
         print("Sin cambios."); return
@@ -425,11 +425,7 @@ def ver_historial_y_totales_alumno():
     opcion = input('¿Modificar un registro puntual? (S/N): ').strip().upper()
     if opcion == "S":
         # Pedir CLASE_ID
-        clase_texto = input("CLASE_ID: ").strip()
-        if not clase_texto.isdigit():
-            print("CLASE_ID inválido.")
-            return
-        clase_id = int(clase_texto)
+        clase_id = legajo_valido(tipo="clase")
         # Pedir nuevo estado o eliminar
         print('Nuevo estado: 0=Presente, 1=AJ, 2=AI, "E"=Eliminar, Enter=sin cambios')
         est = input("Nuevo estado: ").strip().upper()
@@ -469,48 +465,34 @@ def gestion_asistencias():
                 return "logout"
             # Opción 1: cargar asistencia por clase
             elif opcion == "1":
-                # 1) elegir clase
+                # 1) Elegir clase
                 mostrar_lista_de_clases()
-                clase_txt = input("Ingresá el ID de la clase: ").strip()
-                if clase_txt.isdigit():
-                    clase_id = int(clase_txt)
-                    clases_por_id, _ = construir_indices()
-                    if clase_id in clases_por_id:
-                        # 2) pedir legajo inicial (Enter = todos)
-                        legajo_txt = pedir_legajo("Ingresá legajo inicial (Enter = todos): ")
-                        if legajo_txt == "":
-                            inicio_param = None
-                        else:
-                            inicio_param = legajo_valido(tipo="alumno")
-                        registrar_asistencia_secuencial(clase_id, inicio_legajo=inicio_param)
-                    else:
-                        print("ID de clase inexistente.")
+                clase_id = legajo_valido(tipo="clase")
+                # 2) Pedir legajo inicial
+                legajo_txt = input("Ingresá 1 para iniciar desde el legajo inicial u otro valor para iniciar desde un legajo personalizado: ").strip()
+                if legajo_txt == "1":
+                    inicio_param = None
                 else:
-                    print("ID inválido.")
+                    inicio_param = legajo_valido(tipo="alumno")
+                # 3) Registrar asistencias
+                registrar_asistencia_secuencial(clase_id, inicio_legajo=inicio_param)
             # Opción 2: modificar registros
             elif opcion == "2":
                 mostrar_lista_de_clases()
-                clase_txt = input("Ingresá el ID de la clase: ").strip()
-                if clase_txt.isdigit():
-                    modificar_o_eliminar_registro(int(clase_txt))
-                else:
-                    print("ID inválido.")
+                clase_id = legajo_valido(tipo="clase")
+                modificar_o_eliminar_registro(clase_id)
             # Opción 3: filtros (y mostrar tabla filtrada)
             elif opcion == "3":
                 mostrar_lista_de_clases()
-                clase_txt = input("Ingresá el ID de la clase para filtrar: ").strip()
-                if clase_txt.isdigit():
-                    clase_id = int(clase_txt)
-                    filtros = {"apellido": "", "legajo": None, "estado": None}
-                    submenu_filtros(filtros, clase_id)
-                    mostrar_tabla_clase(
-                        clase_id,
-                        filtro_apellido=filtros["apellido"],
-                        filtro_legajo=filtros["legajo"],
-                        filtro_estado=filtros["estado"],
-                    )
-                else:
-                    print("ID inválido.")
+                clase_id = legajo_valido(tipo="clase")
+                filtros = {"apellido": "", "legajo": None, "estado": None}
+                submenu_filtros(filtros, clase_id)
+                mostrar_tabla_clase(
+                    clase_id,
+                    filtro_apellido=filtros["apellido"],
+                    filtro_legajo=filtros["legajo"],
+                    filtro_estado=filtros["estado"],
+                )
             # Opción 4: alumnos global
             elif opcion == "4":
                 ver_alumnos_global()
