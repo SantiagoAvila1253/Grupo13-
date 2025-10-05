@@ -11,6 +11,8 @@ from core import (
     # helpers
     legajo_valido, actualizar_alumnos_ordenada
 )
+from functools import reduce
+
 
 # Crear diccionarios de clases por id y de alumnos por legajo
 def construir_indices():
@@ -35,27 +37,25 @@ def eliminar_asistencia(clase_id, legajo):
 # Cálculos
 
 # Estadísticas globales de un alumno en todas las clases: presentes, AJ, AI, total, %AI, supera_25 (pct = porcentaje)
+
 def estadisticas_alumno(legajo):
-    presentes = 0
-    aus_just = 0
-    aus_injust = 0
-    # Recorrer todas las asistencias cargadas
-    for clave, estado in asistencias.items():
-        clase_id, leg = clave
-        if leg == legajo:
-            if estado == PRESENTE:
-                presentes += 1
-            elif estado == AUS_J:
-                aus_just += 1
-            elif estado == AUS_I:
-                aus_injust += 1
+
+    presentes, aus_just, aus_injust = reduce(
+        lambda acc, kv: (
+            acc[0] + (1 if kv[1] == PRESENTE and kv[0][1] == legajo else 0),
+            acc[1] + (1 if kv[1] == AUS_J and kv[0][1] == legajo else 0),
+            acc[2] + (1 if kv[1] == AUS_I and kv[0][1] == legajo else 0)
+        ),
+        asistencias.items(),
+        (0, 0, 0)
+    )
+
     total = presentes + aus_just + aus_injust
-    if total > 0:
-        pct_ai = (aus_injust / total) * 100.0
-    else:
-        pct_ai = 0.0
+    pct_ai = (aus_injust / total) * 100.0 if total > 0 else 0.0
     supera_25 = pct_ai > 25.0
+
     return presentes, aus_just, aus_injust, total, pct_ai, supera_25
+
 
 # Aplica inactivo según % de inasistencias injustificadas (>25%)
 def aplicar_desactivacion_por_ausentismo(legajo):
@@ -240,7 +240,7 @@ def pedir_legajo(mensaje="Ingresá el LEGAJO: "):
 # Acciones, opciones del menú del panel
 
 # Carga secuencial de asistencia: permite elegir legajo de inicio (opcional). Con Enter empieza desde el primero
-def registrar_asistencia_secuencial(clase_id, alumnos_ordenada, inicio_legajo=None):
+def registrar_asistencia_secuencial(clase_id, inicio_legajo=None):
     # actualizar lista alumnos ordenada
     alumnos_ordenada = actualizar_alumnos_ordenada()
     # índice de inicio (por defecto, el primero)
@@ -359,30 +359,32 @@ def submenu_filtros(filtros, clase_id):
 def ver_alumnos_global():
     # Encabezado de la tabla
     print("\n--- ALUMNOS (totales acumulados) ---")
-    print("LEGAJO | APELLIDO, NOMBRE           | P  | AJ | AI | Tot | %Asist | %Aus (AI) | ¿>25%?")
-    print("-------+-----------------------------+----+----+----+-----+--------+-----------+--------")
+    print(f"{'LEGAJO':<7} | {'APELLIDO, NOMBRE':<27} | {'P':^3} | {'AJ':^3} | {'AI':^3} | {'Tot':^4} | {'%Asist':^8} | {'%Aus (AI)':^10} | {'¿>25%?':^7}")
+    print("-" * 90)
+
     # lista alumnos actualizada
     alumnos_ordenada = actualizar_alumnos_ordenada()
+
     # Recorrer alumnos (ordenados por Apellido, Nombre, Legajo)
     for alumno in alumnos_ordenada:
         legajo = alumno[AL_LEGAJO]
         apellido = alumno[AL_APELLIDO]
         nombre = alumno[AL_NOMBRE]
-        # Obtener estadísticas globales del alumno en TODAS las clases
+
+        # Obtener estadísticas globales del alumno
         presentes, ausentes_justificados, ausentes_injustificados, total_clases, porcentaje_ai, supera_25 = estadisticas_alumno(legajo)
-        # Calcular % de asistencia (si no hay marcas, 0.0)
-        if total_clases > 0:
-            porcentaje_asistencia = (presentes / total_clases) * 100.0
-        else:
-            porcentaje_asistencia = 0.0
-        # Imprimir la fila formateada
+
+        # Calcular % de asistencia
+        porcentaje_asistencia = (presentes / total_clases) * 100.0 if total_clases > 0 else 0.0
+
+        # Imprimir la fila formateada con anchos fijos y centrado correcto
         print(
-            f"{legajo:<6} | "
-            f"{apellido}, {nombre:<21} | "
-            f"{presentes:^2} | {ausentes_justificados:^2} | {ausentes_injustificados:^2} | "
-            f"{total_clases:^3} | "
-            f"{porcentaje_asistencia:>6.1f}% | {porcentaje_ai:>7.1f}%  | "
-            f"{'SI' if supera_25 else 'NO':^6}"
+            f"{legajo:<7} | "
+            f"{apellido + ', ' + nombre:<27} | "
+            f"{presentes:^3} | {ausentes_justificados:^3} | {ausentes_injustificados:^3} | "
+            f"{total_clases:^4} | "
+            f"{porcentaje_asistencia:>7.1f}% | {porcentaje_ai:>9.1f}% | "
+            f"{'SI' if supera_25 else 'NO':^7}"
         )
 
 # Muestra el historial de asistencias de un alumno y sus totales; permite modificación puntual

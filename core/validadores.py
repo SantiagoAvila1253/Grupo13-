@@ -63,20 +63,29 @@ def es_bisiesto(a):
 
 """ Acepta dd-mm-aaaa o dd/mm/aaaa. Valida formato completo con regex; chequea días según mes y febrero bisiesto.
     Rango de año 1915-2009"""
-def fecha_ddmmaaaa_valida(fecha):   
-    s = fecha.strip()
-    if not RE_FECHA_FMT.fullmatch(s):
+def fecha_ddmmaaaa_valida(fecha):
+    s = fecha.strip()   
+    if len(s) != 10:
         return False
-    d_str, m_str, a_str = re.split(r'[-/]', s, maxsplit=2)
-    d, mm, a = int(d_str), int(m_str), int(a_str)
-    if not (1915 <= a <= 2009):
+    if s[2] not in "-/" or s[5] not in "-/":
         return False
-    if not (1 <= mm <= 12):
+    dia_str = s[0:2]    
+    mes_str = s[3:5]     
+    anio_str = s[6:10] 
+    if not (dia_str.isdigit() and mes_str.isdigit() and anio_str.isdigit()):
         return False
-    if mm in (1, 3, 5, 7, 8, 10, 12):
+    dia = int(dia_str)
+    mes = int(mes_str)
+    anio = int(anio_str)
+    if not (1915 <= anio <= 2009):
+        return False
+    if not (1 <= mes <= 12):
+        return False
+    if mes in (1, 3, 5, 7, 8, 10, 12):
         max_dias = 31
-    elif mm in (4, 6, 9, 11):
+    elif mes in (4, 6, 9, 11):
         max_dias = 30
     else:
-        max_dias = 29 if es_bisiesto(a) else 28
-    return 1 <= d <= max_dias
+        max_dias = 29 if es_bisiesto(anio) else 28
+    return 1 <= dia <= max_dias
+

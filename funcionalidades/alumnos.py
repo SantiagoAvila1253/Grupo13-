@@ -151,13 +151,23 @@ def listar_alumnos():
     if not alumnos:
         print("Sin alumnos.")
         return
-    # Encabezado
-    print(f"{'LEGAJO':<8}| {'APELLIDO':<17} | {'NOMBRE':<13} | {'EMAIL':<27}")
-    print("-" * 70)
-    for a in alumnos:
-        print(f"{a[AL_LEGAJO]:<6} | {a[AL_APELLIDO]:<15} | {a[AL_NOMBRE]:<12} | {a[AL_EMAIL]:<30}")
+
+    # Encabezado centrado
+    print(f"{'LEGAJO':^8}|{'APELLIDO':^18}|{'NOMBRE':^18}|{'EMAIL':^35}")
+    print("-" * 82)
+
+    # ✅ Usamos map() para centrar cada campo con anchos iguales
+    filas = map(
+        lambda a: f"{str(a[AL_LEGAJO]):^8}|{a[AL_APELLIDO]:^18}|{a[AL_NOMBRE]:^18}|{a[AL_EMAIL]:^35}",
+        alumnos
+    )
+
+    # ✅ Imprimimos todas las filas con join()
+    print("\n".join(filas))
     print()
     return
+
+
 
 # Menú de alumnos (loop de opciones)
 def menu_alumnos():
