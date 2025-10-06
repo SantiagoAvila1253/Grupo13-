@@ -6,7 +6,6 @@ def mostrar_menu_login():
     print("2) Resetear contraseña")
     print("3) Salir")
 
-
 def mostrar_menu_principal():
     print("\n--- MENÚ PRINCIPAL ---")
     print("1) Gestión de alumnos")
@@ -14,7 +13,6 @@ def mostrar_menu_principal():
     print("3) Reportes")
     print("9) Cerrar sesión")
     print("0) Salir")
-
 
 def mostrar_menu_alumnos():
     print("\n--- MENÚ ALUMNOS ---")
@@ -24,8 +22,6 @@ def mostrar_menu_alumnos():
     print("4) Modificar alumno")
     print("9) Cerrar sesión")
     print("0) Volver")
-
-
 
 def mostrar_menu_asistencia():
     print("\n--- MENÚ ASISTENCIA ---")
