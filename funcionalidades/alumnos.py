@@ -156,13 +156,13 @@ def listar_alumnos():
     print(f"{'LEGAJO':^8}|{'APELLIDO':^18}|{'NOMBRE':^18}|{'EMAIL':^35}")
     print("-" * 82)
 
-    # ✅ Usamos map() para centrar cada campo con anchos iguales
+    # Usamos map() para centrar cada campo con anchos iguales
     filas = map(
         lambda a: f"{str(a[AL_LEGAJO]):^8}|{a[AL_APELLIDO]:^18}|{a[AL_NOMBRE]:^18}|{a[AL_EMAIL]:^35}",
         alumnos
     )
 
-    # ✅ Imprimimos todas las filas con join()
+    # Imprimimos todas las filas con join()
     print("\n".join(filas))
     print()
     return
