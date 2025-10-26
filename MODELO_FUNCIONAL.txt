@@ -1,0 +1,191 @@
+Modelo funcional y de persistencia del sistema de presentismo
+
+Dominio del problema
+
+Se gestiona una única comisión.
+
+Esa comisión tiene múltiples clases (encuentros reales a lo largo del cuatrimestre). Cada clase tiene:
+
+id_clase (único)
+materia
+fecha
+día
+horario
+
+Cada alumno pertenece a la comisión completa, no “a una clase puntual”.
+
+En cada clase, cada alumno puede estar Presente (P), Ausente Injustificado (AI), Ausente Justificado (AJ).
+
+Existe una regla de negocio: si el alumno supera el 25 % de inasistencias acumuladas, queda dado de baja de la comisión.
+
+Persistencia
+2.1. Archivo data/sistema.json
+Contiene las entidades maestras:
+
+alumnos: lista de diccionarios
+Cada alumno tiene:
+{
+"legajo": int,
+"apellido": str,
+"nombre": str,
+"dni": int,
+"nacimiento": "YYYY-MM-DD"
+"mail": str,
+"% asistencia": float con 2 decimales
+"activo": bool
+}
+
+clases: lista de diccionarios
+Cada clase tiene:
+{
+"id_clase": int,
+"materia": str
+"fecha": "YYYY-MM-DD",
+"horario": str
+}
+docentes = [
+    [2001, "12345678", "Clave.123", "Carlos", "Gonzalez", "cgonzalez@uade.edu.ar"],
+]
+docentes: lista de diccionarios
+{
+"id_docente": int,
+"apellido": str,
+"nombre": str,
+"nacimiento": "YYYY-MM-DD"
+"mail": str,
+"dni/usuario": int,
+"clave": str
+"activo": bool
+}
+
+2.2. Archivo data/asistencia.csv
+Este archivo es histórico de asistencia por clase y por alumno.
+
+Formato de columnas:
+
+clase_id;legajo;apellido;nombre;estado
+
+Ejemplo:
+101;2025-08-12;1001;Pérez;Juan;P
+101;2025-08-12;1002;Gómez;Ana;AI
+102;2025-08-19;1001;Pérez;Juan;AJ
+102;2025-08-19;1002;Gómez;Ana;P
+...
+
+Interpretación:
+
+Cada fila es "el alumno LEG_XXX tuvo estado Y en la clase ID_YYY, dada en FECHA_Z".
+
+apellido y nombre se guardan también en el CSV para que el archivo sea legible y exportable sin abrir el JSON.
+
+estado ∈ {"P", "AI", "AJ", ""}.
+
+Política de guardado:
+
+El CSV crece con el tiempo (cada nueva clase produce nuevas filas).
+
+Las filas se agregan al final. No intentamos mantenerlo reordenado.
+
+No se borra historial. Nunca se elimina una fila existente.
+
+Flujo de toma de asistencia
+
+Paso 1. El usuario elige una clase (por id_clase).
+
+Paso 2. El sistema hace una “sincronización previa” ANTES de mostrar la lista:
+a) Se lee sistema.json para obtener:
+
+todos los alumnos con activo == true
+
+los datos actuales de apellido y nombre
+
+la fecha de esa clase
+b) Se leen las filas de asistencia.csv que correspondan a esa clase_id.
+c) Para cada alumno activo del JSON:
+
+si ya existe fila en asistencia.csv para esa clase y ese legajo:
+usamos esa fila, pero actualizamos apellido y nombre en memoria por si cambiaron
+
+si no existe fila todavía:
+creamos una fila en memoria con estado vacío ("") para ese alumno en esa clase
+d) Alumnos con activo == false en JSON NO se incluyen para marcar esa clase.
+e) Se ordena la lista en memoria por apellido (o apellido+nombre) antes de mostrar.
+
+Paso 3. El docente marca estados para cada alumno visible.
+
+Paso 4. Al confirmar "Guardar":
+
+Se vuelca de nuevo al CSV el bloque de esa clase_id con los valores actualizados.
+
+Se conserva el resto del CSV tal como estaba.
+
+Regla del 25 %
+
+Total de clases dictadas = cantidad de elementos en sistema.json["clases"].
+
+Para cada alumno:
+
+se cuentan las filas en asistencia.csv donde estado == "AJ".
+
+se calcula ausencias / total_clases.
+
+Si ese valor > 0.25:
+
+En sistema.json, ese alumno pasa a "activo": false.
+
+Un alumno inactivo deja de aparecer en sincronizaciones futuras (ya no se le pide asistencia más).
+
+Es una baja lógica, no física. El alumno sigue existiendo en el JSON y sigue apareciendo en asistencias históricas ya guardadas en el CSV.
+
+Política de actualización de datos
+
+Alta de alumno:
+
+Se agrega al JSON con activo=true.
+
+En la próxima toma de asistencia de cualquier clase, durante la sincronización previa, se le generan (si faltan) sus filas en memoria con estado "" para esa clase y se incluirá en el guardado.
+
+No se van a hacer altas de clases en este proyecto
+
+Cambios en  datos alumnos:
+
+Se pisa el registro del alumno en JSON.
+
+Cambios en matriz de asistencias en csv:
+
+Se pueden cambiar los estados P / AJ / AI / "", se pisan en el csv realizando cambios destructivos
+
+En la próxima sincronización de cada clase, ese apellido/nombre actualizado se usará y quedará reflejado cuando se vuelva a guardar esa clase.
+
+No hay versiones anteriores ni auditoría de cambios personales: actualización destructiva.
+
+No se reordena físicamente el contenido de los archivos al guardar.
+El orden “lindo” (por apellido, por fecha, etc.) se hace en memoria al mostrar información al usuario o al generar reportes.
+
+Arquitectura del código
+
+core/es_json.py: única capa autorizada a leer y escribir sistema.json.
+
+core/es_csv.py: única capa autorizada a leer y escribir asistencia.csv.
+
+core/estadisticas.py: lógica de cálculo de ausencias y baja automática por 25 %.
+
+funcionalidades/alumnos.py: alta, modificación y baja lógica (activo=false) de alumnos. Usa es_json.
+
+funcionalidades/asistencia.py: orquesta la sincronización previa de una clase, permite marcar estados y confirma guardado. Usa es_json + es_csv.
+
+funcionalidades/reportes.py: genera reportes y listados legibles; usa es_json + es_csv + estadisticas.
+
+login/autenticacion.py: valida acceso según docentes declarados en sistema.json.
+
+tests/tests_unitarios.py: contiene las pruebas unitarias mínimas requeridas (JSON, CSV, regla 25 %).
+
+Estándares de guardado
+
+Guardado no es automático mientras se está editando.
+
+Siempre se pregunta al usuario si desea confirmar y guardar cambios.
+
+Si el usuario cancela, el archivo CSV no se sobrescribe.
+
+Esto permite “salir sin guardar” y evita estados parciales.
