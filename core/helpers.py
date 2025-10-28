@@ -45,5 +45,5 @@ def legajo_valido(tipo):  # tipo: "alumno", "clase" o "inactivo"
 def actualizar_alumnos_ordenada():
     import core
     from core import AL_APELLIDO, AL_NOMBRE, AL_LEGAJO
-    core.alumnos_ordenada = listar_alumnos_ordenados(core.alumnos, AL_APELLIDO, AL_NOMBRE, AL_LEGAJO)
+    core.alumnos_ordenada = actualizar_alumnos_ordenada(core.alumnos, AL_APELLIDO, AL_NOMBRE, AL_LEGAJO)
     return core.alumnos_ordenada

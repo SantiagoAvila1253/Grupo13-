@@ -1,4 +1,4 @@
-from .helpers import listar_alumnos_ordenados
+from .helpers import actualizar_alumnos_ordenada
 
 # Base de datos
 
@@ -72,5 +72,5 @@ asistencias = {}
 
 # Variantes de alumnos
 alumnos_baja = []
-alumnos_ordenada = listar_alumnos_ordenados(alumnos,AL_APELLIDO,AL_NOMBRE,AL_LEGAJO)
+alumnos_ordenada = actualizar_alumnos_ordenada(alumnos,AL_APELLIDO,AL_NOMBRE,AL_LEGAJO)
 
