@@ -1,9 +1,5 @@
 __pycache__/
 *.pyc
 *.pyo
-*.log
-logs/
-*.csv
-*.json
 .idea/
 .vscode/

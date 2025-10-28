@@ -1,0 +1,11 @@
+{
+  "10000": {
+    "id_docente": 10000,
+    "dni/usuario": "12345678",
+    "clave": "Clave.123",
+    "nombre": "Carlos",
+    "apellido": "Gonzalez",
+    "mail": "cgonzalez@uade.edu.ar",
+    "activo": true
+  }
+}

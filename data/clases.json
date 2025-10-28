@@ -1,0 +1,121 @@
+{
+  "20001": {
+    "id_clase": 20001,
+    "materia": "Matemática",
+    "fecha": "2025-08-05",
+    "dia": "Martes",
+    "horario": "14:00 - 18:00"
+  },
+  "20002": {
+    "id_clase": 20002,
+    "materia": "Matemática",
+    "fecha": "2025-08-12",
+    "dia": "Martes",
+    "horario": "14:00 - 18:00"
+  },
+  "20003": {
+    "id_clase": 20003,
+    "materia": "Matemática",
+    "fecha": "2025-08-19",
+    "dia": "Martes",
+    "horario": "14:00 - 18:00"
+  },
+  "20004": {
+    "id_clase": 20004,
+    "materia": "Matemática",
+    "fecha": "2025-08-26",
+    "dia": "Martes",
+    "horario": "14:00 - 18:00"
+  },
+  "20005": {
+    "id_clase": 20005,
+    "materia": "Matemática",
+    "fecha": "2025-09-02",
+    "dia": "Martes",
+    "horario": "14:00 - 18:00"
+  },
+  "20006": {
+    "id_clase": 20006,
+    "materia": "Matemática",
+    "fecha": "2025-09-09",
+    "dia": "Martes",
+    "horario": "14:00 - 18:00"
+  },
+  "20007": {
+    "id_clase": 20007,
+    "materia": "Matemática",
+    "fecha": "2025-09-16",
+    "dia": "Martes",
+    "horario": "14:00 - 18:00"
+  },
+  "20008": {
+    "id_clase": 20008,
+    "materia": "Matemática",
+    "fecha": "2025-09-23",
+    "dia": "Martes",
+    "horario": "14:00 - 18:00"
+  },
+  "20009": {
+    "id_clase": 20009,
+    "materia": "Matemática",
+    "fecha": "2025-09-30",
+    "dia": "Martes",
+    "horario": "14:00 - 18:00"
+  },
+  "20010": {
+    "id_clase": 20010,
+    "materia": "Matemática",
+    "fecha": "2025-10-07",
+    "dia": "Martes",
+    "horario": "14:00 - 18:00"
+  },
+  "20011": {
+    "id_clase": 20011,
+    "materia": "Matemática",
+    "fecha": "2025-10-14",
+    "dia": "Martes",
+    "horario": "14:00 - 18:00"
+  },
+  "20012": {
+    "id_clase": 20012,
+    "materia": "Matemática",
+    "fecha": "2025-10-21",
+    "dia": "Martes",
+    "horario": "14:00 - 18:00"
+  },
+  "20013": {
+    "id_clase": 20013,
+    "materia": "Matemática",
+    "fecha": "2025-10-28",
+    "dia": "Martes",
+    "horario": "14:00 - 18:00"
+  },
+  "20014": {
+    "id_clase": 20014,
+    "materia": "Matemática",
+    "fecha": "2025-11-04",
+    "dia": "Martes",
+    "horario": "14:00 - 18:00"
+  },
+  "20015": {
+    "id_clase": 20015,
+    "materia": "Matemática",
+    "fecha": "2025-11-11",
+    "dia": "Martes",
+    "horario": "14:00 - 18:00"
+  },
+  "20016": {
+    "id_clase": 20016,
+    "materia": "Matemática",
+    "fecha": "2025-11-18",
+    "dia": "Martes",
+    "horario": "14:00 - 18:00"
+  },
+  "20017": {
+    "id_clase": 20017,
+    "materia": "Matemática",
+    "fecha": "2025-11-25",
+    "dia": "Martes",
+    "horario": "14:00 - 18:00"
+  }
+}
