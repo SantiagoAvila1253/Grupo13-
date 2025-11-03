@@ -115,9 +115,9 @@ def reporte_top_inasistencias(alumnos):
     alumnos_ordenados = sorted(alumnos, key=lambda x: x[3], reverse=True)
 
     # Aplicamos slicing para obtener los 5 primeros
-    top_5 = alumnos_ordenados[0:5:1]  # [inicio:fin:paso]
+    top_5 = alumnos_ordenados[0:5:1]
 
-    print("\n📋 Reporte: 5 alumnos con más inasistencias\n")
+    print("\nReporte: 5 alumnos con más inasistencias\n")
     for legajo, apellido, nombre, inasistencias in top_5:
         print(f"{legajo} - {apellido}, {nombre}: {inasistencias} inasistencias")
 
