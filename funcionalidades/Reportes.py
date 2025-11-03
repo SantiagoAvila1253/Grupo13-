@@ -110,6 +110,17 @@ def reporte_por_clase(asistencias, alumnos, clases, clase_id):
         resultado += "   ---\n"
     return resultado
 
+def reporte_top_inasistencias(alumnos):
+    # Ordenamos por inasistencias (de mayor a menor)
+    alumnos_ordenados = sorted(alumnos, key=lambda x: x[3], reverse=True)
+
+    # Aplicamos slicing para obtener los 5 primeros
+    top_5 = alumnos_ordenados[0:5:1]  # [inicio:fin:paso]
+
+    print("\n📋 Reporte: 5 alumnos con más inasistencias\n")
+    for legajo, apellido, nombre, inasistencias in top_5:
+        print(f"{legajo} - {apellido}, {nombre}: {inasistencias} inasistencias")
+
 # Loop del submenú de reportes.
 def menu_reportes():
     en_reportes = True
@@ -132,4 +143,6 @@ def menu_reportes():
         elif opcion == "3":
             for alumno in alumnos:
                 print(reporte_asistencia_por_estudiante(asistencias, alumnos, alumno[AL_LEGAJO]))
+        elif opcion == "4":
+            reporte_top_inasistencias(alumnos)  
     return "volver"
