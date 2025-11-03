@@ -25,6 +25,11 @@ RUTA_CLASES = "data/clases.json"
 RUTA_DOCENTES = "data/docentes.json"
 CARPETA_RESPALDO = "data/respaldo"
 
+# Devuelve True si 'obj' es un dict y todos sus valores son dict
+def es_diccionario_de_diccionarios(obj):
+    if not isinstance(obj, dict):
+        return False
+    return all(isinstance(v, dict) for v in obj.values())
 
 # Pausa de pantalla para continuar con Enter
 def pausa():
@@ -121,9 +126,9 @@ def leer_json(ruta):
         with open(ruta, "r", encoding="utf-8") as archivo:
             datos = json.load(archivo)
 
-            # Verifica que 'datos' sea un diccionario antes de continuar
-            if not isinstance(datos, dict):
-                print(f"No se pudo ejecutar la acción. Motivo: estructura inválida en {ruta} (se esperaba un diccionario).")
+            # Verifica que 'datos' sea un diccionario de diccionarios
+            if not es_diccionario_de_diccionarios(datos):
+                print(f"No se pudo ejecutar la acción. Motivo: estructura inválida en {ruta} (se esperaba un diccionario de diccionarios).")
                 if preguntar_respaldo():
                     guardar_respaldo(ruta, None)
                 else:
@@ -183,9 +188,9 @@ def guardar_json(ruta, datos):
     En caso de error, ofrece guardar respaldo con el contenido en memoria.
     """
 
-    # Verifica que 'datos' sea un diccionario antes de intentar guardarlo
-    if not isinstance(datos, dict):
-        print("No se pudo ejecutar la acción. Motivo: los datos a guardar deben ser un diccionario.")
+    # Verifica que todos los valores sean diccionarios (forma esperada por entidad)
+    if not es_diccionario_de_diccionarios(datos):
+        print("No se pudo ejecutar la acción. Motivo: los valores del diccionario deben ser diccionarios (forma entidad).")
         print("Tipo de error: ValueError.")
         if preguntar_respaldo():
             guardar_respaldo(ruta, None)

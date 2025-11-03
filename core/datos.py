@@ -2,11 +2,11 @@
 """
 Este módulo que antes contenía la base de datos, ahora define constantes y configuraciones globales.
 - Se mantiene el uso de tuplas para representar estructuras inmutables
-# Archivos persistentes pasan a almacenarse en:
-#   data/alumnos.json   -> Diccionario de diccionarios
-#   data/clases.json    -> Diccionario de diccionarios
-#   data/docentes.json  -> Diccionario de diccionarios
-#   data/asistencia.csv -> Matriz (lista de listas)
+- Archivos persistentes pasan a almacenarse en:
+    + data/alumnos.json   -> Diccionario de diccionarios
+    + data/clases.json    -> Diccionario de diccionarios
+    + data/docentes.json  -> Diccionario de diccionarios
+    + data/asistencia.csv -> Matriz (lista de listas)
 """
 
 # Estados de asistencia
