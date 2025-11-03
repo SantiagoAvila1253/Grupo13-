@@ -4,18 +4,7 @@ from .datos import (
     # importar listas fijas
     ESTADOS_ASISTENCIA, ESTADOS_ALUMNO, PRESENTE, AUS_J, AUS_I, AL_ACTIVO, AL_INACTIVO,
 
-"""    # docentes + referencias
-    docentes, DO_LEGAJO, DO_DNI, DO_CLAVE, DO_NOMBRE, DO_APELLIDO, DO_EMAIL,"""
 
-    # clases + referencias
-    clases, CL_ID, CL_MATERIA, CL_FECHA, CL_DIA, CL_HORARIO,
-
-    # alumnos + referencias
-    alumnos, AL_LEGAJO, AL_DNI, AL_APELLIDO, AL_NOMBRE, AL_FECHA_NAC, AL_EMAIL, AL_ESTADO,
-    alumnos_ordenada, alumnos_baja,
-
-    # asistencias
-    asistencias,
 )
 
 from .menus import (
