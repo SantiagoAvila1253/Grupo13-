@@ -1,11 +1,10 @@
-# core/helpers.py
-
-# Funciones de ayuda integradas al modelo nuevo de persistencia contra los JSON (core.es_json)
+# Funciones de ayuda integradas
 
 from core import validadores as val
 from core.es_json import leer_alumnos, leer_clases
 
 
+# Valida legajo existente
 def pedir_legajo_existente(etiqueta="Legajo"):
     """
     Pide un legajo por input hasta que:
@@ -28,6 +27,7 @@ def pedir_legajo_existente(etiqueta="Legajo"):
         return int(texto)
 
 
+# Valida clase existente
 def pedir_id_clase_existente(etiqueta="ID de clase"):
     """
     Pide un id de clase por input hasta que:
@@ -48,3 +48,50 @@ def pedir_id_clase_existente(etiqueta="ID de clase"):
             print(f"{etiqueta} inexistente: {texto}")
             continue
         return int(texto)
+    
+
+# Entrada segura de contraseña (multiplataforma)
+def pedir_password(prompt="Contraseña: "):
+    """
+    Pide una contraseña de forma segura:
+    - En Windows: muestra asteriscos (*) al escribir.
+    - En Linux / Mac: oculta los caracteres con getpass.
+    """
+    import sys
+
+    # Detección del sistema operativo
+    if sys.platform.startswith("win"):
+        import msvcrt
+        print(prompt, end="", flush=True)
+        password = ""
+
+        while True:
+            tecla = msvcrt.getch()
+            # Caso base: Enter fin de ingreso
+            if tecla in (b"\r", b"\n"):
+                print()
+                break
+            # Backspace borrar un carácter
+            elif tecla == b"\x08":
+                if len(password) > 0:
+                    password = password[:-1]
+                    print("\b \b", end="", flush=True)
+            # ESC cancelar ingreso
+            elif tecla == b"\x1b":
+                print("\nCancelado.")
+                return ""
+            # Caso recursivo reducido (nuevo carácter)
+            else:
+                try:
+                    char = tecla.decode("utf-8")
+                except UnicodeDecodeError:
+                    continue
+                password += char
+                print("*", end="", flush=True)
+
+        return password
+
+    else:
+        # En otros sistemas usa getpass (sin mostrar caracteres)
+        import getpass
+        return getpass.getpass(prompt)

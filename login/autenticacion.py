@@ -1,55 +1,155 @@
-# importar funciones y variables
+# Módulo: autenticacion.py
+"""
+Responsabilidades:
+- Gestionar el login de usuarios (docentes).
+- Validar credenciales usando los datos del JSON de docentes.
+- Permitir el reseteo seguro de contraseñas (ingreso protegido).
+"""
 
-from core import (
-    # Funciones
-    mostrar_menu_login, opcion_valida_menu, dni_valido, password_valida,
-    # Datos
-    docentes, DO_DNI, DO_CLAVE
-)
+from core import menus, validadores, es_json
+from core.helpers import pedir_password
+from core.es_json import pausa
 
-# login
-def login_usuario():
-    while True:
-        mostrar_menu_login()
-        opcion = input("Elegí una opción: ").strip()
-        if not opcion_valida_menu(opcion, {"1", "2", "3"}):
-            print("Opción inválida.")
-        elif opcion == "1":
-            dni = input("Ingresá tu DNI sin puntos ni comas o -1 para salir): ").strip()
-            if dni == "-1":
-                return None
-            if not dni_valido(dni):
-                print("DNI inválido.")
-            else:
-                clave = input("Ingresá tu Contraseña: ")
-                ok = False
-                for item in docentes:
-                    if item[DO_DNI] == dni and item[DO_CLAVE] == clave:
-                        ok = True
-                if ok:
-                    print("Login correcto.")
-                    return {"dni": dni}
-                else:
-                    print("Contraseña incorrecta. Probá  de nuevo o reseteá tu contraseña.")
-        elif opcion == "2":
-            reiniciar_clave()
-        elif opcion == "3":
-            return None
+
+# Auxiliar: validación recursiva de credenciales
+def validar_credenciales_rec(dic_docentes, dni, clave, claves, i=0):
+    """
+    Busca recursivamente un docente válido por DNI y clave.
+    - Caso base: si se recorrieron todas las claves → False.
+    - Reducción de dominio: avanza al siguiente índice.
+    """
+    if i == len(claves):
+        return False  # caso base
+
+    clave_actual = claves[i]
+    datos = dic_docentes[clave_actual]
+
+    if str(datos.get("dni")) == str(dni) and str(datos.get("clave")) == str(clave):
+        return True
+
+    # caso recursivo + reducción del dominio
+    return validar_credenciales_rec(dic_docentes, dni, clave, claves, i + 1)
+
+
+# Auxiliar: actualización recursiva de contraseña
+def actualizar_clave_rec(dic_docentes, dni, nueva_clave, claves, i=0):
+    """
+    Actualiza la contraseña de un docente de forma recursiva.
+    - Caso base: si se recorrieron todas las claves → False.
+    - Reducción de dominio: avanza al siguiente índice.
+    """
+    if i == len(claves):
+        return False  # caso base
+
+    clave_actual = claves[i]
+    datos = dic_docentes[clave_actual]
+
+    if str(datos.get("dni")) == str(dni):
+        datos["clave"] = str(nueva_clave)
+        return True
+
+    # caso recursivo + reducción del dominio
+    return actualizar_clave_rec(dic_docentes, dni, nueva_clave, claves, i + 1)
+
 
 # Resetear clave
 def reiniciar_clave():
-    dni = input("Ingresá tu DNI: ").strip()
-    if not dni_valido(dni):
-        print("DNI inválido.")
-        return False
-    nueva = input("Nueva contraseña (mínimo 4 caracteres): ")
-    if not password_valida(nueva, 4):
-        print("Inválida.")
-        return False
-    for item in docentes:
-        if item[DO_DNI] == dni:
-            item[DO_CLAVE] = nueva
-            print("Contraseña actualizada.")
+    """
+    Permite reiniciar la contraseña de un docente existente.
+    - Ingreso protegido con pedir_password (Windows: '*' / otros OS: oculto).
+    - Pide confirmación de la nueva contraseña.
+    """
+    try:
+        docentes = es_json.leer_docentes()
+        dni = input("Ingresá tu DNI: ").strip()
+
+        if not validadores.dni_valido(dni):
+            print("DNI inválido.")
+            pausa()
+            return False
+
+        nueva = pedir_password("Nueva contraseña (mínimo 4 caracteres): ")
+        if not validadores.password_valida(nueva, 4):
+            print("Contraseña inválida (mínimo 4 caracteres).")
+            pausa()
+            return False
+
+        confirma = pedir_password("Repetí la nueva contraseña: ")
+        if nueva != confirma:
+            print("Las contraseñas no coinciden.")
+            pausa()
+            return False
+
+        # Actualización (recursiva) y persistencia
+        if actualizar_clave_rec(docentes, dni, nueva, list(docentes.keys())):
+            es_json.guardar_json("data/docentes.json", docentes)
+            print("Contraseña actualizada correctamente.")
+            pausa()
             return True
-    print("Usuario no encontrado.")
-    return False
+
+        print("Usuario no encontrado.")
+        pausa()
+        return False
+
+    except Exception as error:
+        print(f"No se pudo reiniciar la clave. Tipo de error: {type(error).__name__}. Detalle: {error}")
+        pausa()
+        return False
+
+
+# Login de usuario (controlador del ciclo)
+def login_usuario():
+    """
+    Controla el flujo del login (menú + validaciones).
+    Implementación recursiva de flujo:
+      - Caso base: salir o login correcto → retorna dict/None.
+      - Caso recursivo: opción inválida / DNI inválido / credenciales incorrectas → reintenta.
+      - Reducción del dominio: cada intento vuelve a pedir solo el dato necesario.
+    """
+    try:
+        menus.mostrar_menu_login()
+        opcion = input("Elegí una opción: ").strip()
+
+        # Validación de opción
+        if not validadores.opcion_valida_menu(opcion, {"1", "2", "3"}):
+            print("Opción inválida.")
+            pausa()
+            return login_usuario()  # caso recursivo
+
+        # Opción 1: iniciar sesión
+        if opcion == "1":
+            docentes = es_json.leer_docentes()
+            dni = input("Ingresá tu DNI (sin puntos ni comas o -1 para salir): ").strip()
+            if dni == "-1":
+                return None  # caso base
+
+            if not validadores.dni_valido(dni):
+                print("DNI inválido.")
+                pausa()
+                return login_usuario()  # recursivo
+
+            clave = pedir_password("Ingresá tu contraseña: ")
+
+            ok = validar_credenciales_rec(docentes, dni, clave, list(docentes.keys()))
+            if ok:
+                print("Login correcto.")
+                pausa()
+                return {"dni": dni}  # caso base
+            else:
+                print("Credenciales incorrectas.")
+                pausa()
+                return login_usuario()  # recursivo
+
+        # Opción 2: resetear clave
+        if opcion == "2":
+            reiniciar_clave()
+            return login_usuario()  # recursivo (volver al menú de login)
+
+        # Opción 3: salir
+        if opcion == "3":
+            return None  # caso base
+
+    except Exception as error:
+        print(f"No se pudo ejecutar el login. Tipo de error: {type(error).__name__}. Detalle: {error}")
+        pausa()
+        return None
