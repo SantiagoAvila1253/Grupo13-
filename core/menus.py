@@ -33,13 +33,13 @@ def mostrar_menu_asistencia():
     print("9) Cerrar sesión")
     print("0) Volver")
 
-def mostrar_submenu_filtrar():
+def mostrar_menu_filtrar():
     print("\n--- MENÚ DE FILTROS ---")
     print("1) Filtrar asistencia por apellido")
     print("2) Filtrar asistencia por legajo")
     print("3) Filtrar asistencia por estado (P, AJ, AI)")
     print("4) Filtrar alumnos por apellido")
-    print("5) Filtrar clases por docente")
+    print("5) Filtrar clases por mes (ej. '03' para marzo)")
     print("0) Volver")
 
 def mostrar_menu_reportes():

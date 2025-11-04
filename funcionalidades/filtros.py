@@ -105,7 +105,7 @@ def filtrar_clases_por_mes_rec(dic_clases, mes, claves=None, acumulado=None):
 # Menú principal de filtros (recursivo)
 def menu_filtros():
     try:
-        menus.mostrar_submenu_filtrar()
+        menus.mostrar_menu_filtrar()
         opcion = input("Elegí una opción: ").strip()
 
         # Validar opción
