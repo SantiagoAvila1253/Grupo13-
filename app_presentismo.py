@@ -1,9 +1,9 @@
 # Control de sesión y ruteo de menús
 
 # Imports
-from core import menus, validadores
-from login.autenticacion import login_usuario
-from funcionalidades import alumnos, asistencia, filtros, reportes
+from .core import menus, validadores
+from .login.autenticacion import login_usuario
+from .funcionalidades import alumnos, asistencia, filtros, reportes
 
 
 # control de la sesión
