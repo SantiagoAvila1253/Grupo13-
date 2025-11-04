@@ -53,9 +53,41 @@ def pedir_id_clase_existente(etiqueta="ID de clase"):
 # Entrada segura de contraseña (multiplataforma)
 def pedir_password(prompt="Contraseña: "):
     """
-    Pide una contraseña de forma segura:
-    - En Windows: muestra asteriscos (*) al escribir.
-    - En Linux / Mac: oculta los caracteres con getpass.
+    Solicita una contraseña de forma segura, mostrando asteriscos (*) en Windows o
+    sin mostrar caracteres en otros sistemas operativos.
+
+    Comportamiento detallado:
+    --------------------------
+    - La función detecta el sistema operativo usando `sys.platform`.
+      Si es Windows, utiliza el módulo `msvcrt` para capturar las teclas una por una
+      sin que se impriman en la consola. En otros sistemas usa `getpass.getpass()`.
+
+    - Mientras el usuario escribe:
+        * Cada carácter válido se guarda internamente en la variable `password`.
+          En pantalla solo se imprime un asterisco (*) para ocultar su valor real.
+        * La tecla Backspace (código ASCII `\\x08`) elimina el último carácter
+          tanto en la variable como visualmente (borrando un asterisco).
+        * La tecla Enter (códigos `\\r` o `\\n`) finaliza el ingreso.
+        * La tecla Escape (código `\\x1b`) cancela la operación y devuelve "".
+
+    - `flush=True` fuerza que los asteriscos o los borrados se vean inmediatamente,
+      sin esperar a que la consola vacíe su buffer.
+
+    - Al finalizar, la función devuelve el texto REAL ingresado por el usuario
+      (sin los asteriscos), que puede luego compararse con una contraseña guardada.
+
+    Ejemplo:
+    --------
+    Usuario escribe: M, a, r, i, a, Backspace, Enter
+
+        Pantalla muestra: *****
+        Valor real devuelto: "Mari"
+
+    Seguridad:
+    ----------
+    - En ningún momento se imprime la contraseña real.
+    - No se almacenan logs ni copias temporales visibles.
+    - Es compatible con Windows, Linux y macOS.
     """
     import sys
 
