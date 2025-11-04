@@ -6,7 +6,7 @@ from . import es_csv
 from . import validadores
 from . import helpers
 from . import estadisticas
-from . import filtros
+from ..funcionalidades import filtros
 from . import menus
 
 # Definición de la API pública del paquete

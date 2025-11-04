@@ -34,10 +34,12 @@ def mostrar_menu_asistencia():
     print("0) Volver")
 
 def mostrar_submenu_filtrar():
-    print("1) Filtrar por apellido")
-    print("2) Filtrar por legajo")
-    print("3) Filtrar por estado (Pes; AJ; AI; sin filtro)")
-    print("4) Limpiar todos los filtros")
+    print("\n--- MENÚ DE FILTROS ---")
+    print("1) Filtrar asistencia por apellido")
+    print("2) Filtrar asistencia por legajo")
+    print("3) Filtrar asistencia por estado (P, AJ, AI)")
+    print("4) Filtrar alumnos por apellido")
+    print("5) Filtrar clases por docente")
     print("0) Volver")
 
 def mostrar_menu_reportes():
