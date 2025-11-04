@@ -1,10 +1,15 @@
-# importar en init
-from .alumnos import (menu_alumnos)
-from .asistencia import (gestion_asistencias)
-from .reportes import (menu_reportes)
+# Paquete funcionalidades Importaciones internas del paquete
 
+from . import asistencia
+from . import alumnos
+from . import filtros
+from . import reportes
+
+# Definición de la API pública del paquete
 __all__ = [
-    "menu_alumnos",
-    "gestion_asistencias",
-    "menu_reportes",
+    "asistencia",
+    "alumnos",
+    "filtros",
+    "reportes",
 ]
+

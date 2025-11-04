@@ -10,7 +10,8 @@ def mostrar_menu_principal():
     print("\n--- MENÚ PRINCIPAL ---")
     print("1) Gestión de alumnos")
     print("2) Gestión de asistencias")
-    print("3) Reportes")
+    print("3) Filtros")
+    print("4) Reportes")
     print("9) Cerrar sesión")
     print("0) Salir")
 
@@ -28,15 +29,15 @@ def mostrar_menu_asistencia():
     print("1) Ingresá un ID de clase para cargar asistencia")
     print("2) Modificar registros por clase")
     print("3) Filtrar")
-    print("4) Ver alumnos")
+    print("4) Reportes")
     print("9) Cerrar sesión")
     print("0) Volver")
 
 def mostrar_submenu_filtrar():
-    print("a) Filtrar por apellido")
-    print("b) Filtrar por legajo")
-    print("c) Filtrar por estado (Pes; AJ; AI; sin filtro)")
-    print("d) Limpiar todos los filtros")
+    print("1) Filtrar por apellido")
+    print("2) Filtrar por legajo")
+    print("3) Filtrar por estado (Pes; AJ; AI; sin filtro)")
+    print("4) Limpiar todos los filtros")
     print("0) Volver")
 
 def mostrar_menu_reportes():

@@ -1,45 +1,69 @@
-# importar menú, validadores y funciones
+# Control de sesión y ruteo de menús
 
-from core import (mostrar_menu_principal, opcion_valida_menu)
-from login import login_usuario
-from funcionalidades import (menu_alumnos, menu_reportes, gestion_asistencias)
+# Imports
+from core import menus, validadores
+from login.autenticacion import login_usuario
+from funcionalidades import alumnos, asistencia, filtros, reportes
 
-# controla la sesión logueada
-# - 'logout' si el usuario cierra sesión,
-# - 'exit' si elige Salir del sistema,
-# - 'volver' si vuelve al menú anterior
+
+# control de la sesión
 def ciclo_sesion():
+    """
+      - 'logout' si el usuario cierra sesión,
+      - 'exit' si elige Salir del sistema,
+      - 'volver' si vuelve al menú anterior.
+    """
     en_sistema = True
     while en_sistema:
-        mostrar_menu_principal()
+        menus.mostrar_menu_principal()
         opcion = input("Elegí una opción: ").strip()
-        if not opcion_valida_menu(opcion, {"0", "1", "2", "3", "9"}):
+
+        # Menú principal actualizado: 1=Alumnos, 2=Asistencias, 3=Filtros, 4=Reportes, 9=Cerrar sesión, 0=Salir
+        if not validadores.opcion_valida_menu(opcion, {"0", "1", "2", "3", "4", "9"}):
             print("Opción inválida.")
-        elif opcion == "0":
+            continue
+
+        if opcion == "0":
             print("Fin.")
             return "exit"
-        elif opcion == "9":
-            # cerrar sesión desde el principal
+
+        if opcion == "9":
             return "logout"
-        elif opcion == "1":
-            r = menu_alumnos()
+
+        if opcion == "1":
+            r = alumnos.menu_alumnos()
             if r == "logout":
                 return "logout"
-        elif opcion == "2":
-            # Gestión de asistencias: entrar directo al panel del módulo
-            r = gestion_asistencias()
+            # si vuelve, continúa en el principal
+            continue
+
+        if opcion == "2":
+            r = asistencia.gestion_asistencias()
             if r == "logout":
                 return "logout"
-            # si vuelve de la gestión, seguimos en el menú principal
-        elif opcion == "3":
-            r = menu_reportes()
+            continue
+
+        if opcion == "3":
+            r = filtros.menu_filtros()
             if r == "logout":
                 return "logout"
+            continue
+
+        if opcion == "4":
+            r = reportes.menu_reportes()
+            if r == "logout":
+                return "logout"
+            continue
+
     return "volver"
 
-# aplicación principal
+
+# Aplicación principal
 def main():
-    # permite re-loguear tras 'Cerrar sesión'
+    """
+      - login
+      - ciclo de sesión (con posibilidad de re-logueo tras 'Cerrar sesión')
+    """
     ejecutando = True
     while ejecutando:
         usuario = login_usuario()
@@ -53,5 +77,7 @@ def main():
         elif resultado == "logout":
             print("Cerraste tu sesión.")
 
+
+# Iniciar main
 if __name__ == "__main__":
     main()
