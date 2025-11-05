@@ -4,6 +4,7 @@
 # - Modificación de datos
 # - Listado y menú de alumnos
 # Integra validaciones (regex) y normaliza entradas antes de operar.
+<<<<<<< Updated upstream
  
 from core import (validadores as val, es_json, helpers)
 from core.datos import ESTADOS_ALUMNO, AL_ACTIVO, AL_INACTIVO, ID_ALUMNO_INICIAL
@@ -62,6 +63,38 @@ def pedir_datos_alumno(alumnos_dict, legajo_existente=None):
         elif val.nom_ape_valido(apellido_input):
             apellido = apellido_input
             apellido_valido = True
+=======
+
+# Datos/IO
+from core.es_json import leer_alumnos, guardar_alumnos
+# Menú
+from core import mostrar_menu_alumnos
+# Validadores
+from core import nom_ape_valido, fecha_ddmmaaaa_valida, email_valido, opcion_valida_menu
+# Helpers (compat: lo que antes se llamaba legajo_valido)
+from core import legajo_valido
+
+
+# Dar de alta un alumno (nuevo o reactivación)
+def alta_alumno(alumnos, alumnos_baja):
+    print("Alta de alumno ")
+    print("1) Dar de alta a un alumno nuevo")
+    print("2) Reactivar a un alumno existente")
+    opcion = input("Ingresá una opcion: ").strip()
+
+    # Reactivar un alumno dado de baja previamente
+    if opcion == "2":
+        if alumnos_baja:
+            # Mostrar alumnos inactivos disponibles para reactivar
+            print("Alumnos inactivos disponibles para reactivar:")
+            print(f"{'ID':<5} | {'Nombre':<12} | {'Apellido':<15} | {'Email':<27}")
+            print("-" * 75)
+            for alumno in alumnos_baja:
+                print(f"{alumno[0]:<5} | {alumno[3]:<12} | {alumno[2]:<15} | {alumno[5]:<27}")
+            # Pedir y validar legajo
+            id_reactivar = legajo_valido(tipo="inactivo")
+            reactivar_alumno(id_reactivar, alumnos, alumnos_baja)
+>>>>>>> Stashed changes
         else:
             print("Error: apellido inválido (mínimo 2 letras).")
  

@@ -1,9 +1,15 @@
 # Control de sesión y ruteo de menús
 
 # Imports
+<<<<<<< Updated upstream
 from core import menus, validadores
 from login.autenticacion import login_usuario
 from funcionalidades import alumnos, asistencia, filtros, Reportes
+=======
+from core import (mostrar_menu_principal, opcion_valida_menu)
+from login import login_usuario
+from funcionalidades import (menu_alumnos, menu_reportes, gestion_asistencias, menu_filtros)
+>>>>>>> Stashed changes
 
 
 # control de la sesión
@@ -15,11 +21,11 @@ def ciclo_sesion():
     """
     en_sistema = True
     while en_sistema:
-        menus.mostrar_menu_principal()
+        mostrar_menu_principal()
         opcion = input("Elegí una opción: ").strip()
 
         # Menú principal actualizado: 1=Alumnos, 2=Asistencias, 3=Filtros, 4=Reportes, 9=Cerrar sesión, 0=Salir
-        if not validadores.opcion_valida_menu(opcion, {"0", "1", "2", "3", "4", "9"}):
+        if not opcion_valida_menu(opcion, {"0", "1", "2", "3", "4", "9"}):
             print("Opción inválida.")
             continue
 
@@ -31,26 +37,30 @@ def ciclo_sesion():
             return "logout"
 
         if opcion == "1":
-            r = alumnos.menu_alumnos()
+            r = menu_alumnos()
             if r == "logout":
                 return "logout"
             # si vuelve, continúa en el principal
             continue
 
         if opcion == "2":
-            r = asistencia.gestion_asistencias()
+            r = gestion_asistencias()
             if r == "logout":
                 return "logout"
             continue
 
         if opcion == "3":
-            r = filtros.menu_filtros()
+            r = menu_filtros()
             if r == "logout":
                 return "logout"
             continue
 
         if opcion == "4":
+<<<<<<< Updated upstream
             r = Reportes.menu_reportes()
+=======
+            r = menu_reportes()
+>>>>>>> Stashed changes
             if r == "logout":
                 return "logout"
             continue
