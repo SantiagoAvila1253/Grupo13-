@@ -4,192 +4,425 @@
 # - Modificación de datos
 # - Listado y menú de alumnos
 # Integra validaciones (regex) y normaliza entradas antes de operar.
-
-from core import (
-    # Datos
-    alumnos, alumnos_baja, AL_LEGAJO, AL_APELLIDO, AL_NOMBRE, AL_EMAIL,
-    # Menú
-    mostrar_menu_alumnos,
-    # Validadores
-    nom_ape_valido, fecha_ddmmaaaa_valida, email_valido, opcion_valida_menu,
-    # Helpers
-    legajo_valido
-)
-
-# Dar de alta un alumno (nuevo o reactivación)
-def alta_alumno(alumnos, alumnos_baja):
-    print("Alta de alumno ")
-    print("1) Dar de alta a un alumno nuevo")
-    print("2) Reactivar a un alumno existente")
-    opcion = input("Ingresá una opcion: ").strip()
-
-    # Reactivar un alumno dado de baja previamente
-    if opcion == "2":
-        if alumnos_baja:
-            # Mostrar alumnos inactivos disponibles para reactivar
-            print("Alumnos inactivos disponibles para reactivar:")
-            print(f"{'ID':<5} | {'Nombre':<12} | {'Apellido':<15} | {'Email':<27}")
-            print("-" * 75)
-            for alumno in alumnos_baja:
-                print(f"{alumno[0]:<5} | {alumno[3]:<12} | {alumno[2]:<15} | {alumno[5]:<27}")
-            # Pedir y validar legajo
-            id_reactivar = legajo_valido(tipo="inactivo")
-            reactivar_alumno(id_reactivar, alumnos, alumnos_baja)
+ 
+from core import (validadores as val, es_json, helpers)
+from core.datos import ESTADOS_ALUMNO, AL_ACTIVO, AL_INACTIVO, ID_ALUMNO_INICIAL
+ 
+from core.menus import mostrar_menu_alumnos
+from core.validadores import opcion_valida_menu
+   
+ 
+ 
+def generar_legajo(alumnos_dict):
+    """
+    Genera un nuevo ID de legajo único .
+    Busca el máximo legajo existente y le suma 1.
+    Si no hay alumnos, usa el ID inicial.
+    """
+    if not alumnos_dict:
+        return ID_ALUMNO_INICIAL
+   
+    try:
+        # Convertimos las claves (string) a enteros para buscar el máximo
+        max_legajo = max(int(legajo) for legajo in alumnos_dict.keys())
+        return max_legajo + 1
+    except ValueError:
+        print("Error: Se encontró un legajo no numérico. Usando ID inicial.")
+        return ID_ALUMNO_INICIAL
+   
+ 
+ 
+ 
+def pedir_datos_alumno(alumnos_dict, legajo_existente=None):
+    """
+    Pide los datos de un alumno por consola y los valida.
+    Requiere el dict de alumnos para generar legajo y validar DNI duplicado.
+    """
+   
+   
+ 
+    if legajo_existente:
+        legajo = legajo_existente
+        print(f"\n(Modificando datos para el legajo: {legajo})")
+        datos_actuales = alumnos_dict.get(str(legajo), {})
+    else:
+        legajo = generar_legajo(alumnos_dict)
+        print(f"\n(Nuevo legajo generado: {legajo})")
+        datos_actuales = {}
+ 
+    # --- Pedir Apellido ---
+    apellido = ""
+    apellido_valido = False
+    while not apellido_valido:
+        apellido_input = input(f"Apellido [{datos_actuales.get('apellido', '')}]: ").strip()
+       
+        if not apellido_input and datos_actuales.get('apellido'):
+            apellido = datos_actuales.get('apellido')
+            apellido_valido = True
+        elif val.nom_ape_valido(apellido_input):
+            apellido = apellido_input
+            apellido_valido = True
         else:
-            print("No hay alumnos inactivos para reactivar.")
-        return  # Termina la rama de reactivación
-
-    # Dar de alta un alumno nuevo
-    elif opcion == "1":
-        # Nombre (solo letras, espacios, apóstrofo y guion; min 2)
-        nombre = input("Nombre: ")
-        while not nom_ape_valido(nombre):
-            print("El nombre solo puede tener letras y al menos dos caracteres. Intentá de nuevo.")
-            nombre = input("Nombre: ")
-
-        # Apellido (mismo criterio que nombre)
-        apellido = input("Apellido: ")
-        while not nom_ape_valido(apellido):
-            print("El apellido solo puede tener letras y al menos dos caracteres. Intentá de nuevo")
-            apellido = input("Apellido: ")
-
-        # Fecha de nacimiento (dd-mm-aaaa)
-        fecha_nac = input("Fecha de nacimiento (dd-mm-aaaa): ")
-        while not fecha_ddmmaaaa_valida(fecha_nac):
-            print("Fecha inválida. Intente de nuevo.")
-            fecha_nac = input("Fecha de nacimiento (dd-mm-aaaa): ")
-
-        # Email
-        email = input("Email: ")
-        while not email_valido(email):
-            print("Email inválido. Intente de nuevo.")
-            email = input("Email: ")
-
-        # Generar nuevo ID: base 1001 + cantidad en activos + cantidad en inactivos
-        nuevo_id = 1001 + len(alumnos) + len(alumnos_baja)
-
-        # Estructura del alumno: [ID, <campo reservado>, APELLIDO, NOMBRE, FECHA_NAC, EMAIL, ESTADO]
-        alumnos.append([nuevo_id, " ", apellido, nombre, fecha_nac, email, 0])
-        print(f" Alumno {nombre} {apellido} agregado correctamente con ID {nuevo_id}.")
+            print("Error: apellido inválido (mínimo 2 letras).")
+ 
+    # --- Pedir Nombre ---
+    nombre = ""
+    nombre_valido = False
+    while not nombre_valido:
+        nombre_input = input(f"Nombre [{datos_actuales.get('nombre', '')}]: ").strip()
+       
+        if not nombre_input and datos_actuales.get('nombre'):
+            nombre = datos_actuales.get('nombre')
+            nombre_valido = True
+        elif val.nom_ape_valido(nombre_input):
+            nombre = nombre_input
+            nombre_valido = True
+        else:
+            print("Error: nombre inválido (mínimo 2 letras).")
+ 
+    # --- Pedir DNI ---
+    dni = ""
+    dni_valido = False
+    while not dni_valido:
+        dni_input = input(f"DNI [{datos_actuales.get('dni', '')}]: ").strip()
+       
+        if not dni_input and datos_actuales.get('dni'):
+            dni = datos_actuales.get('dni')
+            dni_valido = True
+       
+        elif val.dni_valido(dni_input):
+            dni_duplicado = False
+            if dni_input != datos_actuales.get('dni'):
+                for datos_alumno in alumnos_dict.values():
+                    if datos_alumno['dni'] == dni_input:
+                        print(f"Error: El DNI {dni_input} ya está registrado para otro alumno.")
+                        dni_duplicado = True
+           
+            if not dni_duplicado:
+                dni = dni_input
+                dni_valido = True
+       
+        else:
+            print("Error: DNI inválido (debe tener 7 u 8 dígitos).")
+ 
+    # --- Pedir Fecha de Nacimiento ---
+    fecha_nac = ""
+    fecha_valida = False
+    while not fecha_valida:
+        fecha_input = input(f"Fecha Nacimiento (dd-mm-aaaa) [{datos_actuales.get('fecha_nac', '')}]: ").strip()
+       
+        if not fecha_input and datos_actuales.get('fecha_nac'):
+            fecha_nac = datos_actuales.get('fecha_nac')
+            fecha_valida = True
+        elif val.fecha_ddmmaaaa_valida(fecha_input):
+            fecha_nac = fecha_input
+            fecha_valida = True
+        else:
+            print("Error: formato de fecha (dd-mm-aaaa) o rango (1915-2009) inválido.")
+ 
+    # --- Pedir Email ---
+    email = ""
+    email_valido = False
+    while not email_valido:
+        email_input = input(f"Email [{datos_actuales.get('email', '')}]: ").strip()
+       
+        if not email_input and datos_actuales.get('email'):
+            email = datos_actuales.get('email')
+            email_valido = True
+        elif val.email_valido(email_input):
+            email = email_input
+            email_valido = True
+        else:
+            print("Error: formato de email inválido.")
+ 
+    # Estado (siempre Activo en alta o modificación)
+    estado = ESTADOS_ALUMNO[AL_ACTIVO]
+ 
+    return {
+        "legajo": legajo,
+        "apellido": apellido,
+        "nombre": nombre,
+        "dni": dni,
+        "fecha_nac": fecha_nac,
+        "email": email,
+        "estado": estado,
+    }
+ 
+def alta_alumno_nuevo():
+    """
+    Da de alta un NUEVO alumno en el sistema.
+ 
+    """
+   
+    # 1. LEER EL JSON
+    alumnos_dict = es_json.leer_alumnos()
+   
+    print("\n--- Alta de Alumno Nuevo ---")
+ 
+    # 2. LLAMAR AL ASISTENTE
+    nuevo_alumno_datos = pedir_datos_alumno(alumnos_dict)
+   
+    # 3. AGREGAR AL DICCIONARIO
+    nuevo_legajo_str = str(nuevo_alumno_datos["legajo"])
+    alumnos_dict[nuevo_legajo_str] = nuevo_alumno_datos
+ 
+    # 4. GUARDAR EL JSON
+    print(f"\nDando de alta al alumno {nuevo_legajo_str}...")
+    es_json.guardar_alumnos(alumnos_dict)
+ 
+def baja_alumno():
+    """
+    Realiza una baja lógica de un alumno (cambia estado a Inactivo).
+    1. Lee el JSON.
+    2. Pide un legajo que exista (usando el helper).
+    3. Confirma y cambia el estado a "Inactivo".
+    4. Guarda el JSON.
+    """
+   
+    # 1. LEER
+    alumnos_dict = es_json.leer_alumnos()
+    if not alumnos_dict:
+        print("No hay alumnos cargados en el sistema.")
         return
-
-    else:
-        print("Opcion no valida. Por favor, intente de nuevo.")
+ 
+    print("\n--- Baja de Alumno (Lógica) ---")
+   
+    # 2. PEDIR LEGAJO
+    # (El helper 'pedir_legajo_existente' ya se encarga de
+    #  leer el JSON y validar que el legajo exista)
+    legajo_int = helpers.pedir_legajo_existente("Legajo del alumno a dar de baja")
+    legajo_str = str(legajo_int)
+ 
+    # 3. CAMBIAR ESTADO
+    # Verificamos el estado actual
+    datos_alumno = alumnos_dict[legajo_str]
+    if datos_alumno["estado"] == ESTADOS_ALUMNO[AL_INACTIVO]:
+        print(f"El alumno {legajo_str} ({datos_alumno['apellido']}) ya se encuentra Inactivo.")
+        input("(Presioná Enter para continuar)")
         return
-
-# Dar de baja (lógica) un alumno
-def baja_alumno(alumnos, alumnos_baja):
-    print("Baja de alumno")
-    # Pedir y validar legajo
-    id_alumno = legajo_valido(tipo="alumno")
-
-    # Mover de activos a inactivos si existe
-    for alumno in alumnos:
-        if alumno[0] == id_alumno:
-            alumnos_baja.append(alumno)
-            alumnos.remove(alumno)
-            print(f" Alumno {alumno[3]} {alumno[2]} y ID {id_alumno} eliminado correctamente.")
-            return
-    print(" No se encontró un alumno con ese ID.")
-    return
-
+   
+    print(f"Alumno a dar de baja: {datos_alumno['apellido']}, {datos_alumno['nombre']}")
+   
+    # Confirmación
+    confirmar = ""
+    es_valido = False
+    while not es_valido:
+        confirmar = input("¿Estás seguro (S/N)?: ").strip().lower()
+        es_valido = val.validar_opcion_sn(confirmar)
+        if not es_valido:
+            print("Opción inválida. Ingresá 'S' o 'N'.")
+ 
+    if confirmar == "n":
+        print("Baja cancelada.")
+        input("(Presioná Enter para continuar)")
+        return
+   
+    # Actualizamos el estado en el diccionario
+    alumnos_dict[legajo_str]["estado"] = ESTADOS_ALUMNO[AL_INACTIVO]
+   
+    # 4. GUARDAR
+    print(f"Dando de baja al alumno {legajo_str}...")
+    es_json.guardar_alumnos(alumnos_dict)
+ 
+def reactivar_alumno():
+    """
+    Reactiva a un alumno inactivo (cambia estado a Activo).
+    1. Lee el JSON.
+    2. Filtra y muestra solo a los alumnos "Inactivos".
+    3. Pide un legajo de esa lista.
+    4. Cambia el estado a "Activo".
+    5. Guarda el JSON.
+    """
+   
+    # 1. LEER
+    alumnos_dict = es_json.leer_alumnos()
+    if not alumnos_dict:
+        print("No hay alumnos cargados en el sistema.")
+        return
+ 
+    print("\n--- Reactivar Alumno Inactivo ---")
+ 
+    # 2. FILTRAR Y MOSTRAR ALUMNOS INACTIVOS
+    alumnos_inactivos = {}
+    for legajo, datos in alumnos_dict.items():
+        if datos["estado"] == ESTADOS_ALUMNO[AL_INACTIVO]:
+            alumnos_inactivos[legajo] = datos
+ 
+    if not alumnos_inactivos:
+        print("No se encontraron alumnos inactivos para reactivar.")
+        input("(Presioná Enter para continuar)")
+        return
+       
+    print("Alumnos inactivos disponibles para reactivar:")
+    print("-" * 50)
+    for legajo, datos in alumnos_inactivos.items():
+        print(f"Legajo: {legajo} | {datos['apellido']}, {datos['nombre']}")
+    print("-" * 50)
+ 
+    # 3. PEDIR LEGAJO (validando que esté en la lista de inactivos)
+    legajo_str = ""
+    es_valido = False
+    while not es_valido:
+        legajo_str = input("Legajo del alumno a reactivar: ").strip()
+        # Verificamos que el legajo sea numérico Y esté en el dict de inactivos
+        if legajo_str.isdigit() and legajo_str in alumnos_inactivos:
+            es_valido = True
+        else:
+            print(f"Error: El legajo {legajo_str} no es un alumno inactivo válido.")
+           
+    # 4. CAMBIAR ESTADO
+    alumnos_dict[legajo_str]["estado"] = ESTADOS_ALUMNO[AL_ACTIVO]
+   
+    # 5. GUARDAR
+    datos_alumno = alumnos_dict[legajo_str]
+    print(f"\nReactivando al alumno {legajo_str}: {datos_alumno['apellido']}, {datos_alumno['nombre']}...")
+    es_json.guardar_alumnos(alumnos_dict)
+# Dar de alta un alumno (nuevo o reactivación)
+def alta_alumno():
+    """
+    Menú principal para dar de alta.
+    Ofrece la opción de crear un alumno nuevo o reactivar uno inactivo.
+    """
+    print("\n--- Gestión de Altas de Alumnos ---")
+    print("1) Dar de alta a un alumno nuevo")
+    print("2) Reactivar a un alumno inactivo")
+    print("0) Volver al menú anterior")
+   
+    opcion = ""
+    es_valido = False
+   
+    # Bucle para validar la opción del menú
+    while not es_valido:
+        opcion = input("Ingresá una opción: ").strip()
+        if opcion in ("1", "2", "0"):
+            es_valido = True
+        else:
+            print("Opción no válida. Ingresá '1', '2' o '0'.")
+ 
+    # Llamar a la función correspondiente
+    if opcion == "1":
+        # Llama a la función 'alta_alumno_nuevo()' que ya pegamos
+        alta_alumno_nuevo()
+       
+    elif opcion == "2":
+        # Llama a la función 'reactivar_alumno()' que ya pegamos
+        reactivar_alumno()
+       
+    elif opcion == "0":
+        print("Volviendo al menú de alumnos...")
+        return # Simplemente vuelve
+ 
+ 
 # Reactivar un alumno previamente dado de baja
-def reactivar_alumno(id_reactivar, alumnos, alumnos_baja):
-    # Buscar por ID en la lista de inactivos
-    alumno_a_reactivar = list(filter(lambda x: x[0] == id_reactivar, alumnos_baja))
-    if alumno_a_reactivar:
-        alumnos.append(alumno_a_reactivar[0])
-        alumnos_baja.remove(alumno_a_reactivar[0])
-        # Mantener un criterio de orden (se respeta el campo existente índice 1)
-        alumnos.sort(key=lambda x: x[1])
-        print(f"El alumno con Id {id_reactivar} ha sido reactivado")
-        return
-    else:
-        print(f" No se encontró un alumno con el ID {id_reactivar} en la lista de inactivos.")
-        return
-
-# Modificar datos de un alumno
-def modificar_dato_alumno(alumnos):
-    print("Modificar datos de un alumno")
-    # Pedir y validar legajo
-    id_alumno = legajo_valido(tipo = "alumno")
-    # Buscar y editar campos seleccionados
-    for alumno in alumnos:
-        if alumno[0] == id_alumno:
-            print(f"\nAlumno encontrado:")
-            print(f"1) Nombre: {alumno[3]}")
-            print(f"2) Apellido: {alumno[2]}")
-            print(f"3) Fecha de nacimiento: {alumno[4]}")
-
-            opcion = input("¿Qué dato desea modificar?: ").strip()
-
-            if opcion == "1":
-                alumno[3] = input("Ingrese el nuevo nombre: ")
-                alumno[5] = input("Ingrese el nuevo email (ligado al nombre y apellido): ")
-            elif opcion == "2":
-                alumno[2] = input("Ingrese el nuevo apellido: ")
-                alumno[5] = input("Ingrese el nuevo email (ligado al nombre y apellido): ")
-            elif opcion == "3":
-                alumno[4] = input("Ingrese la nueva fecha de nacimiento (dd-mm-aaaa): ")
-            else:
-                return
-
-            # Confirmación de cambios
-            print()
-            print("Dato modificado correctamente.")
-            print("Nuevo registro")
-            print(f"nombre: {alumno[3]}")
-            print(f"apellido: {alumno[2]}")
-            print(f"fecha de nacimiento: {alumno[4]}")
-            print(f"email: {alumno[5]}")
-            return
-    print("No se encontró un alumno con ese ID.")
-    return
-
+ 
+# M
+ 
 # Listar alumnos
 def listar_alumnos():
-    if not alumnos:
-        print("Sin alumnos.")
+    """
+    Muestra un listado de todos los alumnos (activos e inactivos).
+    Ordenados por Apellido y Nombre, usando MAP y el HELPER.
+    """
+   
+    # 1. LEER
+    alumnos_dict = es_json.leer_alumnos()
+ 
+    if not alumnos_dict:
+        print("No hay alumnos cargados en el sistema.")
         return
-
-    # Encabezado centrado
-    print(f"{'LEGAJO':^8}|{'APELLIDO':^18}|{'NOMBRE':^18}|{'EMAIL':^35}")
-    print("-" * 82)
-
-    # Usamos map() para centrar cada campo con anchos iguales
-    filas = map(
-        lambda a: f"{str(a[AL_LEGAJO]):^8}|{a[AL_APELLIDO]:^18}|{a[AL_NOMBRE]:^18}|{a[AL_EMAIL]:^35}",
-        alumnos
+ 
+    print("\n--- Listado de Alumnos (Ordenado por Apellido y Nombre) ---")
+   
+    # 2. ORDENAR
+    items_ordenados = sorted(
+        alumnos_dict.items(),
+        key=lambda item: (item[1]['apellido'].lower(), item[1]['nombre'].lower())
     )
-
-    # Imprimimos todas las filas con join()
-    print("\n".join(filas))
-    print()
-    return
-
-
-
+ 
+    # 3. MAPEAR Y UNIR (Llamando al helper)
+   
+    mapa_de_strings = map(helpers.formatear_linea_alumno, items_ordenados)
+   
+    listado_completo = "\n".join(mapa_de_strings)
+   
+   
+    print(listado_completo)
+   
+    input("\n(Presioná Enter para continuar)")
+def modificar_dato_alumno():
+    """
+    Modifica los datos de un alumno existente.
+    1. Lee el JSON.
+    2. Pide un legajo existente.
+    3. Llama al 'helper' pedir_datos_alumno (en modo modificación).
+    4. Actualiza el diccionario.
+    5. Guarda el JSON.
+    """
+   
+    # 1. LEER
+    alumnos_dict = es_json.leer_alumnos()
+    if not alumnos_dict:
+        print("No hay alumnos cargados en el sistema.")
+        return
+ 
+    print("\n--- Modificación de Alumno ---")
+   
+    # 2. PEDIR LEGAJO
+    # (El helper se encarga de validar que exista)
+    legajo_int = helpers.pedir_legajo_existente("Legajo del alumno a modificar")
+    legajo_str = str(legajo_int)
+ 
+    # Mostramos datos actuales antes de empezar
+    print(f"Datos actuales: {alumnos_dict[legajo_str]['apellido']}, {alumnos_dict[legajo_str]['nombre']} | DNI: {alumnos_dict[legajo_str]['dni']}")
+    print("(Dejá el campo vacío y presioná Enter para mantener el dato actual)")
+ 
+    # 3. LLAMAR AL ASISTENTE (en modo Modificación)
+    #    Le pasamos el diccionario Y el legajo.
+    #    Esto le dice a 'pedir_datos_alumno' que está modificando
+    #    y que debe mostrar los datos actuales.
+    datos_modificados = pedir_datos_alumno(alumnos_dict, legajo_existente=legajo_int)
+   
+    # 4. ACTUALIZAR EL DICCIONARIO
+    alumnos_dict[legajo_str] = datos_modificados
+   
+    # 5. GUARDAR
+    print(f"\nModificando datos del alumno {legajo_str}...")
+    es_json.guardar_alumnos(alumnos_dict)
 # Menú de alumnos (loop de opciones)
 def menu_alumnos():
+    """
+    Menú de alumnos (loop de opciones).
+    Llama a las funciones conectadas al JSON.
+    """
     en_alumnos = True
     while en_alumnos:
-        mostrar_menu_alumnos()
+        mostrar_menu_alumnos() # Esta función es de core.menus
         opcion = input("Elegí una opción: ").strip()
+       
         if not opcion_valida_menu(opcion, {"0", "1", "2", "3", "4", "9"}):
             print("Opción inválida.")
+            input("(Presioná Enter para continuar)")
+           
         elif opcion == "0":
             en_alumnos = False
+           
         elif opcion == "9":
-            return "logout"
+            return "logout"  # Para cerrar sesión
+           
         elif opcion == "1":
+            # Llama a la nueva 'listar_alumnos' (la que usa map)
             listar_alumnos()
+           
         elif opcion == "2":
-            alta_alumno(alumnos, alumnos_baja)
-            print("Alta de alumno.")
+            # Llama al nuevo menú 'alta_alumno' (Bloque 5)
+            alta_alumno()
+           
         elif opcion == "3":
-            print("Baja de alumno.")
-            baja_alumno(alumnos, alumnos_baja)
+            # Llama a la nueva 'baja_alumno' (Bloque 3)
+            baja_alumno()
+           
         elif opcion == "4":
-            print("Modificar alumno.")
-            modificar_dato_alumno(alumnos)
-    return "volver"
+            # Llama a la nueva 'modificar_dato_alumno' (Bloque 6)
+            modificar_dato_alumno()
+           
+    return "volver"  # Para volver al menú principal
