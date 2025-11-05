@@ -1,15 +1,9 @@
 # Control de sesión y ruteo de menús
 
 # Imports
-<<<<<<< Updated upstream
-from core import menus, validadores
-from login.autenticacion import login_usuario
-from funcionalidades import alumnos, asistencia, filtros, Reportes
-=======
 from core import (mostrar_menu_principal, opcion_valida_menu)
 from login import login_usuario
 from funcionalidades import (menu_alumnos, menu_reportes, gestion_asistencias, menu_filtros)
->>>>>>> Stashed changes
 
 
 # control de la sesión
@@ -56,11 +50,7 @@ def ciclo_sesion():
             continue
 
         if opcion == "4":
-<<<<<<< Updated upstream
-            r = Reportes.menu_reportes()
-=======
             r = menu_reportes()
->>>>>>> Stashed changes
             if r == "logout":
                 return "logout"
             continue

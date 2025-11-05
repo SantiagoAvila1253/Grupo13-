@@ -1,6 +1,6 @@
 # Exposición controlada de la API de core
 
-# Submódulos (para: from core import es_json, es_csv, validadores, helpers, estadisticas, menus)
+# Submódulos
 from . import es_json
 from . import es_csv
 from . import validadores
@@ -35,11 +35,10 @@ from .validadores import (
     validar_fila_csv,
 )
 
-# Alias de compatibilidad: lo que antes llamaban “legajo_valido”
-# Usa el helper real para pedir un legajo existente
+
 from .helpers import pedir_legajo_existente as legajo_valido
 
-# Constantes del sistema (para consumir directo desde core si las necesitan)
+
 from .datos import (
     ESTADOS_ASISTENCIA,
     PRESENTE, AUS_J, AUS_I,
