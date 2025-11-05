@@ -3,13 +3,13 @@
 from . import asistencia
 from . import alumnos
 from . import filtros
-from . import reportes
+from . import Reportes
 
 # Definición de la API pública del paquete
 __all__ = [
     "asistencia",
     "alumnos",
     "filtros",
-    "reportes",
+    "Reportes",
 ]
 

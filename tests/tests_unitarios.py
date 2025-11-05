@@ -1,7 +1,7 @@
 import os
 import json
 import csv
-from funcionalidades.reportes import reporte_asistencia_general
+from funcionalidades.Reportes import reporte_asistencia_general
 
 def test_docente_credenciales():
     ruta = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "data", "docentes.json"))

@@ -9,7 +9,7 @@ Responsabilidades:
 
 # Importaciones
 from core import es_json, es_csv, validadores, helpers, estadisticas, menus
-from funcionalidades import reportes, filtros
+from funcionalidades import Reportes, filtros
 
 
 # Funciones de ordenamiento clase_id, apellido, nombre, legajo
@@ -372,7 +372,7 @@ def gestion_asistencias():
             if opcion == "4":
                 try:
                     # Reportes se encarga de invocar core/filtros según corresponda
-                    r = reportes.menu_reportes()
+                    r = Reportes.menu_reportes()
                     if r == "logout":
                         return "logout"
                     # si vuelve, continua en este submenú

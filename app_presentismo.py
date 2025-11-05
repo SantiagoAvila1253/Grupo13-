@@ -1,9 +1,9 @@
 # Control de sesión y ruteo de menús
 
 # Imports
-from .core import menus, validadores
-from .login.autenticacion import login_usuario
-from .funcionalidades import alumnos, asistencia, filtros, reportes
+from core import menus, validadores
+from login.autenticacion import login_usuario
+from funcionalidades import alumnos, asistencia, filtros, Reportes
 
 
 # control de la sesión
@@ -50,7 +50,7 @@ def ciclo_sesion():
             continue
 
         if opcion == "4":
-            r = reportes.menu_reportes()
+            r = Reportes.menu_reportes()
             if r == "logout":
                 return "logout"
             continue
