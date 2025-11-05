@@ -271,7 +271,7 @@ def gestion_asistencias():
         while seguir:
             # Mostrar menú principal de asistencias
             menus.mostrar_menu_asistencia()
-            opcion = input("Elegí una opción: ").strip()
+            opcion = input("\nElegí una opción: ").strip()
 
             # Validar opción del menú
             if not validadores.opcion_valida_menu(opcion, {"0", "1", "2", "3", "4", "9"}):

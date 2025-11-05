@@ -413,7 +413,7 @@ def menu_alumnos():
     en_alumnos = True
     while en_alumnos:
         mostrar_menu_alumnos()  # Esta función es de core.menus
-        opcion = input("Elegí una opción: ").strip()
+        opcion = input("\nElegí una opción: ").strip()
 
         if not opcion_valida_menu(opcion, {"0", "1", "2", "3", "4", "9"}):
             print("Opción inválida.")

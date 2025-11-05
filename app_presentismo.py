@@ -3,7 +3,7 @@
 # Imports
 from core import (mostrar_menu_principal, opcion_valida_menu)
 from login import login_usuario
-from funcionalidades import (menu_alumnos, menu_reportes, gestion_asistencias, menu_filtros)
+from funcionalidades import (menu_alumnos, menu_reportes, gestion_asistencias,menu_filtros)
 
 
 # control de la sesión
@@ -16,7 +16,7 @@ def ciclo_sesion():
     en_sistema = True
     while en_sistema:
         mostrar_menu_principal()
-        opcion = input("Elegí una opción: ").strip()
+        opcion = input("\nElegí una opción: ").strip()
 
         # Menú principal actualizado: 1=Alumnos, 2=Asistencias, 3=Filtros, 4=Reportes, 9=Cerrar sesión, 0=Salir
         if not opcion_valida_menu(opcion, {"0", "1", "2", "3", "4", "9"}):

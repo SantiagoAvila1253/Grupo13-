@@ -106,7 +106,7 @@ def filtrar_clases_por_mes_rec(dic_clases, mes, claves=None, acumulado=None):
 def menu_filtros():
     try:
         menus.mostrar_menu_filtrar()
-        opcion = input("Elegí una opción: ").strip()
+        opcion = input("\nElegí una opción: ").strip()
 
         # Validar opción
         if not validadores.opcion_valida_menu(opcion, {"0","1","2","3","4","5"}):

@@ -109,7 +109,7 @@ def menu_reportes():
     en_reportes = True
     while en_reportes:
         menus.mostrar_menu_reportes()
-        opcion = input("Elegí una opción: ").strip()
+        opcion = input("\nElegí una opción: ").strip()
         if not validadores.opcion_valida_menu(opcion, {"0", "1", "2", "3", "9"}):
             print("Opción inválida.")
             continue

@@ -137,8 +137,6 @@ def leer_json(ruta):
                     pausa()
                 return {}
 
-        print("La acción se realizó correctamente.")
-        pausa()
         return datos
 
     except FileNotFoundError as error:
@@ -209,7 +207,7 @@ def guardar_json(ruta, datos):
             # Guarda los datos en formato JSON legible, con claves ordenadas y caracteres especiales visibles
             json.dump(datos_convertidos, archivo, ensure_ascii=False, indent=2, sort_keys=True)
 
-        print("La acción se realizó correctamente.")
+        print("Datos guardados correctamente.")
         pausa()
         return
 

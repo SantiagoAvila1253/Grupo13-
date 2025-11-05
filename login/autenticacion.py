@@ -1,4 +1,4 @@
-# Módulo: autenticacion.py
+# Módulo autenticacion
 """
 Responsabilidades:
 - Gestionar el login de usuarios (docentes).
@@ -83,7 +83,7 @@ def reiniciar_clave():
         # Actualización (recursiva) y persistencia
         if actualizar_clave_rec(docentes, dni, nueva, list(docentes.keys())):
             es_json.guardar_json("data/docentes.json", docentes)
-            print("Contraseña actualizada correctamente.")
+            print("Contraseña actualizada.")
             pausa()
             return True
 
@@ -108,7 +108,7 @@ def login_usuario():
     """
     try:
         menus.mostrar_menu_login()
-        opcion = input("Elegí una opción: ").strip()
+        opcion = input("\nElegí una opción: ").strip()
 
         # Validación de opción
         if not validadores.opcion_valida_menu(opcion, {"1", "2", "3"}):
@@ -119,7 +119,7 @@ def login_usuario():
         # Opción 1: iniciar sesión
         if opcion == "1":
             docentes = es_json.leer_docentes()
-            dni = input("Ingresá tu DNI (sin puntos ni comas o -1 para salir): ").strip()
+            dni = input("\nIngresá tu DNI (sin puntos ni comas o -1 para salir): ").strip()
             if dni == "-1":
                 return None  # caso base
 
