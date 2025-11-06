@@ -2,51 +2,82 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-def test_docentes_json():
+"""
+Configuración global de pytest:
+Asegura que, al ejecutar las pruebas, 
+el directorio raíz del proyecto (grupo13) se agregue al sys.path.
+De esta forma, los módulos del proyecto pueden importarse 
+directamente (por ejemplo, 'from core import validadores')
+sin errores de importación.
+
+PASO A PASO PARA EJECUTAR:
+
+DEFAULT:
+pytest test_unitarios_alumnos.py
+
+CON PRINTS INDICANDO PASS:
+pytest -s tests/test_unitarios_alumnos.py
+"""
+
+import os, csv
+from core import validadores
+
+def test_asistencia_csv():
     """
     Objetivo:
-    - Validar que registros de docentes en docentes.json:
+    - Validar la estructura y contenido básico del archivo asistencia.csv.
 
     Criterios:
-    - El archivo no debe estar vacío.
-    - Cada registro debe ser un dict y contener las claves "dni" y "clave".
-    - dni_valido(dni) debe ser True.
-    - password_valida(clave, 4) debe ser True
+    - El archivo debe existir y no estar vacío.
+    - La cabecera debe coincidir exactamente con:
+        ["clase_id", "legajo", "apellido", "nombre", "estado"]
+    - Debe haber al menos dos registros de datos (además de la cabecera).
+    - Cada fila de datos debe cumplir las reglas de validación definidas en core.validadores.
+      Consideración: el campo 'estado' puede estar vacío si aún no se tomó asistencia.
     """
-    # Imports locales
-    import os, json, logging
-    from core import validadores
 
-    logger = logging.getLogger(__name__)
+    # Ruta al archivo CSV
+    ruta = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "data", "asistencia.csv"))
+    assert os.path.exists(ruta), "El archivo asistencia.csv no existe"
+    print("PASS: archivo asistencia.csv encontrado.")
 
-    # Ruta al JSON de docentes
-    ruta = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "data", "docentes.json"))
-
-    # Leer archivo
+    # Leer contenido del CSV
     with open(ruta, "r", encoding="utf-8") as a:
-        docentes = json.load(a)
+        lector = csv.reader(a, delimiter=';')
+        filas = [fila for fila in lector]
 
-    # Debe haber al menos un docente
-    assert docentes, "El archivo docentes.json está vacío"
-    logger.info("PASS: docentes.json cargado con %d registros.", len(docentes))
+    # Validar que el archivo no esté vacío
+    assert filas, "El archivo asistencia.csv está vacío"
+    print(f"PASS: archivo leído con {len(filas)} filas (incluyendo cabecera).")
 
-    # Recorrido y validaciones
-    errores = 0
-    for id_docente, reg in docentes.items():
-        # Tipo del registro
-        assert isinstance(reg, dict), f"El registro {id_docente} no es un dict: {type(reg).__name__}"
+    # Validar cabecera
+    assert filas[0] == ["clase_id", "legajo", "apellido", "nombre", "estado"], (
+        f"Cabecera inesperada: {filas[0]}"
+    )
+    print("PASS: cabecera válida.")
 
-        # Claves requeridas
-        assert "dni" in reg, f"Falta la clave 'dni' en el docente {id_docente}"
-        assert "clave" in reg, f"Falta la clave 'clave' en el docente {id_docente}"
+    # Validar que haya al menos dos registros (cabecera + datos)
+    assert len(filas) >= 2, "Se esperaban al menos dos filas incluyendo la cabecera"
+    print("PASS: contiene al menos una fila de datos.")
 
-        dni = str(reg["dni"]).strip()
-        clave = str(reg["clave"])
+    # Validar cada fila de datos según los validadores
+    for i, fila in enumerate(filas[1:], start=2):  # Empieza en 2 por la cabecera
+        assert len(fila) == 5, f"Fila {i} no tiene 5 columnas: {fila!r}"
+        clase_id, legajo, apellido, nombre, estado = fila
 
-        # DNI válido
-        assert validadores.dni_valido(dni), f"DNI inválido en {id_docente}: {dni!r}"
+        # IDs numéricos
+        assert validadores.validar_numero_entero(clase_id), f"clase_id inválido en línea {i}: {clase_id!r}"
+        assert validadores.validar_numero_entero(legajo),   f"legajo inválido en línea {i}: {legajo!r}"
 
-        # Clave válida (mínimo 4, ajustá si tu política cambia)
-        assert validadores.password_valida(clave, 4), f"Clave inválida en {id_docente}: {clave!r}"
+        # Apellido / Nombre
+        assert validadores.nom_ape_valido(apellido), f"Apellido inválido en línea {i}: {apellido!r}"
+        assert validadores.nom_ape_valido(nombre),   f"Nombre inválido en línea {i}: {nombre!r}"
 
-    logger.info("PASS: todos los docentes cumplen formato (dni y clave válidos).")
+        # Estado: puede ser vacío (no tomada), o válido según regla
+        estado_norm = estado.strip().upper()
+        if estado_norm:  # solo valida si trae algo
+            assert validadores.validar_estado_asistencia(estado_norm), (
+                f"Estado inválido en línea {i}: {estado!r}"
+            )
+
+    print("PASS: todas las filas cumplen con las reglas de validación.")
