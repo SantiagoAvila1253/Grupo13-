@@ -127,3 +127,12 @@ def pedir_password(prompt="Contraseña: "):
         # En otros sistemas usa getpass (sin mostrar caracteres)
         import getpass
         return getpass.getpass(prompt)
+
+def formatear_linea_alumno(item_alumno):
+    """
+    Toma una tupla (legajo_str, datos_dict) de un alumno
+    y devuelve un string formateado para listados.
+    """
+    legajo_str, datos = item_alumno
+    # Formateamos la salida para que se vea alineada
+    return f"Legajo: {legajo_str:<6} | Alumno: {datos['apellido']}, {datos['nombre']:<20} | DNI: {datos['dni']:<9} | Estado: {datos['estado']}"
