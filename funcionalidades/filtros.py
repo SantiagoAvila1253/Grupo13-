@@ -51,7 +51,7 @@ def filtrar_por_estado_rec(matriz, estado, i=0, acumulado=None):
         return acumulado
 
     fila = matriz[i]
-    if fila and len(fila) >= 5 and fila[4].upper() == estado.upper():
+    if fila and len(fila) >= 5 and fila[4].strip().upper() == estado.strip().upper():
         acumulado.append(fila)
 
     return filtrar_por_estado_rec(             # caso recursivo + reducción del dominio

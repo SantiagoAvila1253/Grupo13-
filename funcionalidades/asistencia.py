@@ -13,7 +13,6 @@ from funcionalidades import reportes, filtros
 
 
 # Funciones de ordenamiento clase_id, apellido, nombre, legajo
-
 def orden_clase_apellido_nombre_legajo(fila):
     try:
         clase_id = int(fila[0])
