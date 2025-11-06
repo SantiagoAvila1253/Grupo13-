@@ -1,6 +1,7 @@
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
 """
 Configuración global de pytest:
 Asegura que, al ejecutar las pruebas, 
@@ -8,7 +9,11 @@ el directorio raíz del proyecto (grupo13) se agregue al sys.path.
 De esta forma, los módulos del proyecto pueden importarse 
 directamente (por ejemplo, 'from core import validadores')
 sin errores de importación.
+
+PARA VER PRINTS PASO A PASO EJECUTAR:
+pytest -s tests/test_unitarios_asistencia.py
 """
+
 import os, csv
 from core import validadores
 
@@ -28,6 +33,8 @@ def test_asistencia_csv():
 
     # Ruta al archivo CSV
     ruta = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "data", "asistencia.csv"))
+    assert os.path.exists(ruta), "El archivo asistencia.csv no existe"
+    print("PASS: archivo asistencia.csv encontrado.")
 
     # Leer contenido del CSV
     with open(ruta, "r", encoding="utf-8") as a:
@@ -36,14 +43,17 @@ def test_asistencia_csv():
 
     # Validar que el archivo no esté vacío
     assert filas, "El archivo asistencia.csv está vacío"
+    print(f"PASS: archivo leído con {len(filas)} filas (incluyendo cabecera).")
 
     # Validar cabecera
     assert filas[0] == ["clase_id", "legajo", "apellido", "nombre", "estado"], (
         f"Cabecera inesperada: {filas[0]}"
     )
+    print("PASS: cabecera válida.")
 
     # Validar que haya al menos dos registros (cabecera + datos)
     assert len(filas) >= 2, "Se esperaban al menos dos filas incluyendo la cabecera"
+    print("PASS: contiene al menos una fila de datos.")
 
     # Validar cada fila de datos según los validadores
     for i, fila in enumerate(filas[1:], start=2):  # Empieza en 2 por la cabecera
@@ -64,3 +74,5 @@ def test_asistencia_csv():
             assert validadores.validar_estado_asistencia(estado_norm), (
                 f"Estado inválido en línea {i}: {estado!r}"
             )
+
+    print("PASS: todas las filas cumplen con las reglas de validación.")

@@ -4,17 +4,6 @@ import csv
 from funcionalidades.reportes import reporte_asistencia_general
 
 
-def test_asistencia_csv():
-    ruta = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "data", "asistencia.csv"))
-    with open(ruta, "r", encoding="utf-8") as a:
-        lector = csv.reader(a, delimiter=';')
-        filas = [fila for fila in lector]
-
-    # verificar cabecera
-    assert filas[0] == ["clase_id", "legajo", "apellido", "nombre", "estado"]
-    # verificar que hay al menos dos registros y que la primera fila de datos coincide
-    assert len(filas) >= 3
-    assert filas[1] == ["20001", "30001", "Saltid", "Juan", "P"]
 
 def test_reporte_asistencia_general_count_and_percentage():
     asistencias = {
