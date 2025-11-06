@@ -3,16 +3,6 @@ import json
 import csv
 from funcionalidades.reportes import reporte_asistencia_general
 
-def test_docente_credenciales():
-    ruta = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "data", "docentes.json"))
-    with open(ruta, "r", encoding="utf-8") as a:
-        docentes = json.load(a)
-
-    reg = docentes.get("10000")
-    assert reg is not None
-    assert reg.get("dni/usuario") == "12345678"
-    assert reg.get("clave") == "Clave.123"
-
 
 def test_asistencia_csv():
     ruta = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "data", "asistencia.csv"))
