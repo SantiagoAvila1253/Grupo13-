@@ -1,7 +1,5 @@
 # Funciones de ayuda integradas
-
-from core import validadores as val
-from core.es_json import leer_alumnos, leer_clases
+from core import es_json, validadores as val
 
 
 # Valida legajo existente
@@ -12,7 +10,7 @@ def pedir_legajo_existente(etiqueta="Legajo"):
         - exista como clave en data/alumnos.json
     Devuelve el legajo como int.
     """
-    alumnos = leer_alumnos()  # diccionario de diccionarios
+    alumnos = es_json.leer_alumnos()  # diccionario de diccionarios
     while True:
         texto = input(f"{etiqueta}: ").strip()
         if not val.validar_numero_entero(texto):
@@ -35,7 +33,7 @@ def pedir_id_clase_existente(etiqueta="ID de clase"):
         - exista como clave en data/clases.json
     Devuelve el id de clase como int.
     """
-    clases = leer_clases()
+    clases = es_json.leer_clases()
     while True:
         texto = input(f"{etiqueta}: ").strip()
         if not val.validar_numero_entero(texto):
@@ -142,3 +140,89 @@ def formatear_linea_alumno(item_alumno):
         f"DNI: {datos['dni']:<10} | "
         f"Estado: {estado:<9}"
     )
+
+
+# Listados reutilizables
+
+# Apellido y nobmre en mayúscula
+def _nombre_en_mayus(reg):
+    """
+    Devuelve 'APELLIDO, NOMBRE' en mayúsculas.
+    Si falta algún dato, retorna un placeholder seguro.
+    """
+    ape = str(reg.get("apellido", "")).strip().upper() or "(SIN APELLIDO)"
+    nom = str(reg.get("nombre", "")).strip().upper() or "(SIN NOMBRE)"
+    return f"{ape}, {nom}"
+
+
+# Lista alumnos en formato tabla:
+def listar_alumnos_resumen(incluir_inactivos=False, imprimir=True, titulo="Alumnos"):
+    """
+    - Por defecto solo activos. Si incluir_inactivos=True, muestra todos.
+    - Orden: Apellido, Nombre, Legajo (numérico).
+    - Si imprimir=True, imprime y devuelve None. Si imprimir=False, devuelve el string formateado.
+    """
+    alumnos = es_json.leer_alumnos()
+    items = []
+    for legajo, reg in alumnos.items():
+        activo = bool(reg.get("activo", True))
+        if incluir_inactivos or activo:
+            items.append((
+                str(legajo),
+                _nombre_en_mayus(reg),
+                "ACTIVO" if activo else "INACTIVO"
+            ))
+
+    # Orden por Apellido, Nombre, luego Legajo int
+    items.sort(key=lambda t: (t[1], int(t[0])))
+
+    lineas = []
+    lineas.append(f"\n{titulo}")
+    lineas.append("-" * 70)
+    lineas.append(f"{'Legajo':<10}{'Apellido, Nombre':<45}{'Estado':<10}")
+    lineas.append("-" * 70)
+    for leg, nom, est in items:
+        lineas.append(f"{leg:<10}{nom:<45}{est:<10}")
+    lineas.append("-" * 70)
+    lineas.append(f"Total: {len(items)}")
+
+    salida = "\n".join(lineas)
+    if imprimir:
+        print(salida)
+        return None
+    return salida
+
+
+# Lista clases en formato tabla:
+def listar_clases_resumen(imprimir=True, titulo="Clases"):
+    """
+    - Orden numérico por ID de clase.
+    - Muestra: ID, Materia (en mayúsculas), Fecha, Horario.
+    """
+    clases = es_json.leer_clases()
+
+    items = []
+    for cid, datos in clases.items():
+        mat = str(datos.get("materia", "")).strip().upper() or "(SIN MATERIA)"
+        fecha = str(datos.get("fecha", "")).strip()
+        horario = str(datos.get("horario", "")).strip()
+        items.append((str(cid), mat, fecha, horario))
+
+    items.sort(key=lambda t: int(t[0]))
+
+    lineas = []
+    lineas.append(f"\n{titulo}")
+    lineas.append("-" * 80)
+    lineas.append(f"{'ID Clase':<10}{'Materia':<35}{'Fecha':<15}{'Horario':<15}")
+    lineas.append("-" * 80)
+    for cid, mat, fecha, hora in items:
+        lineas.append(f"{cid:<10}{mat:<35}{fecha:<15}{hora:<15}")
+    lineas.append("-" * 80)
+    lineas.append(f"Total: {len(items)}")
+
+    salida = "\n".join(lineas)
+    if imprimir:
+        print(salida)
+        return None
+    return salida
+

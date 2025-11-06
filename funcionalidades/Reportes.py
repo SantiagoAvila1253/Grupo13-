@@ -8,7 +8,7 @@
 # funcionalidades/reportes.py
 # Reportes conectados a data/ vía core/es_json y core/es_csv
 
-from core import es_csv, es_json, menus, validadores
+from core import es_csv, es_json, menus, validadores, helpers
 
 # centraliza la carga de datos, existe para evitar repetir lecturas en cada reporte
 def _cargar_datos_basicos():
@@ -23,14 +23,16 @@ def _total_clases(clases):
 
 #formatea el nombre completo del alumno a partir del registro en el diccionario
 def _nombre_alumno(reg_alumno):
-    return f"{reg_alumno.get('apellido','')}, {reg_alumno.get('nombre','')}"
+    ape = str(reg_alumno.get('apellido', '')).upper()
+    nom = str(reg_alumno.get('nombre', '')).upper()
+    return f"{ape}, {nom}"
 
 #Su objetivo es dar un panorama global del CSV, cuantos presentes hay sobre el total y el porcentaje
 def reporte_asistencia_general():
     _, _, matriz = _cargar_datos_basicos()
     #el guion bajo indica que no se usa la variable
     total = len(matriz)
-    presentes = sum(1 for f in matriz if len(f) >= 5 and f[4].upper() == "P")
+    presentes = sum(1 for f in matriz if len(f) >= 5 and str(f[4]).strip().upper() == "P")
     porcentaje = (presentes / total * 100) if total else 0.0
     return f"Asistencia global: {presentes}/{total} registros ({porcentaje:.2f}%)"
 
@@ -48,8 +50,9 @@ def presentes_por_clase():
         if len(fila) < 5:
             continue
         cid, legajo, _, _, estado = fila
-        if estado.upper() == "P":
+        if str(estado).strip().upper() == "P":
             presentes_por_cid.setdefault(cid, []).append(legajo)
+
     #setdefault crea una lista vacía si la clase no existe aún en el diccionario
 
     # armamos salida ordenada por clase
@@ -100,8 +103,10 @@ def porcentaje_por_alumno():
     #ordena por apellido y nombre, ignorando mayúsculas/minúsculas
     lineas = []
     for ape, nom, leg, pct in items:
-        lineas.append(f"{ape}, {nom} (Legajo {leg}): {pct:.2f}%")
+        lineas.append(f"{str(ape).upper()}, {str(nom).upper()} (Legajo {leg}): {pct:.2f}%")
     return "\n".join(lineas)
+
+
 def top_5_inasistencias():
     """
      Muestra el Top 5 de alumnos con más inasistencias.
@@ -156,5 +161,5 @@ def menu_reportes():
         elif opcion == "3":
             print(porcentaje_por_alumno())
         elif opcion == "4":
-            print(top_5_inasistencias())   
+            top_5_inasistencias()
     return "volver"

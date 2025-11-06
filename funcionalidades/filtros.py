@@ -6,7 +6,7 @@ Responsabilidades:
 - Aplicar recursividad en el flujo y en el procesamiento de datos.
 """
 
-from core import es_csv, es_json, validadores, menus
+from core import es_csv, es_json, validadores, menus, helpers
 from core.es_json import pausa
 
 
@@ -123,13 +123,18 @@ def menu_filtros():
             if opcion == "1":
                 prefijo = input("Prefijo de apellido: ").strip().lower()
                 resultado = filtrar_por_apellido_rec(matriz, prefijo)
+
             elif opcion == "2":
+                inc = input("¿Incluir inactivos? (S/N): ").strip().lower() == "s"
+                helpers.listar_alumnos_resumen(incluir_inactivos=inc, imprimir=True, titulo="Alumnos disponibles")
                 legajo_txt = input("Legajo exacto: ").strip()
                 if not validadores.validar_numero_entero(legajo_txt):
                     print("Legajo inválido.")
                     pausa()
                     return menu_filtros()  # recursivo (reintenta)
-                resultado = filtrar_por_legajo_rec(matriz, int(legajo_txt))
+                if not inc:
+                    resultado = [(leg, dat) for (leg, dat) in resultado if dat.get("activo", True)]
+
             elif opcion == "3":
                 estado = input("Estado [P/AJ/AI]: ").strip().upper()
                 if not validadores.validar_estado_asistencia(estado):
@@ -137,7 +142,6 @@ def menu_filtros():
                     pausa()
                     return menu_filtros()  # recursivo (reintenta)
                 resultado = filtrar_por_estado_rec(matriz, estado)
-
             print("\n--- Resultados ---")
             for f in resultado:
                 print(f"{f[0]} | {f[1]} | {f[2]}, {f[3]} | {f[4]}")
@@ -148,8 +152,12 @@ def menu_filtros():
         # Filtro de alumnos (JSON)
         if opcion == "4":
             alumnos = es_json.leer_alumnos()
+            inc = input("¿Incluir inactivos? (S/N): ").strip().lower() == "s"
+            helpers.listar_alumnos_resumen(incluir_inactivos=inc, imprimir=True, titulo="Alumnos disponibles")
+
             prefijo = input("Prefijo de apellido: ").strip().lower()
-            resultado = filtrar_alumnos_por_apellido_rec(alumnos, prefijo)
+            if not inc:
+                resultado = [(leg, dat) for (leg, dat) in resultado if dat.get("activo", True)]
             print("\n--- Alumnos filtrados ---")
             for legajo, datos in resultado:
                 print(f"{legajo} | {datos.get('apellido')}, {datos.get('nombre')}")
@@ -160,6 +168,7 @@ def menu_filtros():
         # Filtro de clases (JSON) por mes (usando slicing)
         if opcion == "5":
             clases = es_json.leer_clases()
+            helpers.listar_clases_resumen(imprimir=True, titulo="Clases disponibles")
             mes = input("Ingresá el número de mes (ej. '01' a '12'): ").strip()
             if not (len(mes) == 2 and mes.isdigit() and 1 <= int(mes) <= 12):
                 print("Mes inválido. Debe tener formato '01' a '12'.")

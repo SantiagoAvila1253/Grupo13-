@@ -288,7 +288,9 @@ def gestion_asistencias():
                 try:
                     # 1) Validar clase
                     clases_json = es_json.leer_clases()
+
                     clase_txt = input("Ingresá el ID de clase: ").strip()
+                    helpers.listar_clases_resumen(imprimir=True)
                     if not validadores.validar_id_clase_existente(clase_txt, clases_json):
                         print("No se pudo ejecutar la acción. Motivo: la clase indicada no existe.")
                         es_json.pausa()
@@ -307,6 +309,7 @@ def gestion_asistencias():
                         # Desde un legajo específico (edición secuencial circular)
                         sincronizar_csv_desde_json()
                         alumnos_json = es_json.leer_alumnos()
+                        helpers.listar_alumnos_resumen(incluir_inactivos=False, imprimir=True, titulo="Alumnos disponibles (solo activos)")
                         legajo_txt = input("Ingresá el legajo desde el que querés iniciar: ").strip()
                         if not validadores.validar_legajo_existente(legajo_txt, alumnos_json):
                             print("No se pudo ejecutar la acción. Motivo: el legajo indicado no existe.")
@@ -330,6 +333,7 @@ def gestion_asistencias():
                 
                 try:
                     sincronizar_csv_desde_json()
+                    helpers.listar_clases_resumen(imprimir=True, titulo="Clases disponibles")
                     clases_json = es_json.leer_clases()
                     clase_txt = input("Ingresá el ID de clase: ").strip()
                     if not validadores.validar_id_clase_existente(clase_txt, clases_json):
@@ -339,6 +343,7 @@ def gestion_asistencias():
                     id_clase = int(clase_txt)
 
                     alumnos_json = es_json.leer_alumnos()
+                    helpers.listar_alumnos_resumen(incluir_inactivos=False, imprimir=True, titulo="Alumnos disponibles (solo activos)")
                     legajo_txt = input("Ingresá el legajo desde el que querés iniciar la modificación: ").strip()
                     if not validadores.validar_legajo_existente(legajo_txt, alumnos_json):
                         print("No se pudo ejecutar la acción. Motivo: el legajo indicado no existe.")

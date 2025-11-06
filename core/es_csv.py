@@ -85,6 +85,8 @@ def leer_asistencia():
     Manejo de errores:
       - FileNotFoundError, OSError → informa, ofrece respaldo (solo cabecera), devuelve []
     """
+
+    print("Leyendo archivos...")
     matriz = []
     try:
         with open(RUTA_ASISTENCIA, "r", encoding="utf-8") as archivo:
@@ -117,8 +119,6 @@ def leer_asistencia():
 
                 matriz.append(columnas)
 
-        print("La acción se realizó correctamente.")
-        pausa()
         return matriz
 
     except FileNotFoundError as error:
