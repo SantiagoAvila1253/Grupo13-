@@ -1,4 +1,18 @@
-def test_docentes_tienen_dni_y_clave():
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+"""
+Configuración global de pytest:
+Asegura que, al ejecutar las pruebas, 
+el directorio raíz del proyecto (grupo13) se agregue al sys.path.
+De esta forma, los módulos del proyecto pueden importarse 
+directamente (por ejemplo, 'from core import validadores')
+sin errores de importación.
+"""
+import os, json
+from core import validadores
+
+def test_docentes_json():
     """
     Objetivo:
     - Validar que registros de docentes en docentes.json:
@@ -9,10 +23,6 @@ def test_docentes_tienen_dni_y_clave():
     - dni_valido(dni) debe ser True.
     - password_valida(clave, 4) debe ser True
     """
-
-    # Imports locales
-    import os, json
-    from core import validadores
 
     # Ruta al JSON de docentes
     ruta = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "data", "docentes.json"))
