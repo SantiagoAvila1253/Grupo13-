@@ -1,137 +1,138 @@
 {
   "30001": {
+    "% asistencia": 0.0,
+    "activo": true,
     "apellido": "Saltid",
-    "nombre": "Juan",
     "dni": "40111222",
-    "nacimiento": "2007-09-08",
     "mail": "jsaltid@uade.edu.ar",
-    "% asistencia": 0.00,
-    "activo": true
+    "nacimiento": "2007-09-08",
+    "nombre": "Juan"
   },
   "30002": {
+    "% asistencia": 17.65,
+    "activo": true,
     "apellido": "Altanio",
-    "nombre": "Pablo",
     "dni": "39222333",
-    "nacimiento": "2004-04-19",
     "mail": "paltanio@uade.edu.ar",
-    "% asistencia": 0.00,
-    "activo": true
+    "nacimiento": "2004-04-19",
+    "nombre": "Pablo"
   },
   "30003": {
+    "% asistencia": 17.65,
+    "activo": true,
     "apellido": "Mandeo",
-    "nombre": "Marcelo",
     "dni": "45444555",
-    "nacimiento": "2007-12-02",
     "mail": "mmandeo@uade.edu.ar",
-    "% asistencia": 0.00,
-    "activo": true
+    "nacimiento": "2007-12-02",
+    "nombre": "Marcelo"
   },
   "30004": {
+    "% asistencia": 23.53,
+    "activo": true,
     "apellido": "Fernandez",
-    "nombre": "Mateo",
     "dni": "42111666",
-    "nacimiento": "2005-03-16",
     "mail": "mfernandez@uade.edu.ar",
-    "% asistencia": 0.00,
-    "activo": true
+    "nacimiento": "2005-03-16",
+    "nombre": "Mateo"
   },
   "30005": {
+    "% asistencia": 17.65,
+    "activo": true,
     "apellido": "Castro",
-    "nombre": "Lucia",
     "dni": "43777888",
-    "nacimiento": "2006-07-17",
     "mail": "lucastro@uade.edu.ar",
-    "% asistencia": 0.00,
-    "activo": true
+    "nacimiento": "2006-07-17",
+    "nombre": "Lucia"
   },
   "30006": {
+    "% asistencia": 17.65,
+    "activo": true,
     "apellido": "Martinez",
-    "nombre": "Julian",
     "dni": "38999111",
-    "nacimiento": "2003-05-06",
     "mail": "jmartinez@uade.edu.ar",
-    "% asistencia": 0.00,
-    "activo": true
+    "nacimiento": "2003-05-06",
+    "nombre": "Julian"
   },
   "30007": {
+    "% asistencia": 23.53,
+    "activo": true,
     "apellido": "Nando",
-    "nombre": "Sofia",
     "dni": "40222444",
-    "nacimiento": "2004-07-13",
     "mail": "snando@uade.edu.ar",
-    "% asistencia": 0.00,
-    "activo": true
+    "nacimiento": "2004-07-13",
+    "nombre": "Sofia"
   },
   "30008": {
+    "% asistencia": 17.65,
+    "activo": true,
     "apellido": "Gonzales",
-    "nombre": "Agustina",
     "dni": "45555666",
-    "nacimiento": "2007-03-09",
     "mail": "agonzales@uade.edu.ar",
-    "% asistencia": 0.00,
-    "activo": true
+    "nacimiento": "2007-03-09",
+    "nombre": "Agustina"
   },
   "30009": {
+    "% asistencia": 17.65,
+    "activo": true,
     "apellido": "Ameglio",
-    "nombre": "Franchesca",
     "dni": "47777888",
-    "nacimiento": "2006-09-11",
     "mail": "fameglio@uade.edu.ar",
-    "% asistencia": 0.00,
-    "activo": true
+    "nacimiento": "2006-09-11",
+    "nombre": "Franchesca"
   },
   "30010": {
+    "% asistencia": 17.65,
+    "activo": true,
     "apellido": "Ayala",
-    "nombre": "Joaquin",
     "dni": "42223333",
-    "nacimiento": "2007-08-20",
     "mail": "jayala@uade.edu.ar",
-    "% asistencia": 0.00,
-    "activo": true
+    "nacimiento": "2007-08-20",
+    "nombre": "Joaquin"
   },
   "30011": {
+    "% asistencia": 23.53,
+    "activo": true,
     "apellido": "Catillo",
-    "nombre": "Valentina",
     "dni": "43333444",
-    "nacimiento": "2005-02-01",
     "mail": "vcastillo@uade.edu.ar",
-    "% asistencia": 0.00,
-    "activo": true
+    "nacimiento": "2005-02-01",
+    "nombre": "Valentina"
   },
   "30012": {
+    "% asistencia": 11.76,
+    "activo": true,
     "apellido": "Nuñez",
-    "nombre": "Lautaro",
     "dni": "45555777",
-    "nacimiento": "2006-04-18",
     "mail": "lnuñez@uade.edu.ar",
-    "% asistencia": 0.00,
-    "activo": true
+    "nacimiento": "2006-04-18",
+    "nombre": "Lautaro"
   },
   "30013": {
+    "% asistencia": 23.53,
+    "activo": true,
     "apellido": "Espinosa",
-    "nombre": "Florencia",
     "dni": "46666888",
-    "nacimiento": "2007-01-30",
     "mail": "fespinosa@uade.edu.ar",
-    "% asistencia": 0.00,
-    "activo": true
+    "nacimiento": "2007-01-30",
+    "nombre": "Florencia"
   },
   "30014": {
+    "% asistencia": 11.76,
+    "activo": true,
     "apellido": "Fuentes",
-    "nombre": "Tomas",
     "dni": "48888999",
-    "nacimiento": "2004-03-23",
     "mail": "tfuentes@uade.edu.ar",
-    "% asistencia": 0.00,
-    "activo": true
+    "nacimiento": "2004-03-23",
+    "nombre": "Tomas"
   },
   "30015": {
-    "apellido": "Flores",
-    "nombre": "Faustina",
-    "dni": "47788999",
-    "nacimiento": "2006-08-12",
-    "mail": "fflores@uade.edu.ar",
-    "% asistencia": 0.00,
-    "activo": true
+    "% asistencia": 17.65,
+    "activo": false,
+    "apellido": "Sarpero",
+    "dni": "47805604",
+    "email": "lunitasarpero@gmail.com",
+    "fecha_nac": "16-03-2007",
+    "legajo": 30015,
+    "nombre": "Luna"
   }
 }

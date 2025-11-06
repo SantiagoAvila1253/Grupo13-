@@ -139,13 +139,15 @@ def pedir_datos_alumno(alumnos_dict, legajo_existente=None):
     estado = ESTADOS_ALUMNO[AL_ACTIVO]
  
     return {
+        "% asistencia": float(0.0),
+        "activo": True,
         "legajo": legajo,
         "apellido": apellido,
         "nombre": nombre,
         "dni": dni,
         "fecha_nac": fecha_nac,
         "email": email,
-        "estado": estado,
+
     }
  
 def alta_alumno_nuevo():
@@ -196,9 +198,9 @@ def baja_alumno():
     # 3. CAMBIAR ESTADO
     # Verificamos el estado actual
     datos_alumno = alumnos_dict[legajo_str]
-    if datos_alumno["estado"] == ESTADOS_ALUMNO[AL_INACTIVO]:
-        print(f"El alumno {legajo_str} ({datos_alumno['apellido']}) ya se encuentra Inactivo.")
-        input("(Presioná Enter para continuar)")
+    if not datos_alumno.get("activo", True):
+        print("El alumno ya se encuentra inactivo.")
+        input("Presioná Enter para continuar.")
         return
    
     print(f"Alumno a dar de baja: {datos_alumno['apellido']}, {datos_alumno['nombre']}")
@@ -218,8 +220,14 @@ def baja_alumno():
         return
    
     # Actualizamos el estado en el diccionario
-    alumnos_dict[legajo_str]["estado"] = ESTADOS_ALUMNO[AL_INACTIVO]
-   
+    # 4. ACTUALIZAMOS Y GUARDAMOS EL ESTADO EN EL DICCIONARIO
+    alumnos_dict[legajo_str]["activo"] = False
+    alumnos_dict[legajo_str].pop("estado", None)  # elimina 'estado' si existe
+
+
+    # Guardamos los cambios en el JSON
+    es_json.guardar_alumnos(alumnos_dict)
+
     # 4. GUARDAR
     print(f"Dando de baja al alumno {legajo_str}...")
     es_json.guardar_alumnos(alumnos_dict)
@@ -244,15 +252,24 @@ def reactivar_alumno():
  
     # 2. FILTRAR Y MOSTRAR ALUMNOS INACTIVOS
     alumnos_inactivos = {}
+
     for legajo, datos in alumnos_dict.items():
-        if datos["estado"] == ESTADOS_ALUMNO[AL_INACTIVO]:
+    # Normalizar 'activo' por si viniera como string ("true"/"false") en datos viejos
+        v = datos.get("activo", True)
+    if isinstance(v, str):
+        v_norm = v.strip().lower() in ("true", "1", "si", "sí")
+    else:
+        v_norm = bool(v)
+
+    # Solo agregamos si está inactivo (activo == False)
+        if not v_norm:
             alumnos_inactivos[legajo] = datos
- 
+
     if not alumnos_inactivos:
         print("No se encontraron alumnos inactivos para reactivar.")
-        input("(Presioná Enter para continuar)")
+        input("Presioná Enter para continuar")
         return
-       
+
     print("Alumnos inactivos disponibles para reactivar:")
     print("-" * 50)
     for legajo, datos in alumnos_inactivos.items():
@@ -269,14 +286,62 @@ def reactivar_alumno():
             es_valido = True
         else:
             print(f"Error: El legajo {legajo_str} no es un alumno inactivo válido.")
-           
-    # 4. CAMBIAR ESTADO
-    alumnos_dict[legajo_str]["estado"] = ESTADOS_ALUMNO[AL_ACTIVO]
-   
-    # 5. GUARDAR
-    datos_alumno = alumnos_dict[legajo_str]
-    print(f"\nReactivando al alumno {legajo_str}: {datos_alumno['apellido']}, {datos_alumno['nombre']}...")
+def reactivar_alumno():
+    """
+    Reactiva a un alumno inactivo (pasa activo=False -> True).
+    """
+    from core import es_json
+
+    # 1) Leer siempre desde disco
+    alumnos_dict = es_json.leer_alumnos()
+    if not alumnos_dict:
+        print("No hay alumnos cargados en el sistema.")
+        return
+
+    print("\n--- Reactivar Alumno Inactivo ---")
+
+    # 2) Filtrar SOLO por 'activo' == False (normalizado)
+    alumnos_inactivos = {}
+    for legajo, datos in alumnos_dict.items():
+        v = datos.get("activo", True)
+        if isinstance(v, str):
+            v_norm = v.strip().lower() in ("true", "1", "si", "sí")
+        else:
+            v_norm = bool(v)
+        if not v_norm:  # inactivo
+            alumnos_inactivos[legajo] = datos
+
+    if not alumnos_inactivos:
+        print("No se encontraron alumnos inactivos para reactivar.")
+        for leg, d in alumnos_dict.items():
+            print(f"  {leg}: {d.get('activo')!r}")
+        input("Presioná Enter para continuar")
+        return
+
+    # 3) Listar inactivos
+    print("Alumnos inactivos disponibles para reactivar:")
+    print("-" * 50)
+    for legajo, datos in alumnos_inactivos.items():
+        print(f"Legajo: {legajo} | {datos['apellido']}, {datos['nombre']}")
+    print("-" * 50)
+
+    # 4) Pedir y validar legajo
+    while True:
+        legajo_str = input("Legajo del alumno a reactivar: ").strip()
+        if legajo_str in alumnos_inactivos:
+            break
+        print(f"Error: el legajo {legajo_str} no es un alumno inactivo válido.")
+
+    # 5) Cambiar estado y guardar (limpiar 'estado' si existiera)
+    alumnos_dict[legajo_str]["activo"] = True
+    alumnos_dict[legajo_str].pop("estado", None)
+
     es_json.guardar_alumnos(alumnos_dict)
+
+    datos_alumno = alumnos_dict[legajo_str]
+    print(f"Alumno reactivado: {legajo_str} | {datos_alumno['apellido']}, {datos_alumno['nombre']}")
+    input("Presioná Enter para continuar")
+
 # Dar de alta un alumno (nuevo o reactivación)
 def alta_alumno():
     """

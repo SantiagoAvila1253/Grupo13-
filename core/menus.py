@@ -47,5 +47,6 @@ def mostrar_menu_reportes():
     print("1) Reporte general de asistencia")
     print("2) Presentes por clase")
     print("3) Porcentaje de asistencia por alumno")
+    print("4) Top 5 alumnos con más inasistencias")
     print("9) Cerrar sesión")
     print("0) Volver")

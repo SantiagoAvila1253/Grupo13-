@@ -134,5 +134,11 @@ def formatear_linea_alumno(item_alumno):
     y devuelve un string formateado para listados.
     """
     legajo_str, datos = item_alumno
-    # Formateamos la salida para que se vea alineada
-    return f"Legajo: {legajo_str:<6} | Alumno: {datos['apellido']}, {datos['nombre']:<20} | DNI: {datos['dni']:<9} | Estado: {datos['estado']}"
+    estado = "Activo" if datos.get("activo", True) else "Inactivo"
+#string formateado con alineación para listados
+    return (
+        f"Legajo: {legajo_str:<6} | "
+        f"Alumno: {datos['apellido']:<12}, {datos['nombre']:<15} | "
+        f"DNI: {datos['dni']:<10} | "
+        f"Estado: {estado:<9}"
+    )

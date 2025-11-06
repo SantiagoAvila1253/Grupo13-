@@ -102,6 +102,38 @@ def porcentaje_por_alumno():
     for ape, nom, leg, pct in items:
         lineas.append(f"{ape}, {nom} (Legajo {leg}): {pct:.2f}%")
     return "\n".join(lineas)
+def top_5_inasistencias():
+    """
+     Muestra el Top 5 de alumnos con más inasistencias.
+    """
+   # mantener la estructura del proyecto
+
+    alumnos = es_json.leer_alumnos()
+    if not alumnos:
+        print("No hay alumnos cargados en el sistema.")
+        return
+
+    # Convertir el diccionario en una lista de tuplas (legajo, datos)
+    lista_alumnos = list(alumnos.items())
+
+    # Ordenar de menor a mayor porcentaje de asistencia (más inasistencias primero)
+    lista_ordenada = sorted(
+        lista_alumnos,
+        key=lambda item: float(item[1].get("% asistencia", 0))
+    )
+
+    top_5 = lista_ordenada[:5]
+
+    print("\nTop 5 alumnos con más inasistencias")
+    print("-" * 65)
+    print(f"{'Legajo':<10}{'Apellido':<18}{'Nombre':<18}{'% Asistencia':>15}")
+    print("-" * 65)
+
+    for legajo, datos in top_5:
+        pct = float(datos.get("% asistencia", 0))
+        print(f"{legajo:<10}{datos['apellido']:<18}{datos['nombre']:<18}{pct:>13.2f}%")
+
+    print("-" * 65)
 
 # --- Menú de reportes ---
 
@@ -110,7 +142,7 @@ def menu_reportes():
     while en_reportes:
         menus.mostrar_menu_reportes()
         opcion = input("\nElegí una opción: ").strip()
-        if not validadores.opcion_valida_menu(opcion, {"0", "1", "2", "3", "9"}):
+        if not validadores.opcion_valida_menu(opcion, {"0", "1", "2", "3", "4", "9"}):
             print("Opción inválida.")
             continue
         if opcion == "0":
@@ -123,4 +155,6 @@ def menu_reportes():
             print(presentes_por_clase())
         elif opcion == "3":
             print(porcentaje_por_alumno())
+        elif opcion == "4":
+            print(top_5_inasistencias())   
     return "volver"
