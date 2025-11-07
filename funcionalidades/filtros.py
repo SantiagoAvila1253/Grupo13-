@@ -11,19 +11,38 @@ from core.es_json import pausa
 
 
 # Filtros sobre la matriz de asistencia (CSV)
-def filtrar_por_apellido_rec(matriz, prefijo, i=0, acumulado=None):
+def filtrar_por_apellido_rec(matriz, prefijo,incluir_inactivos=False, i=0, acumulado=None):
     # Filtra recursivamente por prefijo de apellido (sin distinguir mayúsculas)
     if acumulado is None:
         acumulado = []
-    if i == len(matriz):                       # caso base
+    if i == len(matriz):     # caso base
+        if incluir_inactivos:                      
+       # Si terminó de recorrer el CSV y se pidió incluir inactivos:
+            alumnos = es_json.leer_alumnos()
+            clases = es_json.leer_clases()
+            ids_clase = sorted(map(int, clases.keys()))
+         # legajos presentes en el CSV 
+            presentes = {int(f[1]) for f in acumulado if f and f[1].isdigit()}
+             # Buscar inactivos cuyo apellido sea igual a el prefijo
+            pref = prefijo.lower()
+            for leg, dat in alumnos.items():
+                ape = str(dat.get("apellido", "")).lower()
+                if ape.startswith(pref) and not bool(dat.get("activo", True)) and int(leg) not in presentes:
+                    ape_out = dat.get("apellido", "")
+                    nom_out = dat.get("nombre", "")
+                    # Genero una fila por clase (estado vacío)
+                    for cid in ids_clase:
+                        acumulado.append([str(cid), str(leg), ape_out, nom_out, ""])
         return acumulado
+        
 
     fila = matriz[i]
-    if fila and len(fila) >= 3 and fila[2].lower().startswith(prefijo.lower()):
+    if (isinstance(fila, (list, tuple)) and len(fila) >= 3
+            and str(fila[2]).lower().startswith(prefijo.lower())):
         acumulado.append(fila)
 
     return filtrar_por_apellido_rec(           # caso recursivo + reducción del dominio
-        matriz, prefijo, i + 1, acumulado
+        matriz, prefijo, incluir_inactivos, i + 1, acumulado
     )
 
 
@@ -121,10 +140,21 @@ def menu_filtros():
         if opcion in {"1", "2", "3"}:
             matriz = es_csv.leer_asistencia()
             if opcion == "1":
+                matriz = es_csv.leer_asistencia()
                 prefijo = input("Prefijo de apellido: ").strip().lower()
-                resultado = filtrar_por_apellido_rec(matriz, prefijo)
+                resultado = filtrar_por_apellido_rec(matriz, prefijo, incluir_inactivos =True)
+                
+                print("\n--- Resultados ---")
+                for f in resultado:
+                    if not (isinstance(f, (list, tuple)) and len(f) >= 5):
+                        continue  # por si se cuela algo raro
+                    print(f"{f[0]} | {f[1]} | {f[2]}, {f[3]} | {f[4]}")
+                print(f"Total encontrados: {len(resultado)}")
+                pausa()
+                return menu_filtros()
 
             elif opcion == "2":
+                matriz = es_csv.leer_asistencia()
                 inc = helpers.pedir_sn("¿Incluir inactivos? (S/N): ")
                 helpers.listar_alumnos_resumen(incluir_inactivos=inc, imprimir=True, titulo="Alumnos disponibles")
                 legajo_txt = input("Legajo exacto: ").strip()
@@ -134,10 +164,25 @@ def menu_filtros():
                     return menu_filtros()  # recursivo (reintenta)
                 legajo = int(legajo_txt)
                 resultado = filtrar_por_legajo_rec(matriz, legajo)
+                alumnos = es_json.leer_alumnos()
                 if not inc:
-                    alumnos = es_json.leer_alumnos()
                     resultado = [(leg, dat) for (leg, dat) in resultado if dat.get("activo", True)]
+                elif not resultado:
+                    reg = alumnos.get(str(legajo))
+                    #lo que hace es agregar al resultado el alumno inactivo si no tiene registros de asistencia
+                    if reg and not reg.get("activo", True):
+                        #lee todas las clases de clases.json
+                        for cid in sorted(map(int, es_json.leer_clases().keys())):
+                            #fabrica una fila por cada clase
+                            resultado.append([str(cid), legajo_txt, reg.get("apellido", ""), reg.get("nombre", ""), ""])
 
+                print("\n--- Resultados ---")
+                for f in resultado:
+                    print(f"{f[0]} | {f[1]} | {f[2]}, {f[3]} | {f[4]}")
+                print(f"Total encontrados: {len(resultado)}")
+                pausa()
+                return menu_filtros()
+            
             elif opcion == "3":
                 estado = input("Estado [P/AJ/AI]: ").strip().upper()
                 if not validadores.validar_estado_asistencia(estado):
