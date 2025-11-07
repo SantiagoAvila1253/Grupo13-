@@ -81,12 +81,12 @@
     "nombre": "Franchesca"
   },
   "30010": {
-    "% asistencia": 17.65,
+    "% asistencia": 0.0,
     "activo": true,
     "apellido": "Ayala",
     "dni": "42223333",
-    "mail": "jayala@uade.edu.ar",
-    "nacimiento": "2007-08-20",
+    "mail": "",
+    "nacimiento": "",
     "nombre": "Joaquin"
   },
   "30011": {
@@ -127,12 +127,22 @@
   },
   "30015": {
     "% asistencia": 17.65,
-    "activo": false,
+    "activo": true,
     "apellido": "Sarpero",
     "dni": "47805604",
     "email": "lunitasarpero@gmail.com",
     "fecha_nac": "16-03-2007",
     "legajo": 30015,
     "nombre": "Luna"
+  },
+  "30016": {
+    "% asistencia": 0.0,
+    "activo": true,
+    "apellido": "abel",
+    "dni": "45672341",
+    "email": "abelpintos@gmail.com",
+    "fecha_nac": "12-10-2007",
+    "legajo": 30016,
+    "nombre": "pintos"
   }
 }

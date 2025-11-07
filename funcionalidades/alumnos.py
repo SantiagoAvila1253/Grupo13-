@@ -109,11 +109,12 @@ def pedir_datos_alumno(alumnos_dict, legajo_existente=None):
     fecha_nac = ""
     fecha_valida = False
     while not fecha_valida:
-        fecha_input = input(f"Fecha Nacimiento (dd-mm-aaaa) [{datos_actuales.get('fecha_nac', '')}]: ").strip()
+        fecha_input = input(f"Fecha Nacimiento (dd-mm-aaaa) [{datos_actuales.get('nacimiento', '')}]: ").strip()
        
-        if not fecha_input and datos_actuales.get('fecha_nac'):
-            fecha_nac = datos_actuales.get('fecha_nac')
+        if fecha_input == "":
+            fecha_nac = datos_actuales.get('nacimiento', '')
             fecha_valida = True
+
         elif val.fecha_ddmmaaaa_valida(fecha_input):
             fecha_nac = fecha_input
             fecha_valida = True
@@ -124,10 +125,10 @@ def pedir_datos_alumno(alumnos_dict, legajo_existente=None):
     email = ""
     email_valido = False
     while not email_valido:
-        email_input = input(f"Email [{datos_actuales.get('email', '')}]: ").strip()
+        email_input = input(f"Email [{datos_actuales.get('mail', '')}]: ").strip()
        
-        if not email_input and datos_actuales.get('email'):
-            email = datos_actuales.get('email')
+        if email_input == "":
+            email = datos_actuales.get('mail', '')
             email_valido = True
         elif val.email_valido(email_input):
             email = email_input
@@ -136,17 +137,17 @@ def pedir_datos_alumno(alumnos_dict, legajo_existente=None):
             print("Error: formato de email inválido.")
  
     # Estado (siempre Activo en alta o modificación)
-    estado = ESTADOS_ALUMNO[AL_ACTIVO]
- 
+    activo_actual = datos_actuales.get("activo", True) if legajo_existente else True
+    pct_actual    = datos_actuales.get("% asistencia", 0.0)
+
     return {
-        "% asistencia": float(0.0),
-        "activo": True,
-        "legajo": legajo,
+        "% asistencia": pct_actual,
+        "activo": activo_actual,
         "apellido": apellido,
-        "nombre": nombre,
         "dni": dni,
-        "fecha_nac": fecha_nac,
-        "email": email,
+        "nacimiento": fecha_nac,
+        "mail": email,
+        "nombre": nombre,
 
     }
  
@@ -165,9 +166,13 @@ def alta_alumno_nuevo():
     nuevo_alumno_datos = pedir_datos_alumno(alumnos_dict)
    
     # 3. AGREGAR AL DICCIONARIO
-    nuevo_legajo_str = str(nuevo_alumno_datos["legajo"])
+    nuevo_legajo = generar_legajo(alumnos_dict)
+    nuevo_legajo_str = str(nuevo_legajo)
     alumnos_dict[nuevo_legajo_str] = nuevo_alumno_datos
- 
+
+
+    alumnos_dict[nuevo_legajo_str] = nuevo_alumno_datos
+
     # 4. GUARDAR EL JSON
     print(f"\nDando de alta al alumno {nuevo_legajo_str}...")
     es_json.guardar_alumnos(alumnos_dict)
@@ -222,70 +227,13 @@ def baja_alumno():
     # Actualizamos el estado en el diccionario
     # 4. ACTUALIZAMOS Y GUARDAMOS EL ESTADO EN EL DICCIONARIO
     alumnos_dict[legajo_str]["activo"] = False
-    alumnos_dict[legajo_str].pop("estado", None)  # elimina 'estado' si existe
 
 
     # Guardamos los cambios en el JSON
-    es_json.guardar_alumnos(alumnos_dict)
-
-    # 4. GUARDAR
     print(f"Dando de baja al alumno {legajo_str}...")
     es_json.guardar_alumnos(alumnos_dict)
  
-def reactivar_alumno():
-    """
-    Reactiva a un alumno inactivo (cambia estado a Activo).
-    1. Lee el JSON.
-    2. Filtra y muestra solo a los alumnos "Inactivos".
-    3. Pide un legajo de esa lista.
-    4. Cambia el estado a "Activo".
-    5. Guarda el JSON.
-    """
-   
-    # 1. LEER
-    alumnos_dict = es_json.leer_alumnos()
-    if not alumnos_dict:
-        print("No hay alumnos cargados en el sistema.")
-        return
- 
-    print("\n--- Reactivar Alumno Inactivo ---")
- 
-    # 2. FILTRAR Y MOSTRAR ALUMNOS INACTIVOS
-    alumnos_inactivos = {}
 
-    for legajo, datos in alumnos_dict.items():
-    # Normalizar 'activo' por si viniera como string ("true"/"false") en datos viejos
-        v = datos.get("activo", True)
-    if isinstance(v, str):
-        v_norm = v.strip().lower() in ("true", "1", "si", "sí")
-    else:
-        v_norm = bool(v)
-
-    # Solo agregamos si está inactivo (activo == False)
-        if not v_norm:
-            alumnos_inactivos[legajo] = datos
-
-    if not alumnos_inactivos:
-        print("No se encontraron alumnos inactivos para reactivar.")
-        input("Presioná Enter para continuar")
-        return
-
-    print("Alumnos inactivos disponibles para reactivar:")
-    print("-" * 50)
-    for legajo, datos in alumnos_inactivos.items():
-        print(f"Legajo: {legajo} | {datos['apellido']}, {datos['nombre']}")
-    print("-" * 50)
- 
-    # 3. PEDIR LEGAJO (validando que esté en la lista de inactivos)
-    legajo_str = ""
-    es_valido = False
-    while not es_valido:
-        legajo_str = input("Legajo del alumno a reactivar: ").strip()
-        # Verificamos que el legajo sea numérico Y esté en el dict de inactivos
-        if legajo_str.isdigit() and legajo_str in alumnos_inactivos:
-            es_valido = True
-        else:
-            print(f"Error: El legajo {legajo_str} no es un alumno inactivo válido.")
 def reactivar_alumno():
     """
     Reactiva a un alumno inactivo (pasa activo=False -> True).
