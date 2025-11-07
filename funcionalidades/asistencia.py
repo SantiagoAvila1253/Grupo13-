@@ -42,6 +42,7 @@ def sincronizar_csv_desde_json():
     - Agrega alumnos o clases nuevas si aparecen en los JSON.
     - Ordena la matriz resultante por clase, apellido, nombre y legajo.
     """
+    print("Sincronizando asistencia...")
     try:
         alumnos = es_json.leer_alumnos()
         clases = es_json.leer_clases()  
@@ -72,8 +73,6 @@ def sincronizar_csv_desde_json():
         nuevas_filas.sort(key=orden_clase_apellido_nombre_legajo)
         es_csv.guardar_asistencia_sobrescribir(nuevas_filas)
 
-        print("Sincronización de asistencia completada correctamente.")
-        es_json.pausa()
         return
 
     except Exception as error:
@@ -286,15 +285,16 @@ def gestion_asistencias():
             # Opción 1: Tomar asistencia por clase (con inicio configurable)
             if opcion == "1":
                 try:
-                    # 1) Validar clase
+                    # 1) Mostrar listado de clases y pedir ID
+                    helpers.listar_clases_resumen(titulo="Clases disponibles")
                     clases_json = es_json.leer_clases()
-
                     clase_txt = input("Ingresá el ID de clase: ").strip()
-                    helpers.listar_clases_resumen(imprimir=True)
+
                     if not validadores.validar_id_clase_existente(clase_txt, clases_json):
                         print("No se pudo ejecutar la acción. Motivo: la clase indicada no existe.")
                         es_json.pausa()
                         continue
+
                     id_clase = int(clase_txt)
 
                     # 2) Elegir modo de inicio
@@ -306,10 +306,10 @@ def gestion_asistencias():
                         continue
 
                     elif modo == "2":
-                        # Desde un legajo específico (edición secuencial circular)
                         sincronizar_csv_desde_json()
+                        # Mostrar listado de alumnos (solo activos por defecto)
+                        helpers.listar_alumnos_resumen(titulo="Alumnos (solo activos)")
                         alumnos_json = es_json.leer_alumnos()
-                        helpers.listar_alumnos_resumen(incluir_inactivos=False, imprimir=True, titulo="Alumnos disponibles (solo activos)")
                         legajo_txt = input("Ingresá el legajo desde el que querés iniciar: ").strip()
                         if not validadores.validar_legajo_existente(legajo_txt, alumnos_json):
                             print("No se pudo ejecutar la acción. Motivo: el legajo indicado no existe.")
@@ -333,7 +333,8 @@ def gestion_asistencias():
                 
                 try:
                     sincronizar_csv_desde_json()
-                    helpers.listar_clases_resumen(imprimir=True, titulo="Clases disponibles")
+                    # Listar clases antes de pedir ID
+                    helpers.listar_clases_resumen(titulo="Clases disponibles")
                     clases_json = es_json.leer_clases()
                     clase_txt = input("Ingresá el ID de clase: ").strip()
                     if not validadores.validar_id_clase_existente(clase_txt, clases_json):
@@ -341,9 +342,9 @@ def gestion_asistencias():
                         es_json.pausa()
                         continue
                     id_clase = int(clase_txt)
-
+                    # Listar alumnos antes de pedir legajo
+                    helpers.listar_alumnos_resumen(titulo="Alumnos (solo activos)")
                     alumnos_json = es_json.leer_alumnos()
-                    helpers.listar_alumnos_resumen(incluir_inactivos=False, imprimir=True, titulo="Alumnos disponibles (solo activos)")
                     legajo_txt = input("Ingresá el legajo desde el que querés iniciar la modificación: ").strip()
                     if not validadores.validar_legajo_existente(legajo_txt, alumnos_json):
                         print("No se pudo ejecutar la acción. Motivo: el legajo indicado no existe.")

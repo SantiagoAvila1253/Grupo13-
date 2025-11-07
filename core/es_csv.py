@@ -86,7 +86,6 @@ def leer_asistencia():
       - FileNotFoundError, OSError → informa, ofrece respaldo (solo cabecera), devuelve []
     """
 
-    print("Leyendo archivos...")
     matriz = []
     try:
         with open(RUTA_ASISTENCIA, "r", encoding="utf-8") as archivo:
@@ -144,7 +143,7 @@ def leer_asistencia():
         return []
 
 
-# Agrega UNA fila al final (modo append), guard mínimal activo
+"""# Agrega UNA fila al final (modo append), guard mínimal activo
 def agregar_fila_asistencia(fila):
 
     if not validar_formato_fila(fila):
@@ -199,7 +198,7 @@ def agregar_filas_asistencia(filas):
             print("No se realizó ninguna copia de respaldo.")
             print("Comunicate con soporte técnico.")
             pausa()
-        return
+        return"""
 
 
 # Sobrescribe COMPLETAMENTE el CSV con cabecera + matriz (omite inválidas)
@@ -217,8 +216,6 @@ def guardar_asistencia_sobrescribir(matriz):
                 linea = CSV_SEP.join(str(campo) for campo in fila)
                 archivo.write(linea + "\n")
 
-        print("La acción se realizó correctamente.")
-        pausa()
         return
 
     except OSError as error:

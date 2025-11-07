@@ -21,11 +21,6 @@ def _cargar_datos_basicos():
 def _total_clases(clases):
     return len(clases)
 
-#formatea el nombre completo del alumno a partir del registro en el diccionario
-def _nombre_alumno(reg_alumno):
-    ape = str(reg_alumno.get('apellido', '')).upper()
-    nom = str(reg_alumno.get('nombre', '')).upper()
-    return f"{ape}, {nom}"
 
 #Su objetivo es dar un panorama global del CSV, cuantos presentes hay sobre el total y el porcentaje
 def reporte_asistencia_general():
@@ -70,7 +65,7 @@ def presentes_por_clase():
             for leg in sorted(legs, key=lambda x: int(x)):
                 #los ordena numéricamente por legajo
                 reg = idx_alumnos.get(str(leg), {})
-                lineas.append(f"    - {_nombre_alumno(reg)} (Legajo {leg})")
+                lineas.append(f"    - {helpers._nombre_en_mayus(reg)} (Legajo {leg})")
         lineas.append("")  # línea en blanco
     return "\n".join(lineas)
 
@@ -103,16 +98,13 @@ def porcentaje_por_alumno():
     #ordena por apellido y nombre, ignorando mayúsculas/minúsculas
     lineas = []
     for ape, nom, leg, pct in items:
-        lineas.append(f"{str(ape).upper()}, {str(nom).upper()} (Legajo {leg}): {pct:.2f}%")
+        reg_min = {"apellido": ape, "nombre": nom}
+        lineas.append(f"{helpers._nombre_en_mayus(reg_min)} (Legajo {leg}): {pct:.2f}%")
     return "\n".join(lineas)
 
 
+#      Muestra el Top 5 de alumnos con más inasistencias.
 def top_5_inasistencias():
-    """
-     Muestra el Top 5 de alumnos con más inasistencias.
-    """
-   # mantener la estructura del proyecto
-
     alumnos = es_json.leer_alumnos()
     if not alumnos:
         print("No hay alumnos cargados en el sistema.")
