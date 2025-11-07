@@ -1,5 +1,5 @@
 # Funciones de ayuda integradas
-from core import es_json, validadores as val
+from core import es_json, es_csv, validadores as val
 
 
 # Valida legajo existente
@@ -156,33 +156,53 @@ def _nombre_en_mayus(reg):
 
 
 # Lista alumnos en formato tabla:
-def listar_alumnos_resumen(incluir_inactivos=False, imprimir=True, titulo="Alumnos"):
+def listar_alumnos_resumen(incluir_inactivos=False, imprimir=True, titulo="Alumnos", id_clase=None):
     """
     - Por defecto solo activos. Si incluir_inactivos=True, muestra todos.
-    - Orden: Apellido, Nombre, Legajo (numérico).
+    - Orden: Apellido, Nombre, Legajo (numérico)
     - Si imprimir=True, imprime y devuelve None. Si imprimir=False, devuelve el string formateado.
     """
     alumnos = es_json.leer_alumnos()
+
+    # Si se pasa id_clase → construir diccionario de estados previos desde asistencia.csv
+    estado_por_legajo = {}
+    if id_clase is not None:
+        matriz = es_csv.leer_asistencia()
+        for fila in matriz:
+            if not fila or len(fila) < 5:
+                continue
+            cid_txt, leg, _ape, _nom, est = fila
+            if cid_txt.isdigit() and int(cid_txt) == int(id_clase):
+                estado_por_legajo[str(leg)] = str(est).strip().upper()
+
     items = []
     for legajo, reg in alumnos.items():
         activo = bool(reg.get("activo", True))
         if incluir_inactivos or activo:
-            items.append((
-                str(legajo),
-                _nombre_en_mayus(reg),
-                "ACTIVO" if activo else "INACTIVO"
-            ))
+            nom = _nombre_en_mayus(reg)
+            if id_clase is None:
+                col3 = "ACTIVO" if activo else "INACTIVO"
+            else:
+                col3 = estado_por_legajo.get(str(legajo), "") or "—"
+            items.append((str(legajo), nom, col3))
 
-    # Orden por Apellido, Nombre, luego Legajo int
+    # Ordenar
     items.sort(key=lambda t: (t[1], int(t[0])))
 
+    # Cabecera
     lineas = []
     lineas.append(f"\n{titulo}")
     lineas.append("-" * 70)
-    lineas.append(f"{'Legajo':<10}{'Apellido, Nombre':<45}{'Estado':<10}")
+    if id_clase is None:
+        lineas.append(f"{'Legajo':<10}{'Apellido, Nombre':<45}{'Estado':<10}")
+    else:
+        lineas.append(f"{'Legajo':<10}{'Apellido, Nombre':<45}{'Asist.':<10}")
     lineas.append("-" * 70)
-    for leg, nom, est in items:
-        lineas.append(f"{leg:<10}{nom:<45}{est:<10}")
+
+    # Filas
+    for leg, nom, col3 in items:
+        lineas.append(f"{leg:<10}{nom:<45}{col3:<10}")
+
     lineas.append("-" * 70)
     lineas.append(f"Total: {len(items)}")
 
@@ -191,6 +211,8 @@ def listar_alumnos_resumen(incluir_inactivos=False, imprimir=True, titulo="Alumn
         print(salida)
         return None
     return salida
+
+
 # Pide S/N y valida estrictamente
 def pedir_sn(msg="¿Incluir inactivos? (S/N): "):
     """

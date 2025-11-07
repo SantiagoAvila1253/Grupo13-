@@ -296,8 +296,17 @@ def gestion_asistencias():
 
                     id_clase = int(clase_txt)
 
+                    # Mostrar alumnos con la asistencia previa de ESTA clase
+                    helpers.listar_alumnos_resumen(
+                        incluir_inactivos=False,
+                        imprimir=True,
+                        titulo=f"Alumnos (solo activos) – Asistencia actual clase {id_clase}",
+                        id_clase=id_clase
+                    )
+
                     # 2) Elegir modo de inicio
                     modo = input("Ingresá 1 para iniciar desde el primer alumno o 2 para iniciar desde un legajo: ").strip()
+
                     if modo == "1":
                         # Sincronización + Recorrido completo desde el primer alumno (orden A-Z)
                         sincronizar_csv_desde_json()
@@ -306,10 +315,18 @@ def gestion_asistencias():
 
                     elif modo == "2":
                         sincronizar_csv_desde_json()
-                        # Mostrar listado de alumnos (solo activos por defecto)
-                        helpers.listar_alumnos_resumen(titulo="Alumnos (solo activos)")
+
+                        # Mostrar alumnos con la asistencia previa de ESTA clase
+                        helpers.listar_alumnos_resumen(
+                            incluir_inactivos=False,
+                            imprimir=True,
+                            titulo=f"Alumnos (solo activos) – Asistencia actual clase {id_clase}",
+                            id_clase=id_clase
+                        )
+
                         alumnos_json = es_json.leer_alumnos()
                         legajo_txt = input("Ingresá el legajo desde el que querés iniciar: ").strip()
+
                         if not validadores.validar_legajo_existente(legajo_txt, alumnos_json):
                             print("No se pudo ejecutar la acción. Motivo: el legajo indicado no existe.")
                             es_json.pausa()
@@ -341,10 +358,18 @@ def gestion_asistencias():
                         es_json.pausa()
                         continue
                     id_clase = int(clase_txt)
-                    # Listar alumnos antes de pedir legajo
-                    helpers.listar_alumnos_resumen(titulo="Alumnos (solo activos)")
+
+                    # Listar alumnos con asistencia previa de ESTA clase antes de pedir legajo
+                    helpers.listar_alumnos_resumen(
+                        incluir_inactivos=False,
+                        imprimir=True,
+                        titulo=f"Alumnos (solo activos) – Asistencia actual clase {id_clase}",
+                        id_clase=id_clase
+                    )
+
                     alumnos_json = es_json.leer_alumnos()
                     legajo_txt = input("Ingresá el legajo desde el que querés iniciar la modificación: ").strip()
+
                     if not validadores.validar_legajo_existente(legajo_txt, alumnos_json):
                         print("No se pudo ejecutar la acción. Motivo: el legajo indicado no existe.")
                         es_json.pausa()
