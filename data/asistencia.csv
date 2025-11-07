@@ -1,20 +1,22 @@
 clase_id;legajo;apellido;nombre;estado
-20001;30002;Altanio;Pablo;AI
+20001;30002;Altanio;Pablo;P
 20001;30009;Ameglio;Franchesca;P
-20001;30010;Ayala;Joaquin;
+20001;30016;Avila;Lucas;P
+20001;30010;Ayala;Joaquin;P
 20001;30005;Castro;Lucia;P
 20001;30011;Catillo;Valentina;P
 20001;30013;Espinosa;Florencia;P
 20001;30004;Fernandez;Mateo;P
-20001;30014;Fuentes;Tomas;
+20001;30014;Fuentes;Tomas;P
 20001;30008;Gonzales;Agustina;P
 20001;30003;Mandeo;Marcelo;P
 20001;30006;Martinez;Julian;P
 20001;30007;Nando;Sofia;P
 20001;30012;Nuñez;Lautaro;P
-20001;30001;Saltid;Juan;
+20001;30001;Saltid;Juan;P
 20002;30002;Altanio;Pablo;P
 20002;30009;Ameglio;Franchesca;P
+20002;30016;Avila;Lucas;
 20002;30010;Ayala;Joaquin;
 20002;30005;Castro;Lucia;P
 20002;30011;Catillo;Valentina;P
@@ -29,6 +31,7 @@ clase_id;legajo;apellido;nombre;estado
 20002;30001;Saltid;Juan;
 20003;30002;Altanio;Pablo;P
 20003;30009;Ameglio;Franchesca;P
+20003;30016;Avila;Lucas;
 20003;30010;Ayala;Joaquin;
 20003;30005;Castro;Lucia;P
 20003;30011;Catillo;Valentina;P
@@ -43,6 +46,7 @@ clase_id;legajo;apellido;nombre;estado
 20003;30001;Saltid;Juan;
 20004;30002;Altanio;Pablo;P
 20004;30009;Ameglio;Franchesca;AI
+20004;30016;Avila;Lucas;
 20004;30010;Ayala;Joaquin;
 20004;30005;Castro;Lucia;AI
 20004;30011;Catillo;Valentina;P
@@ -57,6 +61,7 @@ clase_id;legajo;apellido;nombre;estado
 20004;30001;Saltid;Juan;
 20005;30002;Altanio;Pablo;
 20005;30009;Ameglio;Franchesca;
+20005;30016;Avila;Lucas;
 20005;30010;Ayala;Joaquin;
 20005;30005;Castro;Lucia;
 20005;30011;Catillo;Valentina;
@@ -71,6 +76,7 @@ clase_id;legajo;apellido;nombre;estado
 20005;30001;Saltid;Juan;
 20006;30002;Altanio;Pablo;
 20006;30009;Ameglio;Franchesca;
+20006;30016;Avila;Lucas;
 20006;30010;Ayala;Joaquin;
 20006;30005;Castro;Lucia;
 20006;30011;Catillo;Valentina;
@@ -85,6 +91,7 @@ clase_id;legajo;apellido;nombre;estado
 20006;30001;Saltid;Juan;
 20007;30002;Altanio;Pablo;
 20007;30009;Ameglio;Franchesca;
+20007;30016;Avila;Lucas;
 20007;30010;Ayala;Joaquin;
 20007;30005;Castro;Lucia;
 20007;30011;Catillo;Valentina;
@@ -99,6 +106,7 @@ clase_id;legajo;apellido;nombre;estado
 20007;30001;Saltid;Juan;
 20008;30002;Altanio;Pablo;
 20008;30009;Ameglio;Franchesca;
+20008;30016;Avila;Lucas;
 20008;30010;Ayala;Joaquin;
 20008;30005;Castro;Lucia;
 20008;30011;Catillo;Valentina;
@@ -113,6 +121,7 @@ clase_id;legajo;apellido;nombre;estado
 20008;30001;Saltid;Juan;
 20009;30002;Altanio;Pablo;
 20009;30009;Ameglio;Franchesca;
+20009;30016;Avila;Lucas;
 20009;30010;Ayala;Joaquin;
 20009;30005;Castro;Lucia;
 20009;30011;Catillo;Valentina;
@@ -127,6 +136,7 @@ clase_id;legajo;apellido;nombre;estado
 20009;30001;Saltid;Juan;
 20010;30002;Altanio;Pablo;
 20010;30009;Ameglio;Franchesca;
+20010;30016;Avila;Lucas;
 20010;30010;Ayala;Joaquin;
 20010;30005;Castro;Lucia;
 20010;30011;Catillo;Valentina;
@@ -141,6 +151,7 @@ clase_id;legajo;apellido;nombre;estado
 20010;30001;Saltid;Juan;
 20011;30002;Altanio;Pablo;
 20011;30009;Ameglio;Franchesca;
+20011;30016;Avila;Lucas;
 20011;30010;Ayala;Joaquin;
 20011;30005;Castro;Lucia;
 20011;30011;Catillo;Valentina;
@@ -155,6 +166,7 @@ clase_id;legajo;apellido;nombre;estado
 20011;30001;Saltid;Juan;
 20012;30002;Altanio;Pablo;
 20012;30009;Ameglio;Franchesca;
+20012;30016;Avila;Lucas;
 20012;30010;Ayala;Joaquin;
 20012;30005;Castro;Lucia;
 20012;30011;Catillo;Valentina;
@@ -169,6 +181,7 @@ clase_id;legajo;apellido;nombre;estado
 20012;30001;Saltid;Juan;
 20013;30002;Altanio;Pablo;
 20013;30009;Ameglio;Franchesca;
+20013;30016;Avila;Lucas;
 20013;30010;Ayala;Joaquin;
 20013;30005;Castro;Lucia;
 20013;30011;Catillo;Valentina;
@@ -183,6 +196,7 @@ clase_id;legajo;apellido;nombre;estado
 20013;30001;Saltid;Juan;
 20014;30002;Altanio;Pablo;
 20014;30009;Ameglio;Franchesca;
+20014;30016;Avila;Lucas;
 20014;30010;Ayala;Joaquin;
 20014;30005;Castro;Lucia;
 20014;30011;Catillo;Valentina;
@@ -197,6 +211,7 @@ clase_id;legajo;apellido;nombre;estado
 20014;30001;Saltid;Juan;
 20015;30002;Altanio;Pablo;
 20015;30009;Ameglio;Franchesca;
+20015;30016;Avila;Lucas;
 20015;30010;Ayala;Joaquin;
 20015;30005;Castro;Lucia;
 20015;30011;Catillo;Valentina;
@@ -211,6 +226,7 @@ clase_id;legajo;apellido;nombre;estado
 20015;30001;Saltid;Juan;
 20016;30002;Altanio;Pablo;
 20016;30009;Ameglio;Franchesca;
+20016;30016;Avila;Lucas;
 20016;30010;Ayala;Joaquin;
 20016;30005;Castro;Lucia;
 20016;30011;Catillo;Valentina;
@@ -225,6 +241,7 @@ clase_id;legajo;apellido;nombre;estado
 20016;30001;Saltid;Juan;
 20017;30002;Altanio;Pablo;
 20017;30009;Ameglio;Franchesca;
+20017;30016;Avila;Lucas;
 20017;30010;Ayala;Joaquin;
 20017;30005;Castro;Lucia;
 20017;30011;Catillo;Valentina;

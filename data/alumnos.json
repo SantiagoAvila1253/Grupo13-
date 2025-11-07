@@ -1,6 +1,6 @@
 {
   "30001": {
-    "% asistencia": 0.0,
+    "% asistencia": 5.88,
     "activo": true,
     "apellido": "Saltid",
     "dni": "40111222",
@@ -9,7 +9,7 @@
     "nombre": "Juan"
   },
   "30002": {
-    "% asistencia": 17.65,
+    "% asistencia": 23.53,
     "activo": true,
     "apellido": "Altanio",
     "dni": "39222333",
@@ -81,7 +81,7 @@
     "nombre": "Franchesca"
   },
   "30010": {
-    "% asistencia": 17.65,
+    "% asistencia": 5.88,
     "activo": true,
     "apellido": "Ayala",
     "dni": "42223333",
@@ -117,7 +117,7 @@
     "nombre": "Florencia"
   },
   "30014": {
-    "% asistencia": 11.76,
+    "% asistencia": 5.88,
     "activo": true,
     "apellido": "Fuentes",
     "dni": "48888999",
@@ -126,7 +126,7 @@
     "nombre": "Tomas"
   },
   "30015": {
-    "% asistencia": 17.65,
+    "% asistencia": 0.0,
     "activo": false,
     "apellido": "Sarpero",
     "dni": "47805604",
@@ -134,5 +134,15 @@
     "fecha_nac": "16-03-2007",
     "legajo": 30015,
     "nombre": "Luna"
+  },
+  "30016": {
+    "% asistencia": 5.88,
+    "activo": true,
+    "apellido": "Avila",
+    "dni": "4567890",
+    "email": "lucas@gmail.com",
+    "fecha_nac": "12-03-2005",
+    "legajo": 30016,
+    "nombre": "Lucas"
   }
 }

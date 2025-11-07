@@ -10,6 +10,7 @@ from core import menus, validadores, es_json
 from core.helpers import pedir_password
 from core.es_json import pausa
 
+from colorama import Fore, Style
 
 # Auxiliar: validación recursiva de credenciales
 def validar_credenciales_rec(dic_docentes, dni, clave, claves, i=0):
@@ -61,38 +62,38 @@ def reiniciar_clave():
     """
     try:
         docentes = es_json.leer_docentes()
-        dni = input("Ingresá tu DNI: ").strip()
+        dni = input(Fore.YELLOW + "Ingresá tu DNI: " + Style.RESET_ALL).strip()
 
         if not validadores.dni_valido(dni):
-            print("DNI inválido.")
+            print(Fore.RED + "DNI inválido.")
             pausa()
             return False
 
         nueva = pedir_password("Nueva contraseña (mínimo 4 caracteres): ")
         if not validadores.password_valida(nueva, 4):
-            print("Contraseña inválida (mínimo 4 caracteres).")
+            print(Fore.RED + "Contraseña inválida (mínimo 4 caracteres).")
             pausa()
             return False
 
         confirma = pedir_password("Repetí la nueva contraseña: ")
         if nueva != confirma:
-            print("Las contraseñas no coinciden.")
+            print(Fore.RED + "Las contraseñas no coinciden.")
             pausa()
             return False
 
         # Actualización (recursiva) y persistencia
         if actualizar_clave_rec(docentes, dni, nueva, list(docentes.keys())):
             es_json.guardar_json("data/docentes.json", docentes)
-            print("Contraseña actualizada.")
+            print(Fore.GREEN + "Contraseña actualizada.")
             pausa()
             return True
 
-        print("Usuario no encontrado.")
+        print(Fore.RED + "Usuario no encontrado.")
         pausa()
         return False
 
     except Exception as error:
-        print(f"No se pudo reiniciar la clave. Tipo de error: {type(error).__name__}. Detalle: {error}")
+        print(Fore.RED + f"No se pudo reiniciar la clave. Tipo de error: {type(error).__name__}. Detalle: {error}")
         pausa()
         return False
 
@@ -108,23 +109,23 @@ def login_usuario():
     """
     try:
         menus.mostrar_menu_login()
-        opcion = input("\nElegí una opción: ").strip()
+        opcion = input(Fore.YELLOW + "\nElegí una opción: " + Style.RESET_ALL).strip()
 
         # Validación de opción
         if not validadores.opcion_valida_menu(opcion, {"1", "2", "3"}):
-            print("Opción inválida.")
+            print(Fore.RED + "Opción inválida.")
             pausa()
             return login_usuario()  # caso recursivo
 
         # Opción 1: iniciar sesión
         if opcion == "1":
             docentes = es_json.leer_docentes()
-            dni = input("\nIngresá tu DNI (sin puntos ni comas o -1 para salir): ").strip()
+            dni = input(Fore.YELLOW + "\nIngresá tu DNI (sin puntos ni comas o -1 para salir): " + Style.RESET_ALL).strip()
             if dni == "-1":
                 return None  # caso base
 
             if not validadores.dni_valido(dni):
-                print("DNI inválido.")
+                print(Fore.RED + "DNI inválido.")
                 pausa()
                 return login_usuario()  # recursivo
 
@@ -132,11 +133,11 @@ def login_usuario():
 
             ok = validar_credenciales_rec(docentes, dni, clave, list(docentes.keys()))
             if ok:
-                print("Login correcto.")
+                print(Fore.GREEN + "Login correcto.")
                 pausa()
                 return {"dni": dni}  # caso base
             else:
-                print("Credenciales incorrectas.")
+                print(Fore.RED + "Credenciales incorrectas.")
                 pausa()
                 return login_usuario()  # recursivo
 
@@ -150,6 +151,6 @@ def login_usuario():
             return None  # caso base
 
     except Exception as error:
-        print(f"No se pudo ejecutar el login. Tipo de error: {type(error).__name__}. Detalle: {error}")
+        print(Fore.RED + f"No se pudo ejecutar el login. Tipo de error: {type(error).__name__}. Detalle: {error}")
         pausa()
         return None

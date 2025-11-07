@@ -5,7 +5,7 @@ from core import menus, validadores
 from login.autenticacion import login_usuario
 from funcionalidades import alumnos, asistencia, filtros, reportes
 
-
+from colorama import init, Fore, Style
 # control de la sesión
 def ciclo_sesion():
     """
@@ -16,15 +16,15 @@ def ciclo_sesion():
     en_sistema = True
     while en_sistema:
         menus.mostrar_menu_principal()
-        opcion = input("Elegí una opción: ").strip()
+        opcion = input(Fore.YELLOW + "Elegí una opción: " + Style.RESET_ALL).strip()
 
         # Menú principal actualizado: 1=Alumnos, 2=Asistencias, 3=Filtros, 4=Reportes, 9=Cerrar sesión, 0=Salir
         if not validadores.opcion_valida_menu(opcion, {"0", "1", "2", "3", "4", "9"}):
-            print("Opción inválida.")
+            print(Fore.RED + "Opción inválida.")
             continue
 
         if opcion == "0":
-            print("Fin.")
+            print(Fore.GREEN + "Fin.")
             return "exit"
 
         if opcion == "9":
@@ -64,18 +64,20 @@ def main():
       - login
       - ciclo de sesión (con posibilidad de re-logueo tras 'Cerrar sesión')
     """
+    init(autoreset=True, wrap=False)
+
     ejecutando = True
     while ejecutando:
         usuario = login_usuario()
         if not usuario:
-            print("Saliste del sistema.")
+            print(Fore.GREEN + "Saliste del sistema.")
             return
 
         resultado = ciclo_sesion()
         if resultado == "exit":
             ejecutando = False
         elif resultado == "logout":
-            print("Cerraste tu sesión.")
+            print(Fore.YELLOW + "Cerraste tu sesión.")
 
 
 # Iniciar main
