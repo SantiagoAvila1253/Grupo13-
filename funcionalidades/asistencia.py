@@ -42,7 +42,6 @@ def sincronizar_csv_desde_json():
     - Agrega alumnos o clases nuevas si aparecen en los JSON.
     - Ordena la matriz resultante por clase, apellido, nombre y legajo.
     """
-    print("Sincronizando asistencia...")
     try:
         alumnos = es_json.leer_alumnos()
         clases = es_json.leer_clases()  

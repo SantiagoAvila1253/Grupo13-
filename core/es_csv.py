@@ -50,25 +50,30 @@ def guardar_respaldo_csv(nombre_archivo_destino, filas=None):
     """
     Si 'filas' es None o lista vacía, se respalda solo la cabecera.
     Si 'filas' tiene contenido (lista de listas), se escribe cabecera + filas.
+    Crea automáticamente la carpeta de respaldo si no existe.
+    Devuelve la ruta del archivo creado si todo salió bien; en caso de error, devuelve None.
     """
     try:
+        os.makedirs(CARPETA_RESPALDO, exist_ok=True)
+
         destino = os.path.join(CARPETA_RESPALDO, nombre_respaldo_csv(nombre_archivo_destino))
         with open(destino, "w", encoding="utf-8") as archivo:
             # Cabecera fija
             archivo.write(CSV_SEP.join(CABECERA_CSV) + "\n")
-            # Filas (opcional)
+            # Filas opcionales
             if filas:
                 for fila in filas:
                     linea = CSV_SEP.join(str(campo) for campo in fila)
                     archivo.write(linea + "\n")
-        print(f"Se guardó una copia de respaldo como {destino}")
+
+        return destino  # éxito: sin prints, sin pausa
+
     except Exception as error:
         print("No se pudo guardar la copia de respaldo del CSV.")
         print(f"Tipo de error: {type(error).__name__}. Detalle: {error}")
-    finally:
         print("Comunicate con soporte técnico.")
-        pausa()
-        return
+        pausa()  # pausa SOLO si esta función también falla
+        return None
 
 
 # Validación mínima para evitar corrupción del CSV
@@ -83,7 +88,7 @@ def validar_formato_fila(fila):
 def leer_asistencia():
     """
     Manejo de errores:
-      - FileNotFoundError, OSError → informa, ofrece respaldo (solo cabecera), devuelve []
+      - FileNotFoundError, OSError, informa, devuelve []
     """
 
     matriz = []
@@ -92,14 +97,10 @@ def leer_asistencia():
             # 1) Leer primera línea (cabecera)
             cabecera = archivo.readline()
             if not cabecera:
-                # Archivo vacío → error, ofrecer respaldo vacío
-                print("No se pudo ejecutar la acción. Motivo: el archivo de asistencia está vacío.")
-                if preguntar_respaldo():
-                    guardar_respaldo_csv(RUTA_ASISTENCIA, [])
-                else:
-                    print("No se realizó ninguna copia de respaldo.")
-                    print("Comunicate con soporte técnico.")
-                    pausa()
+                # Archivo vacío, error, ofrecer respaldo vacío
+                print("No se pudo ejecutar la acción. El archivo de asistencia está vacío.")
+                print("Comunicate con soporte técnico.")
+                pausa()
                 return []
 
             # 2) Leer el resto del archivo línea por línea
@@ -123,82 +124,16 @@ def leer_asistencia():
     except FileNotFoundError as error:
         print(f"No se pudo ejecutar la acción. Motivo: archivo inexistente: {RUTA_ASISTENCIA}.")
         print(f"Tipo de error: {type(error).__name__}. Detalle: {error}")
-        if preguntar_respaldo():
-            guardar_respaldo_csv(RUTA_ASISTENCIA, [])
-        else:
-            print("No se realizó ninguna copia de respaldo.")
-            print("Comunicate con soporte técnico.")
-            pausa()
+        print("Comunicate con soporte técnico.")
+        pausa()
         return []
 
     except OSError as error:
         print(f"No se pudo ejecutar la acción. Motivo: error de acceso al archivo {RUTA_ASISTENCIA}.")
         print(f"Tipo de error: {type(error).__name__}. Detalle: {error}")
-        if preguntar_respaldo():
-            guardar_respaldo_csv(RUTA_ASISTENCIA, [])
-        else:
-            print("No se realizó ninguna copia de respaldo.")
-            print("Comunicate con soporte técnico.")
-            pausa()
+        print("Comunicate con soporte técnico.")
+        pausa()
         return []
-
-
-"""# Agrega UNA fila al final (modo append), guard mínimal activo
-def agregar_fila_asistencia(fila):
-
-    if not validar_formato_fila(fila):
-        print("Error interno: la fila de asistencia debe tener exactamente 5 columnas. Revisá los validadores.")
-        return
-
-    try:
-        with open(RUTA_ASISTENCIA, "a", encoding="utf-8") as archivo:
-            linea = CSV_SEP.join(str(campo) for campo in fila)
-            archivo.write(linea + "\n")
-
-        print("La acción se realizó correctamente.")
-        pausa()
-        return
-
-    except OSError as error:
-        print(f"No se pudo ejecutar la acción. Motivo: error al escribir en {RUTA_ASISTENCIA}.")
-        print(f"Tipo de error: {type(error).__name__}. Detalle: {error}")
-        # En error de E/S sí ofrecemos respaldo (con cabecera + esta fila)
-        if preguntar_respaldo():
-            guardar_respaldo_csv(RUTA_ASISTENCIA, [fila])
-        else:
-            print("No se realizó ninguna copia de respaldo.")
-            print("Comunicate con soporte técnico.")
-            pausa()
-        return
-
-
-# Agrega VARIAS filas al final (modo append), omitiendo inválidas
-def agregar_filas_asistencia(filas):
-
-    try:
-        with open(RUTA_ASISTENCIA, "a", encoding="utf-8") as archivo:
-            for fila in filas:
-                if not validar_formato_fila(fila):
-                    print("Advertencia interna: se omitió una fila con formato inválido durante el append múltiple.")
-                    continue
-                linea = CSV_SEP.join(str(campo) for campo in fila)
-                archivo.write(linea + "\n")
-
-        print("La acción se realizó correctamente.")
-        pausa()
-        return
-
-    except OSError as error:
-        print(f"No se pudo ejecutar la acción. Motivo: error al escribir en {RUTA_ASISTENCIA}.")
-        print(f"Tipo de error: {type(error).__name__}. Detalle: {error}")
-        if preguntar_respaldo():
-            filas_validas = [f for f in filas if validar_formato_fila(f)]
-            guardar_respaldo_csv(RUTA_ASISTENCIA, filas_validas)
-        else:
-            print("No se realizó ninguna copia de respaldo.")
-            print("Comunicate con soporte técnico.")
-            pausa()
-        return"""
 
 
 # Sobrescribe COMPLETAMENTE el CSV con cabecera + matriz (omite inválidas)
@@ -221,11 +156,14 @@ def guardar_asistencia_sobrescribir(matriz):
     except OSError as error:
         print(f"No se pudo ejecutar la acción. Motivo: error al guardar {RUTA_ASISTENCIA}.")
         print(f"Tipo de error: {type(error).__name__}. Detalle: {error}")
+
         if preguntar_respaldo():
             filas_validas = [f for f in matriz if validar_formato_fila(f)]
-            guardar_respaldo_csv(RUTA_ASISTENCIA, filas_validas)
-        else:
-            print("No se realizó ninguna copia de respaldo.")
-            print("Comunicate con soporte técnico.")
-            pausa()
+            ruta_respaldo = guardar_respaldo_csv(RUTA_ASISTENCIA, filas_validas)
+            if ruta_respaldo:
+                print(f"Se guardó una copia de respaldo como {ruta_respaldo}")
+                print("Comunicate con soporte técnico.")
+                pausa()
+            else:
+                pass
         return

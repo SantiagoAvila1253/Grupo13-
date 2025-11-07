@@ -88,29 +88,35 @@ def nombre_respaldo(base):
 
 # Guarda una copia de respaldo en data/respaldo/ de lo trabajado con nombre único cuando hay un error en el archivo
 def guardar_respaldo(nombre_archivo_destino, datos=None):
+    """
+    Comportamiento
+    - Si 'datos' es None → guarda un JSON vacío.
+    - Retorna la ruta del respaldo si todo salió bien, o None si falla.
+    """
     try:
+        os.makedirs(CARPETA_RESPALDO, exist_ok=True)
+
         # Ruta final del respaldo: data/respaldo/<base>_YYYY-MM-DD_HH-MM-SS.json
         destino = os.path.join(CARPETA_RESPALDO, nombre_respaldo(nombre_archivo_destino))
 
-        # Si 'datos' es None → {}, si no → convertimos claves externas a str (JSON exige claves string)
+        # Si 'datos' es None => {}, si no => convertimos claves externas a str
         contenido = {} if datos is None else {str(clave): valor for clave, valor in datos.items()}
 
-        # Escritura del JSON (legible y consistente)
+        # Escritura del JSON
         with open(destino, "w", encoding="utf-8") as archivo:
             json.dump(contenido, archivo, ensure_ascii=False, indent=2, sort_keys=True)
 
         print(f"Se guardó una copia de respaldo como {destino}")
-
-    except Exception as error:
-        print(
-            "No se pudo guardar la copia de respaldo. "
-            f"Tipo de error: {type(error).__name__}. Detalle: {error}"
-        )
-
-    finally:
         print("Comunicate con soporte técnico.")
         pausa()
-        return
+        return destino
+
+    except Exception as error:
+        print("No se pudo guardar la copia de respaldo.")
+        print(f"Tipo de error: {type(error).__name__}. Detalle: {error}")
+        print("Comunicate con soporte técnico.")
+        pausa()
+        return None
 
 
 # Lectura general de archivos JSON
@@ -129,12 +135,8 @@ def leer_json(ruta):
             # Verifica que 'datos' sea un diccionario de diccionarios
             if not es_diccionario_de_diccionarios(datos):
                 print(f"No se pudo ejecutar la acción. Motivo: estructura inválida en {ruta} (se esperaba un diccionario de diccionarios).")
-                if preguntar_respaldo():
-                    guardar_respaldo(ruta, None)
-                else:
-                    print("No se realizó ninguna copia de respaldo.")
-                    print("Comunicate con soporte técnico.")
-                    pausa()
+                print("Comunicate con soporte técnico.")
+                pausa()
                 return {}
 
         return datos
@@ -142,12 +144,8 @@ def leer_json(ruta):
     except FileNotFoundError as error:
         print(f"No se pudo ejecutar la acción. Motivo: archivo inexistente: {ruta}.")
         print(f"Tipo de error: {type(error).__name__}. Detalle: {error}")
-        if preguntar_respaldo():
-            guardar_respaldo(ruta, None)
-        else:
-            print("No se realizó ninguna copia de respaldo.")
-            print("Comunicate con soporte técnico.")
-            pausa()
+        print("Comunicate con soporte técnico.")
+        pausa()
         return {}
 
     except json.JSONDecodeError as error:
@@ -155,71 +153,61 @@ def leer_json(ruta):
         # __name__ devuelve el nombre del tipo de error (por ejemplo "JSONDecodeError")
         # lineno y colno indican la línea y columna del archivo donde ocurrió el error JSON
         print(f"Tipo de error: {type(error).__name__}. Detalle: línea {error.lineno}, columna {error.colno}.")
-        if preguntar_respaldo():
-            guardar_respaldo(ruta, None)
-        else:
-            print("No se realizó ninguna copia de respaldo.")
-            print("Comunicate con soporte técnico.")
-            pausa()
+        print("Comunicate con soporte técnico.")
+        pausa()
         return {}
 
     except OSError as error:
         print(f"No se pudo ejecutar la acción. Motivo: error de acceso al archivo {ruta}.")
         print(f"Tipo de error: {type(error).__name__}. Detalle: {error}")
-        if preguntar_respaldo():
-            guardar_respaldo(ruta, None)
-        else:
-            print("No se realizó ninguna copia de respaldo.")
-            print("Comunicate con soporte técnico.")
-            pausa()
+        print("Comunicate con soporte técnico.")
+        pausa()
         return {}
 
 
 # Guardado general de archivos JSON
 def guardar_json(ruta, datos):
     """
-    Guarda un diccionario en un archivo JSON.
-    Manejo de errores:
-      - ValueError si 'datos' no es dict
-      - OSError al abrir/escribir
-    En caso de éxito, confirma la acción.
-    En caso de error, ofrece guardar respaldo con el contenido en memoria.
+    Comportamiento:
+    - En éxito: guarda y retorna
+    - En error: muestra detalles, ofrece respaldo y pausa.
+    - ValueError si 'datos' no es dict válido.
+    - OSError si hay error al abrir/escribir.
     """
 
-    # Verifica que todos los valores sean diccionarios (forma esperada por entidad)
+    # Validación de estructura
     if not es_diccionario_de_diccionarios(datos):
         print("No se pudo ejecutar la acción. Motivo: los valores del diccionario deben ser diccionarios (forma entidad).")
         print("Tipo de error: ValueError.")
         if preguntar_respaldo():
             guardar_respaldo(ruta, None)
+            print("Se guardó una copia de respaldo. Comunicate con soporte técnico.")
         else:
             print("No se realizó ninguna copia de respaldo.")
             print("Comunicate con soporte técnico.")
-            pausa()
+        pausa()
         return
 
     try:
-        # Convierte las claves del diccionario a texto para que sean válidas en formato JSON
+        # Convierte las claves a string por compatibilidad JSON
         datos_convertidos = {str(clave): valor for clave, valor in datos.items()}
 
-        # Abre el archivo en modo escritura ("w" sobrescribe el contenido anterior)
+        # Guarda el archivo sobrescribiendo el anterior
         with open(ruta, "w", encoding="utf-8") as archivo:
-            # Guarda los datos en formato JSON legible, con claves ordenadas y caracteres especiales visibles
             json.dump(datos_convertidos, archivo, ensure_ascii=False, indent=2, sort_keys=True)
 
-        print("Datos guardados correctamente.")
-        pausa()
-        return
+        return  # éxito: sin prints ni pausas
 
     except OSError as error:
         print(f"No se pudo ejecutar la acción. Motivo: error al guardar {ruta}.")
         print(f"Tipo de error: {type(error).__name__}. Detalle: {error}")
         if preguntar_respaldo():
             guardar_respaldo(ruta, datos)
+            print("Se guardó una copia de respaldo. Comunicate con soporte técnico.")
         else:
             print("No se realizó ninguna copia de respaldo.")
             print("Comunicate con soporte técnico.")
-            pausa()
+        pausa()
         return
 
 
