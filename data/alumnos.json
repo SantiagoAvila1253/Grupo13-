@@ -81,8 +81,8 @@
     "nombre": "Franchesca"
   },
   "30010": {
-    "% asistencia": 5.88,
-    "activo": true,
+    "% asistencia": 0.0,
+    "activo": false,
     "apellido": "Ayala",
     "dni": "42223333",
     "mail": "jayala@uade.edu.ar",
@@ -136,11 +136,20 @@
   },
   "30016": {
     "% asistencia": 5.88,
-    "activo": false,
+    "activo": true,
     "apellido": "Avila",
     "dni": "4567890",
     "mail": "lucas@gmail.com",
     "nacimiento": "12-03-2005",
     "nombre": "Lucas"
+  },
+  "30017": {
+    "% asistencia": 0.0,
+    "activo": true,
+    "apellido": "Pereira",
+    "dni": "46789123",
+    "mail": "carlospereira@gmail.com",
+    "nacimiento": "10-05-2006",
+    "nombre": "carlos"
   }
 }

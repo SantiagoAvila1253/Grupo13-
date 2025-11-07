@@ -125,14 +125,17 @@ def menu_filtros():
                 resultado = filtrar_por_apellido_rec(matriz, prefijo)
 
             elif opcion == "2":
-                inc = input("¿Incluir inactivos? (S/N): ").strip().lower() == "s"
+                inc = helpers.pedir_sn("¿Incluir inactivos? (S/N): ")
                 helpers.listar_alumnos_resumen(incluir_inactivos=inc, imprimir=True, titulo="Alumnos disponibles")
                 legajo_txt = input("Legajo exacto: ").strip()
                 if not validadores.validar_numero_entero(legajo_txt):
                     print("Legajo inválido.")
                     pausa()
                     return menu_filtros()  # recursivo (reintenta)
+                legajo = int(legajo_txt)
+                resultado = filtrar_por_legajo_rec(matriz, legajo)
                 if not inc:
+                    alumnos = es_json.leer_alumnos()
                     resultado = [(leg, dat) for (leg, dat) in resultado if dat.get("activo", True)]
 
             elif opcion == "3":
@@ -152,10 +155,11 @@ def menu_filtros():
         # Filtro de alumnos (JSON)
         if opcion == "4":
             alumnos = es_json.leer_alumnos()
-            inc = input("¿Incluir inactivos? (S/N): ").strip().lower() == "s"
+            inc = helpers.pedir_sn("¿Incluir inactivos? (S/N): ")
             helpers.listar_alumnos_resumen(incluir_inactivos=inc, imprimir=True, titulo="Alumnos disponibles")
 
             prefijo = input("Prefijo de apellido: ").strip().lower()
+            resultado = filtrar_alumnos_por_apellido_rec(alumnos, prefijo)
             if not inc:
                 resultado = [(leg, dat) for (leg, dat) in resultado if dat.get("activo", True)]
             print("\n--- Alumnos filtrados ---")

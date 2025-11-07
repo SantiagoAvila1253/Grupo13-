@@ -191,7 +191,17 @@ def listar_alumnos_resumen(incluir_inactivos=False, imprimir=True, titulo="Alumn
         print(salida)
         return None
     return salida
-
+# Pide S/N y valida estrictamente
+def pedir_sn(msg="¿Incluir inactivos? (S/N): "):
+    """
+    Pide una respuesta S/N y la valida estrictamente.
+    Devuelve True si S, False si N.
+    """
+    resp = input(msg).strip().lower()
+    while not val.validar_opcion_sn(resp):
+        print("Opción inválida. Ingresá 'S' o 'N'.")
+        resp = input(msg).strip().lower()
+    return resp == "s"
 
 # Lista clases en formato tabla:
 def listar_clases_resumen(imprimir=True, titulo="Clases"):
