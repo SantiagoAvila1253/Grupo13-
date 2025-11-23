@@ -127,7 +127,7 @@
   },
   "30015": {
     "% asistencia": 0.0,
-    "activo": false,
+    "activo": true,
     "apellido": "Sarpero",
     "dni": "47805604",
     "mail": "lunitasarpero@gmail.com",
