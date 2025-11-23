@@ -46,7 +46,7 @@ def validar_numero_entero(valor):
     try:
         int(valor)
         return True
-    except Exception:
+    except ValueError: 
         return False
 
 
@@ -155,9 +155,16 @@ def validar_id_clase_formato(id_clase):
 def validar_legajo_existente(legajo, alumnos_json):
     if not validar_legajo_formato(legajo):
         return False
-    return str(int(legajo)) in alumnos_json
+    
+    if not isinstance(alumnos_json, dict):
+        raise TypeError("alumnos_json debe ser un diccionario.")
+    
+    try:
+        return str(int(legajo)) in alumnos_json
+    except ValueError:
+        raise ValueError("El legajo debe ser numérico.")
 
-
+    
 # valida que el id de clase exista como clave en el diccionario de clases (claves string)
 def validar_id_clase_existente(id_clase, clases_json):
     if not validar_id_clase_formato(id_clase):

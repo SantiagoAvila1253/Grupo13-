@@ -20,7 +20,7 @@ def orden_clase_apellido_nombre_legajo(fila):
         apellido = fila[2]
         nombre = fila[3]
         return (clase_id, apellido.lower(), nombre.lower(), legajo)
-    except Exception:
+    except (ValueError, TypeError, AttributeError, IndexError):
         return (0, "", "", 0)
 
 
@@ -392,8 +392,12 @@ def gestion_asistencias():
                         return "logout"
                     # si vuelve, continua en este submenú
                     continue
-                except Exception as error:
-                    print(f"No se pudo abrir el menú de filtros. Tipo de error: {type(error).__name__}. Detalle: {error}")
+                except FileNotFoundError:
+                    print("No se encuentra el archivo")
+                except (ValueError, TypeError, RuntimeError) as error:
+                    print("\nNo se pudo abrir el menú de filtros.")
+                    print(f"Tipo de error: {type(error).__name__}")
+                    print(f"Detalle: {error}")
                     es_json.pausa()
                     continue
 

@@ -233,7 +233,10 @@ def menu_filtros():
             pausa()
             return menu_filtros()  # caso recursivo (volver al menú)
 
-    except Exception as error:
-        print(f"No se pudo ejecutar el menú de filtros. Tipo de error: {type(error).__name__}. Detalle: {error}")
+    except (ValueError, TypeError, AttributeError, KeyError, RuntimeError) as error:
+        print("\nNo se pudo ejecutar el menú de filtros.")
+        print(f"Tipo de error: {type(error).__name__}")
+        print(f"Detalle: {error}\n")
         pausa()
         return "volver"
+    

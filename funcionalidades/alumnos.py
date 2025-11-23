@@ -18,18 +18,22 @@ def generar_legajo(alumnos_dict):
     Busca el máximo legajo existente y le suma 1.
     Si no hay alumnos, usa el ID inicial.
     """
+    if not isinstance(alumnos_dict, dict):
+        raise TypeError("alumnos_dict debe ser un diccionario.")
+
     if not alumnos_dict:
         return ID_ALUMNO_INICIAL
-
-    try:
-        # Convertimos las claves (string) a enteros para buscar el máximo
-        max_legajo = max(int(legajo) for legajo in alumnos_dict.keys())
-        return max_legajo + 1
-    except ValueError:
-        print("Error: Se encontró un legajo no numérico. Usando ID inicial.")
-        return ID_ALUMNO_INICIAL
-
-
+    
+    legajos = []
+   
+    for clave in alumnos_dict.keys():
+        try:
+            legajos.append(int(clave))
+        except ValueError:
+            raise ValueError(f"Legajo no numerico: '{clave}'")
+ 
+    return max(legajos) + 1
+ 
 def pedir_datos_alumno(alumnos_dict, legajo_existente=None):
     """
     Pide los datos de un alumno por consola y los valida.

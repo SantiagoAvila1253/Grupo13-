@@ -92,8 +92,9 @@ def reiniciar_clave():
         pausa()
         return False
 
-    except Exception as error:
-        print(Fore.RED + f"No se pudo reiniciar la clave. Tipo de error: {type(error).__name__}. Detalle: {error}")
+    except (ValueError, TypeError, KeyError, AttributeError) as error:
+        print(Fore.RED + "\nNo se pudo reiniciar la clave.")
+        print(f"Motivo: {error}\n")
         pausa()
         return False
 
