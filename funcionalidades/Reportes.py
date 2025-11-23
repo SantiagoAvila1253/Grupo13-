@@ -10,24 +10,28 @@
 
 from core import es_csv, es_json, menus, validadores, helpers
 
+
 # centraliza la carga de datos, existe para evitar repetir lecturas en cada reporte
 def _cargar_datos_basicos():
-    alumnos = es_json.leer_alumnos()    # dict[str -> dict]
-    clases = es_json.leer_clases()      
-    matriz = es_csv.leer_asistencia()   # lista de listas (sin cabecera)
+    alumnos = es_json.leer_alumnos()  # dict[str -> dict]
+    clases = es_json.leer_clases()
+    matriz = es_csv.leer_asistencia()  # lista de listas (sin cabecera)
     return alumnos, clases, matriz
 
-#devuelve el total de clases registradas
+
+# devuelve el total de clases registradas
 def _total_clases(clases):
     return len(clases)
 
 
-#Su objetivo es dar un panorama global del CSV, cuantos presentes hay sobre el total y el porcentaje
+# Su objetivo es dar un panorama global del CSV, cuantos presentes hay sobre el total y el porcentaje
 def reporte_asistencia_general():
     _, _, matriz = _cargar_datos_basicos()
-    #el guion bajo indica que no se usa la variable
+    # el guion bajo indica que no se usa la variable
     total = len(matriz)
-    presentes = sum(1 for f in matriz if len(f) >= 5 and str(f[4]).strip().upper() == "P")
+    presentes = sum(
+        1 for f in matriz if len(f) >= 5 and str(f[4]).strip().upper() == "P"
+    )
     porcentaje = (presentes / total * 100) if total else 0.0
     return f"Asistencia global: {presentes}/{total} registros ({porcentaje:.2f}%)"
 
@@ -38,7 +42,7 @@ def presentes_por_clase():
 
     # indexamos alumnos por legajo (string)
     idx_alumnos = {k: v for k, v in alumnos.items()}
-    #Crea un diccionario auxiliar donde la clave es el legajo (string) y el valor es todo el registro del alumno.
+    # Crea un diccionario auxiliar donde la clave es el legajo (string) y el valor es todo el registro del alumno.
     # agrupamos por clase_id
     presentes_por_cid = {}
     for fila in matriz:
@@ -48,12 +52,12 @@ def presentes_por_clase():
         if str(estado).strip().upper() == "P":
             presentes_por_cid.setdefault(cid, []).append(legajo)
 
-    #setdefault crea una lista vacía si la clase no existe aún en el diccionario
+    # setdefault crea una lista vacía si la clase no existe aún en el diccionario
 
     # armamos salida ordenada por clase
     lineas = []
     for cid in sorted(clases.keys(), key=lambda x: int(x)):
-        #el lambda convierte el id de clase a entero para ordenar numéricamente
+        # el lambda convierte el id de clase a entero para ordenar numéricamente
         datos_clase = clases[cid]
         encabezado = f"Clase {cid} | {datos_clase.get('materia','')} | Fecha: {datos_clase.get('fecha','')} | Horario: {datos_clase.get('horario','')}"
         lineas.append(encabezado)
@@ -63,14 +67,14 @@ def presentes_por_clase():
         else:
             lineas.append(f"  Presentes ({len(legs)}):")
             for leg in sorted(legs, key=lambda x: int(x)):
-                #los ordena numéricamente por legajo
+                # los ordena numéricamente por legajo
                 reg = idx_alumnos.get(str(leg), {})
                 lineas.append(f"    - {helpers._nombre_en_mayus(reg)} (Legajo {leg})")
         lineas.append("")  # línea en blanco
     return "\n".join(lineas)
 
 
-#Su objetivo es que para cada alumno, calcula su porcentaje de asistencia y lo lista ordenado por Apellido, Nombre
+# Su objetivo es que para cada alumno, calcula su porcentaje de asistencia y lo lista ordenado por Apellido, Nombre
 def porcentaje_por_alumno():
     alumnos, clases, matriz = _cargar_datos_basicos()
     total_c = _total_clases(clases)
@@ -92,10 +96,10 @@ def porcentaje_por_alumno():
         else:
             pres = presentes_por_legajo.get(legajo_str, 0)
             pct = (pres / total_c) * 100
-        items.append((reg.get("apellido",""), reg.get("nombre",""), legajo_str, pct))
+        items.append((reg.get("apellido", ""), reg.get("nombre", ""), legajo_str, pct))
 
     items.sort(key=lambda t: (t[0].lower(), t[1].lower()))
-    #ordena por apellido y nombre, ignorando mayúsculas/minúsculas
+    # ordena por apellido y nombre, ignorando mayúsculas/minúsculas
     lineas = []
     for ape, nom, leg, pct in items:
         reg_min = {"apellido": ape, "nombre": nom}
@@ -103,7 +107,7 @@ def porcentaje_por_alumno():
     return "\n".join(lineas)
 
 
-#      Muestra el Top 5 de alumnos con más inasistencias.
+# Muestra el Top 5 de alumnos con más inasistencias.
 def top_5_inasistencias():
     alumnos = es_json.leer_alumnos()
     if not alumnos:
@@ -115,8 +119,7 @@ def top_5_inasistencias():
 
     # Ordenar de menor a mayor porcentaje de asistencia (más inasistencias primero)
     lista_ordenada = sorted(
-        lista_alumnos,
-        key=lambda item: float(item[1].get("% asistencia", 0))
+        lista_alumnos, key=lambda item: float(item[1].get("% asistencia", 0))
     )
 
     top_5 = lista_ordenada[:5]
@@ -132,7 +135,9 @@ def top_5_inasistencias():
 
     print("-" * 65)
 
+
 # --- Menú de reportes ---
+
 
 def menu_reportes():
     en_reportes = True

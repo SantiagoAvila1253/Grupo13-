@@ -25,11 +25,13 @@ RUTA_CLASES = "data/clases.json"
 RUTA_DOCENTES = "data/docentes.json"
 CARPETA_RESPALDO = "data/respaldo"
 
+
 # Devuelve True si 'obj' es un dict y todos sus valores son dict
 def es_diccionario_de_diccionarios(obj):
     if not isinstance(obj, dict):
         return False
     return all(isinstance(v, dict) for v in obj.values())
+
 
 # Pausa de pantalla para continuar con Enter
 def pausa():
@@ -41,7 +43,9 @@ def pausa():
 def preguntar_respaldo():
     opciones = {"s", "n"}
     while True:
-        respuesta = input("¿Querés guardar una copia de respaldo? (S/N): ").strip().lower()
+        respuesta = (
+            input("¿Querés guardar una copia de respaldo? (S/N): ").strip().lower()
+        )
         if respuesta in opciones:
             return respuesta == "s"
         print("Opción inválida. Ingresá 'S' o 'N'.")
@@ -97,10 +101,16 @@ def guardar_respaldo(nombre_archivo_destino, datos=None):
         os.makedirs(CARPETA_RESPALDO, exist_ok=True)
 
         # Ruta final del respaldo: data/respaldo/<base>_YYYY-MM-DD_HH-MM-SS.json
-        destino = os.path.join(CARPETA_RESPALDO, nombre_respaldo(nombre_archivo_destino))
+        destino = os.path.join(
+            CARPETA_RESPALDO, nombre_respaldo(nombre_archivo_destino)
+        )
 
         # Si 'datos' es None => {}, si no => convertimos claves externas a str
-        contenido = {} if datos is None else {str(clave): valor for clave, valor in datos.items()}
+        contenido = (
+            {}
+            if datos is None
+            else {str(clave): valor for clave, valor in datos.items()}
+        )
 
         # Escritura del JSON
         with open(destino, "w", encoding="utf-8") as archivo:
@@ -134,7 +144,9 @@ def leer_json(ruta):
 
             # Verifica que 'datos' sea un diccionario de diccionarios
             if not es_diccionario_de_diccionarios(datos):
-                print(f"No se pudo ejecutar la acción. Motivo: estructura inválida en {ruta} (se esperaba un diccionario de diccionarios).")
+                print(
+                    f"No se pudo ejecutar la acción. Motivo: estructura inválida en {ruta} (se esperaba un diccionario de diccionarios)."
+                )
                 print("Comunicate con soporte técnico.")
                 pausa()
                 return {}
@@ -152,13 +164,17 @@ def leer_json(ruta):
         print(f"No se pudo ejecutar la acción. Motivo: JSON inválido en {ruta}.")
         # __name__ devuelve el nombre del tipo de error (por ejemplo "JSONDecodeError")
         # lineno y colno indican la línea y columna del archivo donde ocurrió el error JSON
-        print(f"Tipo de error: {type(error).__name__}. Detalle: línea {error.lineno}, columna {error.colno}.")
+        print(
+            f"Tipo de error: {type(error).__name__}. Detalle: línea {error.lineno}, columna {error.colno}."
+        )
         print("Comunicate con soporte técnico.")
         pausa()
         return {}
 
     except OSError as error:
-        print(f"No se pudo ejecutar la acción. Motivo: error de acceso al archivo {ruta}.")
+        print(
+            f"No se pudo ejecutar la acción. Motivo: error de acceso al archivo {ruta}."
+        )
         print(f"Tipo de error: {type(error).__name__}. Detalle: {error}")
         print("Comunicate con soporte técnico.")
         pausa()
@@ -177,7 +193,9 @@ def guardar_json(ruta, datos):
 
     # Validación de estructura
     if not es_diccionario_de_diccionarios(datos):
-        print("No se pudo ejecutar la acción. Motivo: los valores del diccionario deben ser diccionarios (forma entidad).")
+        print(
+            "No se pudo ejecutar la acción. Motivo: los valores del diccionario deben ser diccionarios (forma entidad)."
+        )
         print("Tipo de error: ValueError.")
         if preguntar_respaldo():
             guardar_respaldo(ruta, None)
@@ -194,7 +212,9 @@ def guardar_json(ruta, datos):
 
         # Guarda el archivo sobrescribiendo el anterior
         with open(ruta, "w", encoding="utf-8") as archivo:
-            json.dump(datos_convertidos, archivo, ensure_ascii=False, indent=2, sort_keys=True)
+            json.dump(
+                datos_convertidos, archivo, ensure_ascii=False, indent=2, sort_keys=True
+            )
 
         return  # éxito: sin prints ni pausas
 

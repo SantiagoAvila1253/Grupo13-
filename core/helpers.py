@@ -46,7 +46,7 @@ def pedir_id_clase_existente(etiqueta="ID de clase"):
             print(f"{etiqueta} inexistente: {texto}")
             continue
         return int(texto)
-    
+
 
 # Entrada segura de contraseña (multiplataforma)
 def pedir_password(prompt="Contraseña: "):
@@ -97,7 +97,7 @@ def pedir_password(prompt="Contraseña: "):
 
         while True:
             tecla = msvcrt.getch()
-            # Caso base: Enter fin de ingreso
+            # Tecla Enter: finaliza el ingreso de la contraseña
             if tecla in (b"\r", b"\n"):
                 print()
                 break
@@ -110,7 +110,7 @@ def pedir_password(prompt="Contraseña: "):
             elif tecla == b"\x1b":
                 print("\nCancelado.")
                 return ""
-            # Caso recursivo reducido (nuevo carácter)
+            # Caso normal: se agrega el nuevo carácter y se muestra un asterisco
             else:
                 try:
                     char = tecla.decode("utf-8")
