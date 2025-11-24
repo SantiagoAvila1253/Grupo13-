@@ -6,17 +6,17 @@ from datetime import datetime
 # Patrones precompilados (regex)
 
 # Legajo/ID: permite ceros a la izquierda, pero exige valor > 0 (rechaza "0", "0000", etc.)
-RE_LEGAJO = re.compile(r'^0*[1-9]\d*$')
+RE_LEGAJO = re.compile(r"^0*[1-9]\d*$")
 
 # DNI: exactamente 7 u 8 dígitos
-RE_DNI = re.compile(r'^\d{7,8}$')
+RE_DNI = re.compile(r"^\d{7,8}$")
 
 # Email: parte local con ._%+-, dominio con . y -, y TLD de 2+ letras
-RE_EMAIL = re.compile(r'^[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$')
+RE_EMAIL = re.compile(r"^[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$")
 
 # Fecha dd-mm-aaaa o dd/mm/aaaa (formato correcto, no rango semántico)
 RE_FECHA_FMT = re.compile(
-    r'^(0[1-9]|[12]\d|3[01])[-/](0[1-9]|1[0-2])[-/](19\d{2}|20\d{2})$'
+    r"^(0[1-9]|[12]\d|3[01])[-/](0[1-9]|1[0-2])[-/](19\d{2}|20\d{2})$"
 )
 
 # Nombres/Apellidos: letras (incluye acentos/ñ), espacios, ' y -, mínimo 2 chars
@@ -26,6 +26,63 @@ RE_NOM_AP = re.compile(r"^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ' -]{2,}$")
 ESTADOS_ASISTENCIA_VALIDOS = {"P", "AJ", "AI"}
 
 # Validadores generales
+
+
+# Valida de forma estricta una cadena usando un patrón (regex) o una función
+def validar_cadena_estricta(valor, patron, descripcion="valor"):
+    """
+    Parámetros:
+    - valor: dato a validar (se espera str).
+    - patron: una expresión regular compilada (con método fullmatch).
+    - descripcion: texto usado en los mensajes de error (por ejemplo: "DNI", "legajo", "email").
+
+    Lanza:
+    - TypeError: si valor no es una cadena (error interno, contactar soporte técnico).
+    - ValueError: si la cadena está vacía o no cumple el patrón de validación.
+
+    Retorna:
+    - La cadena normalizada (strip) si es válida.
+    """
+    if not isinstance(valor, str):
+        tipo_recibido = type(valor).__name__
+        raise TypeError(
+            f"Error interno de validificación en {descripcion}: se esperaba str y se recibió "
+            f"{tipo_recibido}. Por favor, contacte al soporte técnico."
+        )
+
+    cadena_limpia = valor.strip()
+    if cadena_limpia == "":
+        raise ValueError(f"El {descripcion} no puede estar vacío.")
+
+    # Verifica si el patrón es una expresión regular compilada (tiene fullmatch)
+    es_patron_regex = hasattr(patron, "fullmatch")
+
+    if es_patron_regex:
+        if not patron.fullmatch(cadena_limpia):
+            descripcion_normalizada = descripcion.strip().lower()
+
+            if descripcion_normalizada == "dni":
+                mensaje_error = "El DNI debe tener 7 u 8 dígitos numéricos, sin puntos, guiones ni letras."
+            elif descripcion_normalizada == "legajo":
+                mensaje_error = "El legajo debe contener solo dígitos numéricos y no puede ser cero."
+            elif descripcion_normalizada in {"email", "mail", "correo"}:
+                mensaje_error = "El email no cumple un formato válido. Use el formato usuario@dominio."
+            else:
+                raise TypeError(
+                    "Error interno: descripción no reconocida en validación estricta. "
+                    "Por favor, contacte al soporte técnico."
+                )
+
+            raise ValueError(mensaje_error)
+
+    else:
+        raise TypeError(
+            "Error interno: el patrón de validación debe ser una expresión regular compilada. "
+            "Por favor, contacte al soporte técnico."
+        )
+
+    return cadena_limpia
+
 
 # valida una opción de Sí/No
 def validar_opcion_sn(valor):
@@ -46,7 +103,7 @@ def validar_numero_entero(valor):
     try:
         int(valor)
         return True
-    except ValueError: 
+    except ValueError:
         return False
 
 
@@ -68,9 +125,11 @@ def opcion_valida_menu(opcion, validas):
 
 # DNI válido si tiene 7 u 8 dígitos
 def dni_valido(dni):
-    if not isinstance(dni, str):
+    try:
+        validar_cadena_estricta(dni, RE_DNI, "DNI")
+        return True
+    except (TypeError, ValueError):
         return False
-    return bool(RE_DNI.fullmatch(dni.strip()))
 
 
 # valida nombre/apellido: letras (incluye acentos/ñ), espacios, ' y -, mínimo 2 caracteres
@@ -155,16 +214,16 @@ def validar_id_clase_formato(id_clase):
 def validar_legajo_existente(legajo, alumnos_json):
     if not validar_legajo_formato(legajo):
         return False
-    
+
     if not isinstance(alumnos_json, dict):
         raise TypeError("alumnos_json debe ser un diccionario.")
-    
+
     try:
         return str(int(legajo)) in alumnos_json
     except ValueError:
         raise ValueError("El legajo debe ser numérico.")
 
-    
+
 # valida que el id de clase exista como clave en el diccionario de clases (claves string)
 def validar_id_clase_existente(id_clase, clases_json):
     if not validar_id_clase_formato(id_clase):

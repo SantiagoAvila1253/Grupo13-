@@ -14,7 +14,7 @@ sin errores de importación.
 PASO A PASO PARA EJECUTAR:
 
 DEFAULT:
-pytest test_unitarios_asistencia.py
+pytest tests/test_unitarios_asistencia.py -vv
 
 CON PRINTS INDICANDO PASS:
 pytest -s tests/test_unitarios_asistencia.py
