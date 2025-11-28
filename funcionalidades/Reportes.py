@@ -9,7 +9,7 @@
 # Reportes conectados a data/ vía core/es_json y core/es_csv
 
 from core import es_csv, es_json, menus, validadores, helpers
-
+from functools import reduce
 
 # centraliza la carga de datos, existe para evitar repetir lecturas en cada reporte
 def _cargar_datos_basicos():
@@ -29,9 +29,7 @@ def reporte_asistencia_general():
     _, _, matriz = _cargar_datos_basicos()
     # el guion bajo indica que no se usa la variable
     total = len(matriz)
-    presentes = sum(
-        1 for f in matriz if len(f) >= 5 and str(f[4]).strip().upper() == "P"
-    )
+    presentes = reduce(lambda acc, fila: acc + (1 if len(fila) >= 5 and fila[4].strip().upper() == "P" else 0), matriz, 0)
     porcentaje = (presentes / total * 100) if total else 0.0
     return f"Asistencia global: {presentes}/{total} registros ({porcentaje:.2f}%)"
 
