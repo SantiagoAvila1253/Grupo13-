@@ -125,7 +125,68 @@ def pedir_password(prompt="Contraseña: "):
         # En otros sistemas usa getpass (sin mostrar caracteres)
         import getpass
         return getpass.getpass(prompt)
+    
 
+
+# Filtro booleano con filter + lambda
+def filtrar_por_campo_booleano(lista_pares, nombre_campo: str, valor_esperado: bool = True):
+    """
+    Filtra una lista de tuplas (id, datos_dict) quedándose solo con aquellas
+    cuyo diccionario de datos tiene el campo booleano == valor_esperado.
+
+    Parámetros:
+    - lista_pares: lista de tuplas (id, datos), donde 'datos' es un dict.
+      Ejemplo: [("1001", {"apellido": "Gomez", "activo": True}), ...]
+    - nombre_campo: nombre de la clave booleana (por ejemplo 'activo').
+    - valor_esperado: valor que debe tener el campo para incluir el elemento.
+
+    Funcionamiento:
+    - Cada elemento de lista_pares es una tupla (id, datos).
+    - La lambda recibe esa tupla como 'par'.
+    - 'par[1]' es el diccionario de datos.
+    - par[1].get(nombre_campo, False) obtiene el valor del campo.
+    - La lambda devuelve True solo si ese valor coincide con valor_esperado.
+    - filter() recorre toda la lista y conserva solo los elementos
+      para los que la lambda devuelve True.
+    """
+    return list(
+        filter(
+            lambda par: par[1].get(nombre_campo, False) == valor_esperado,
+            lista_pares,
+        )
+    )
+
+
+# Filtro por prefijo con filter + lambda
+def filtrar_por_prefijo_texto(lista_pares, nombre_campo: str, prefijo: str):
+    """
+    Filtra una lista de tuplas (id, datos_dict) quedándose solo con aquellas
+    cuyo campo de texto comienza con el prefijo indicado (sin distinguir mayúsculas).
+
+    Parámetros:
+    - lista_pares: lista de tuplas (id, datos), donde 'datos' es un dict.
+      Ejemplo: [("1001", {"apellido": "Gomez"}), ("1002", {"apellido": "Martinez"}), ...]
+    - nombre_campo: nombre de la clave de texto (por ejemplo 'apellido', 'materia').
+    - prefijo: texto de prefijo a comparar (lo normal es que venga de un input).
+
+    Funcionamiento:
+    - Se normaliza el prefijo a minúsculas.
+    - Cada elemento de lista_pares es una tupla (id, datos).
+    - La lambda toma par[1].get(nombre_campo, "") como string,
+      lo pasa a minúsculas y verifica si empieza con el prefijo.
+    - filter() recorre la lista y conserva solo las tuplas donde
+      el campo textual cumple esa condición.
+    """
+    prefijo = prefijo.lower()
+    return list(
+        filter(
+            lambda par: str(par[1].get(nombre_campo, "")).lower().startswith(prefijo),
+            lista_pares,
+        )
+    )
+
+
+# Formato de línea de alumno
 def formatear_linea_alumno(item_alumno):
     """
     Toma una tupla (legajo_str, datos_dict) de un alumno
